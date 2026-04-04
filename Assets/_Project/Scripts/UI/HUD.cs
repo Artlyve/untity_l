@@ -26,6 +26,14 @@ namespace ProjectFPS.UI
         [Header("Prompt d'interaction")]
         [SerializeField] private TextMeshProUGUI   interactionPrompt;
 
+        [Header("Réticule")]
+        [Tooltip("Image centrale du réticule. Laissez vide pour créer un réticule automatique.")]
+        [SerializeField] private Image             reticle;
+        [Tooltip("Couleur du réticule par défaut.")]
+        [SerializeField] private Color             reticleColor        = Color.white;
+        [Tooltip("Couleur quand un objet interactif est visé.")]
+        [SerializeField] private Color             reticleHighlight    = new Color(1f, 0.85f, 0f);
+
         [Header("Ressources joueur")]
         [SerializeField] private TextMeshProUGUI   resourceText;   // optionnel — affiche les pts perso
 
@@ -35,12 +43,15 @@ namespace ProjectFPS.UI
         [SerializeField] private PlayerInteraction playerInteraction;
 
         private Image[] _slotBackgrounds;
+        private bool    _hasInteractable;   // vrai si l'item visé est interactif (pour le réticule)
 
         // ── Lifecycle ─────────────────────────────────────────────────────────────
         private void Awake()
         {
             if (interactionPrompt != null)
                 interactionPrompt.gameObject.SetActive(false);
+
+            EnsureReticle();
         }
 
         private void OnEnable()
@@ -191,17 +202,65 @@ namespace ProjectFPS.UI
         /// </summary>
         private void UpdateInteractionPrompt(string promptText)
         {
-            if (interactionPrompt == null) return;
+            _hasInteractable = promptText != null;
 
-            if (promptText != null)
+            if (interactionPrompt != null)
             {
-                interactionPrompt.text = promptText;
-                interactionPrompt.gameObject.SetActive(true);
+                if (promptText != null)
+                {
+                    interactionPrompt.text = promptText;
+                    interactionPrompt.gameObject.SetActive(true);
+                }
+                else
+                {
+                    interactionPrompt.gameObject.SetActive(false);
+                }
             }
-            else
-            {
-                interactionPrompt.gameObject.SetActive(false);
-            }
+
+            // Réticule : change de couleur si un objet interactif est visé
+            if (reticle != null)
+                reticle.color = _hasInteractable ? reticleHighlight : reticleColor;
+        }
+
+        // ── Réticule ──────────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Crée un réticule minimaliste (croix de 4 traits) si aucun n'est assigné.
+        /// </summary>
+        private void EnsureReticle()
+        {
+            if (reticle != null) return;
+
+            // Conteneur centré
+            var go = new GameObject("Reticle");
+            go.transform.SetParent(transform, false);
+            var rt = go.AddComponent<RectTransform>();
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = Vector2.zero;
+
+            // Point central (carré 4×4 px)
+            reticle = CreateReticleElement(go.transform, "Dot", new Vector2(4, 4), Vector2.zero);
+
+            // Quatre traits (haut, bas, gauche, droite)
+            CreateReticleElement(go.transform, "Top",    new Vector2(2, 8),  new Vector2(0,  10));
+            CreateReticleElement(go.transform, "Bottom", new Vector2(2, 8),  new Vector2(0, -10));
+            CreateReticleElement(go.transform, "Left",   new Vector2(8, 2),  new Vector2(-10,  0));
+            CreateReticleElement(go.transform, "Right",  new Vector2(8, 2),  new Vector2( 10,  0));
+        }
+
+        private Image CreateReticleElement(Transform parent, string name, Vector2 size, Vector2 offset)
+        {
+            var go  = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var rt  = go.AddComponent<RectTransform>();
+            rt.anchorMin        = new Vector2(0.5f, 0.5f);
+            rt.anchorMax        = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta        = size;
+            rt.anchoredPosition = offset;
+            var img = go.AddComponent<Image>();
+            img.color = reticleColor;
+            return img;
         }
 
         private void UpdateResourceText(int personalResources)

@@ -22,7 +22,8 @@ namespace ProjectFPS.Inventory
         [SerializeField] private ItemData _data;
 
         [Header("Animation flottante (état Floating)")]
-        [SerializeField] private bool  enableFloat    = true;
+        [Tooltip("Désactivé par défaut : les objets restent statiques au sol.")]
+        [SerializeField] private bool  enableFloat    = false;
         [SerializeField] private float rotationSpeed  = 45f;
         [SerializeField] private float bobAmplitude   = 0.15f;
         [SerializeField] private float bobFrequency   = 1f;
@@ -67,7 +68,7 @@ namespace ProjectFPS.Inventory
             switch (_state)
             {
                 case WorldItemState.Floating:
-                    enableFloat = true;
+                    // enableFloat reste à sa valeur sérialisée (false par défaut)
                     if (_rb != null) _rb.isKinematic = true;
                     if (_col != null) _col.isTrigger = true;
                     break;
@@ -108,11 +109,16 @@ namespace ProjectFPS.Inventory
 
         private void AnimateFloat()
         {
-            transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
-            _bobTime += Time.deltaTime * bobFrequency;
-            Vector3 pos = _basePosition;
-            pos.y += Mathf.Sin(_bobTime * Mathf.PI * 2f) * bobAmplitude;
-            transform.position = pos;
+            if (rotationSpeed > 0f)
+                transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime, Space.World);
+
+            if (bobAmplitude > 0f)
+            {
+                _bobTime += Time.deltaTime * bobFrequency;
+                Vector3 pos = _basePosition;
+                pos.y += Mathf.Sin(_bobTime * Mathf.PI * 2f) * bobAmplitude;
+                transform.position = pos;
+            }
         }
 
         // ── Collision / Impact ────────────────────────────────────────────────────

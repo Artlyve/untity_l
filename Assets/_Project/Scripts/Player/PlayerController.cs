@@ -35,8 +35,10 @@ namespace ProjectFPS.Player
         [SerializeField] private float gravity = -9.81f;
 
         [Header("Positionnement caméra (FPS)")]
-        [Tooltip("Hauteur des yeux relative à la base du CharacterController.")]
+        [Tooltip("Hauteur des yeux en position debout (relative à la base du CharacterController).")]
         [SerializeField] private float cameraEyeHeight    = 1.7f;
+        [Tooltip("Hauteur des yeux en position accroupie.")]
+        [SerializeField] private float cameraEyeHeightCrouch = 0.85f;
         [Tooltip("Décalage avant de la caméra pour éviter de clipper dans le mesh de la tête.")]
         [SerializeField] private float cameraForwardOffset = 0.12f;
 
@@ -153,12 +155,22 @@ namespace ProjectFPS.Player
             if (Input.GetKeyDown(KeyCode.LeftControl))
                 _isCrouching = !_isCrouching;
 
+            // Hauteur du CharacterController
             float targetHeight = _isCrouching ? crouchHeight : standHeight;
             _cc.height = Mathf.Lerp(_cc.height, targetHeight, crouchTransitionSpeed * Time.deltaTime);
 
             Vector3 center = _cc.center;
             center.y  = _cc.height / 2f;
             _cc.center = center;
+
+            // Caméra suit la hauteur des yeux en temps réel (fluide)
+            if (cameraHolder != null)
+            {
+                float targetEyeY = _isCrouching ? cameraEyeHeightCrouch : cameraEyeHeight;
+                Vector3 lp = cameraHolder.localPosition;
+                lp.y = Mathf.Lerp(lp.y, targetEyeY, crouchTransitionSpeed * Time.deltaTime);
+                cameraHolder.localPosition = lp;
+            }
 
             if (animator != null)
                 animator.SetBool(IsCrouchingParam, _isCrouching);
