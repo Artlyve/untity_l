@@ -1,19 +1,12 @@
-using System;
 using UnityEngine;
+using System;
 using ProjectFPS.Inventory;
 
 namespace ProjectFPS.Player
 {
     /// <summary>
-    /// Gère toutes les interactions du joueur avec le monde :
-    ///
-    ///   [E]  Ramasser un item utilitaire ou une ressource ;
-    ///        Dans une RitualZone : déposer ses ressources.
-    ///   [G]  Poser l'item sélectionné au sol (drop contrôlé, sans effet).
-    ///   [Q]  Lancer l'item sélectionné (uniquement si CanThrow).
-    ///   [F]  Utiliser l'item sélectionné (uniquement si CanUse).
-    ///
-    /// Dépendances : InventorySystem (sur ce GameObject ou sur le parent).
+    /// Gère toutes les interactions du joueur avec le monde.
+    /// Activer debugMode dans l'Inspector pour afficher les logs détaillés et le rayon.
     /// </summary>
     public class PlayerInteraction : MonoBehaviour
     {
@@ -22,28 +15,32 @@ namespace ProjectFPS.Player
         [SerializeField] private LayerMask interactionLayer  = ~0;
 
         [Header("Lancer")]
-        [Tooltip("Angle vers le haut (en degrés) ajouté à la direction de regard pour le lancer.")]
         [SerializeField] private float throwUpwardAngle = 10f;
 
         [Header("Références")]
         [SerializeField] private Camera    playerCamera;
-        [Tooltip("Point d'apparition du prefab lors d'un drop ou d'un lancer (optionnel). " +
-                 "Si non assigné, la position du joueur est utilisée.")]
         [SerializeField] private Transform itemSpawnPoint;
+
+        [Header("━━ DEBUG ━━")]
+        [Tooltip("Active les logs détaillés et le rayon visible dans la Scene view.")]
+        [SerializeField] private bool debugMode = true;
+        [Tooltip("Couleur du rayon quand il ne touche rien.")]
+        [SerializeField] private Color debugRayMiss = Color.red;
+        [Tooltip("Couleur du rayon quand il touche un item ramassable.")]
+        [SerializeField] private Color debugRayHit  = Color.green;
+        [Tooltip("Couleur du rayon quand il touche autre chose.")]
+        [SerializeField] private Color debugRayOther = Color.yellow;
 
         // ── Références internes ───────────────────────────────────────────────────
         private InventorySystem _inventory;
-
-        // Objet/zone actuellement visé par le raycast
         private ItemWorldObject _lookedAtItem;
         private RitualZone      _lookedAtRitual;
 
-        // ── Événements ────────────────────────────────────────────────────────────
+        // Throttle des logs "rien détecté" pour ne pas spammer
+        private float _lastMissLogTime = -999f;
+        private const float MissLogInterval = 2f;
 
-        /// <summary>
-        /// Déclenché chaque frame : texte du prompt d'interaction à afficher,
-        /// ou null pour masquer le prompt.
-        /// </summary>
+        // ── Événements ────────────────────────────────────────────────────────────
         public event Action<string> OnInteractionPrompt;
 
         // ── Lifecycle ─────────────────────────────────────────────────────────────
@@ -54,6 +51,9 @@ namespace ProjectFPS.Player
 
             if (playerCamera == null)
                 playerCamera = GetComponentInChildren<Camera>();
+
+            if (debugMode)
+                DebugStartup();
         }
 
         private void Update()
@@ -70,23 +70,51 @@ namespace ProjectFPS.Player
 
             if (playerCamera == null)
             {
+                if (debugMode) Debug.LogError("[PlayerInteraction] playerCamera est NULL ! " +
+                    "Assurez-vous qu'une Camera est enfant du Player ou assignée dans l'Inspector.");
                 OnInteractionPrompt?.Invoke(null);
                 return;
             }
 
-            Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+            var origin = playerCamera.transform.position;
+            var dir    = playerCamera.transform.forward;
+            var ray    = new Ray(origin, dir);
 
-            // QueryTriggerInteraction.Collide : le raycast détecte aussi les Trigger colliders
-            // (les items en état Floating utilisent isTrigger = true)
-            if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, interactionLayer,
-                                QueryTriggerInteraction.Collide))
+            bool hitSomething = Physics.Raycast(ray, out RaycastHit hit, interactionRange,
+                                                interactionLayer,
+                                                QueryTriggerInteraction.Collide);
+
+            if (hitSomething)
             {
-                // ── Item monde ────────────────────────────────────────────────────
+                // ── Tente de trouver ItemWorldObject ──────────────────────────────
                 var worldItem = hit.collider.GetComponent<ItemWorldObject>()
                              ?? hit.collider.GetComponentInParent<ItemWorldObject>();
 
-                if (worldItem != null && worldItem.CanBePickedUp && worldItem.Data != null)
+                if (worldItem != null)
                 {
+                    if (debugMode)
+                        Debug.DrawRay(origin, dir * hit.distance, debugRayHit);
+
+                    // Diagnostic si l'item est invalide
+                    if (!worldItem.CanBePickedUp)
+                    {
+                        if (debugMode)
+                            Debug.Log($"[PlayerInteraction] Touché : '{hit.collider.name}' " +
+                                      $"mais CanBePickedUp=false (état={worldItem.State})");
+                        OnInteractionPrompt?.Invoke(null);
+                        return;
+                    }
+
+                    if (worldItem.Data == null)
+                    {
+                        if (debugMode)
+                            Debug.LogWarning($"[PlayerInteraction] '{hit.collider.name}' a " +
+                                             "ItemWorldObject mais Data (ItemData) est NULL ! " +
+                                             "Assignez-le dans l'Inspector du prefab.");
+                        OnInteractionPrompt?.Invoke("[!] Item sans données (voir Console)");
+                        return;
+                    }
+
                     _lookedAtItem = worldItem;
                     bool isResource = worldItem.Data.IsResource;
                     string prompt = isResource
@@ -96,15 +124,50 @@ namespace ProjectFPS.Player
                     return;
                 }
 
-                // ── Zone de rituel ────────────────────────────────────────────────
+                // ── Tente de trouver RitualZone ───────────────────────────────────
                 var ritual = hit.collider.GetComponent<RitualZone>()
                           ?? hit.collider.GetComponentInParent<RitualZone>();
 
                 if (ritual != null)
                 {
+                    if (debugMode)
+                        Debug.DrawRay(origin, dir * hit.distance, debugRayHit);
+
                     _lookedAtRitual = ritual;
                     OnInteractionPrompt?.Invoke(ritual.GetPromptText(_inventory));
                     return;
+                }
+
+                // ── Touche quelque chose mais pas un item connu ───────────────────
+                if (debugMode)
+                {
+                    Debug.DrawRay(origin, dir * hit.distance, debugRayOther);
+
+                    // Log throttlé pour ne pas spammer la console
+                    if (Time.time - _lastMissLogTime > MissLogInterval)
+                    {
+                        _lastMissLogTime = Time.time;
+                        Debug.Log($"[PlayerInteraction] Raycast touche '{hit.collider.name}' " +
+                                  $"(layer={LayerMask.LayerToName(hit.collider.gameObject.layer)}, " +
+                                  $"dist={hit.distance:F2}m) mais pas de ItemWorldObject ni RitualZone. " +
+                                  $"Ajoutez ItemWorldObject sur ce prefab.");
+                    }
+                }
+            }
+            else
+            {
+                // ── Rien détecté ──────────────────────────────────────────────────
+                if (debugMode)
+                {
+                    Debug.DrawRay(origin, dir * interactionRange, debugRayMiss);
+
+                    if (Time.time - _lastMissLogTime > MissLogInterval)
+                    {
+                        _lastMissLogTime = Time.time;
+                        Debug.Log($"[PlayerInteraction] Raycast: rien détecté sur {interactionRange}m. " +
+                                  $"LayerMask={interactionLayer.value} " +
+                                  $"(~0 = tout détecter, vérifiez la valeur si un layer est exclu).");
+                    }
                 }
             }
 
@@ -114,54 +177,80 @@ namespace ProjectFPS.Player
         // ── Actions clavier ───────────────────────────────────────────────────────
         private void HandleInputActions()
         {
-            if (Input.GetKeyDown(KeyCode.E))   TryPickupOrDeposit();
-            if (Input.GetKeyDown(KeyCode.G))   TryDrop();
-            if (Input.GetKeyDown(KeyCode.Q))   TryThrow();
-            if (Input.GetKeyDown(KeyCode.F))   TryUse();
+            if (Input.GetKeyDown(KeyCode.E)) TryPickupOrDeposit();
+            if (Input.GetKeyDown(KeyCode.G)) TryDrop();
+            if (Input.GetKeyDown(KeyCode.Q)) TryThrow();
+            if (Input.GetKeyDown(KeyCode.F)) TryUse();
         }
 
         // ── [E] Ramasser / Déposer ────────────────────────────────────────────────
         private void TryPickupOrDeposit()
         {
+            if (debugMode)
+                Debug.Log($"[PlayerInteraction] [E] pressé — " +
+                          $"lookedAtItem={(_lookedAtItem != null ? _lookedAtItem.name : "null")}, " +
+                          $"lookedAtRitual={(_lookedAtRitual != null ? _lookedAtRitual.name : "null")}, " +
+                          $"inventory={(_inventory != null ? "OK" : "NULL")}");
+
             // Priorité 1 : zone de rituel
             if (_lookedAtRitual != null)
             {
-                // Le dépôt est géré par RitualZone.Update() (joueur dans le trigger + E)
-                // Mais si on regarde directement la zone depuis l'extérieur, on peut aussi
-                // déclencher via raycast :
-                if (_inventory != null)
+                if (_inventory == null) { Debug.LogError("[PlayerInteraction] InventorySystem manquant !"); return; }
+                int deposited = _inventory.DepositResources();
+                if (deposited > 0 && ResourceSystem.Instance != null)
                 {
-                    int deposited = _inventory.DepositResources();
-                    if (deposited > 0 && ResourceSystem.Instance != null)
-                        ResourceSystem.Instance.Deposit(deposited);
+                    ResourceSystem.Instance.Deposit(deposited);
+                    if (debugMode) Debug.Log($"[PlayerInteraction] Dépôt : {deposited} pts transférés.");
                 }
+                else if (debugMode)
+                    Debug.Log("[PlayerInteraction] Pas de ressources à déposer.");
                 return;
             }
 
             // Priorité 2 : item monde
-            if (_lookedAtItem == null || !_lookedAtItem.CanBePickedUp) return;
+            if (_lookedAtItem == null)
+            {
+                if (debugMode) Debug.Log("[PlayerInteraction] [E] : aucun item visé, action ignorée.");
+                return;
+            }
+
+            if (!_lookedAtItem.CanBePickedUp)
+            {
+                if (debugMode) Debug.Log($"[PlayerInteraction] '{_lookedAtItem.name}' ne peut pas être ramassé (état={_lookedAtItem.State}).");
+                return;
+            }
 
             var data = _lookedAtItem.Data;
-            if (data == null || _inventory == null) return;
+
+            if (data == null)
+            {
+                Debug.LogWarning($"[PlayerInteraction] '{_lookedAtItem.name}' : ItemData est NULL ! Assignez-le dans l'Inspector.");
+                return;
+            }
+
+            if (_inventory == null)
+            {
+                Debug.LogError("[PlayerInteraction] InventorySystem introuvable sur le Player !");
+                return;
+            }
 
             if (data.IsResource)
             {
-                // Ressource → points directs, pas de slot
                 _inventory.AddResource(data.ResourceValue);
                 _lookedAtItem.OnPickedUp();
-                Debug.Log($"[PlayerInteraction] Ressource collectée : +{data.ResourceValue} pts");
+                Debug.Log($"[PlayerInteraction] ✔ Ressource '{data.ItemName}' collectée : +{data.ResourceValue} pts");
             }
             else
             {
-                // Item utilitaire
                 if (_inventory.TryPickupUtility(data))
                 {
                     _lookedAtItem.OnPickedUp();
-                    Debug.Log($"[PlayerInteraction] Ramassé : {data.ItemName}");
+                    Debug.Log($"[PlayerInteraction] ✔ Ramassé : '{data.ItemName}'");
                 }
                 else
                 {
-                    Debug.Log("[PlayerInteraction] Inventaire plein, impossible de ramasser.");
+                    Debug.Log($"[PlayerInteraction] ✘ Inventaire plein — impossible de ramasser '{data.ItemName}'. " +
+                              $"Slots: {_inventory.OccupiedSlotCount}/{_inventory.MaxSlots}");
                 }
             }
         }
@@ -170,10 +259,8 @@ namespace ProjectFPS.Player
         private void TryDrop()
         {
             if (_inventory == null) return;
-
             var item = _inventory.RemoveFromSlot(_inventory.SelectedSlot);
-            if (item == null) return;
-
+            if (item == null) { if (debugMode) Debug.Log("[PlayerInteraction] [G] : slot sélectionné vide."); return; }
             SpawnWorldItem(item, ItemWorldObject.WorldItemState.Dropped);
             Debug.Log($"[PlayerInteraction] Posé : {item.ItemName}");
         }
@@ -182,29 +269,15 @@ namespace ProjectFPS.Player
         private void TryThrow()
         {
             if (_inventory == null || playerCamera == null) return;
-
             var item = _inventory.GetSelectedItem();
-            if (item == null)
-            {
-                Debug.Log("[PlayerInteraction] Aucun item sélectionné.");
-                return;
-            }
-            if (!item.CanThrow)
-            {
-                Debug.Log($"[PlayerInteraction] {item.ItemName} ne peut pas être lancé.");
-                return;
-            }
+            if (item == null) { if (debugMode) Debug.Log("[PlayerInteraction] [Q] : slot vide."); return; }
+            if (!item.CanThrow) { if (debugMode) Debug.Log($"[PlayerInteraction] [Q] : '{item.ItemName}' non lançable."); return; }
 
             _inventory.RemoveFromSlot(_inventory.SelectedSlot);
-
-            // Direction = regard caméra + angle vers le haut
             Vector3 throwDir = Quaternion.AngleAxis(-throwUpwardAngle, playerCamera.transform.right)
                              * playerCamera.transform.forward;
-
             var worldObj = SpawnWorldItem(item, ItemWorldObject.WorldItemState.Thrown);
-            if (worldObj != null)
-                worldObj.ApplyThrowVelocity(throwDir * item.ThrowForce);
-
+            if (worldObj != null) worldObj.ApplyThrowVelocity(throwDir * item.ThrowForce);
             Debug.Log($"[PlayerInteraction] Lancé : {item.ItemName}");
         }
 
@@ -212,64 +285,33 @@ namespace ProjectFPS.Player
         private void TryUse()
         {
             if (_inventory == null) return;
-
             var item = _inventory.UseSelectedItem();
-            if (item == null)
-            {
-                Debug.Log("[PlayerInteraction] Aucun item utilisable sélectionné.");
-                return;
-            }
-
+            if (item == null) { if (debugMode) Debug.Log("[PlayerInteraction] [F] : aucun item utilisable sélectionné."); return; }
             ApplyUseEffect(item);
-            Debug.Log($"[PlayerInteraction] Utilisé : {item.ItemName}" +
-                      (item.Consumes ? " (consommé)" : ""));
+            Debug.Log($"[PlayerInteraction] Utilisé : {item.ItemName}{(item.Consumes ? " (consommé)" : "")}");
         }
 
-        // ── Effets d'utilisation directe ──────────────────────────────────────────
         private void ApplyUseEffect(ItemData item)
         {
             switch (item.Type)
             {
-                case ItemType.Potion:
-                    // TODO: soigner le joueur (GetComponent<PlayerState>().Heal(...))
-                    Debug.Log("[PlayerInteraction] Potion utilisée → soin appliqué.");
-                    break;
-
-                case ItemType.Balle:
-                    // TODO: tirer une balle (appeler un système de tir)
-                    Debug.Log("[PlayerInteraction] Balle utilisée → tir effectué.");
-                    break;
-
-                case ItemType.Armure:
-                    // TODO: activer bouclier (PlayerState.ActivateArmor())
-                    Debug.Log("[PlayerInteraction] Armure activée → absorbe la prochaine attaque.");
-                    break;
-
-                case ItemType.MalusEnnemi:
-                    // TODO: appliquer debuff à la cible visée
-                    Debug.Log("[PlayerInteraction] Malus ennemi appliqué à la cible.");
-                    break;
+                case ItemType.Potion:      Debug.Log("[PlayerInteraction] Potion → soin. (TODO)"); break;
+                case ItemType.Balle:       Debug.Log("[PlayerInteraction] Balle → tir. (TODO)"); break;
+                case ItemType.Armure:      Debug.Log("[PlayerInteraction] Armure → bouclier. (TODO)"); break;
+                case ItemType.MalusEnnemi: Debug.Log("[PlayerInteraction] Malus → debuff. (TODO)"); break;
             }
         }
 
-        // ── Utilitaire : spawn d'un objet monde ───────────────────────────────────
-
-        /// <summary>
-        /// Instancie le WorldPrefab de l'item et l'initialise dans l'état donné.
-        /// Le spawn se fait au point itemSpawnPoint ou à la position du joueur + 0.5 m devant.
-        /// </summary>
+        // ── Spawn ─────────────────────────────────────────────────────────────────
         private ItemWorldObject SpawnWorldItem(ItemData item, ItemWorldObject.WorldItemState state)
         {
             if (item.WorldPrefab == null)
             {
-                Debug.LogWarning($"[PlayerInteraction] {item.ItemName} n'a pas de WorldPrefab assigné.");
+                Debug.LogWarning($"[PlayerInteraction] '{item.ItemName}' n'a pas de WorldPrefab assigné.");
                 return null;
             }
-
-            Vector3    spawnPos = GetSpawnPosition();
-            Quaternion spawnRot = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
-
-            var go  = UnityEngine.Object.Instantiate(item.WorldPrefab, spawnPos, spawnRot);
+            var go  = UnityEngine.Object.Instantiate(item.WorldPrefab, GetSpawnPosition(),
+                                                     Quaternion.Euler(0f, transform.eulerAngles.y, 0f));
             var wio = go.GetComponent<ItemWorldObject>() ?? go.AddComponent<ItemWorldObject>();
             wio.Initialize(item, state);
             return wio;
@@ -277,13 +319,31 @@ namespace ProjectFPS.Player
 
         private Vector3 GetSpawnPosition()
         {
-            if (itemSpawnPoint != null)
-                return itemSpawnPoint.position;
-
-            // Spawn devant le joueur, à hauteur de la caméra
+            if (itemSpawnPoint != null) return itemSpawnPoint.position;
             return playerCamera != null
                 ? playerCamera.transform.position + playerCamera.transform.forward * 0.6f
                 : transform.position + transform.forward * 0.6f;
+        }
+
+        // ── Debug startup ─────────────────────────────────────────────────────────
+        private void DebugStartup()
+        {
+            Debug.Log("━━━━━━━━━━ [PlayerInteraction] DIAGNOSTIC DÉMARRAGE ━━━━━━━━━━");
+
+            if (playerCamera == null)
+                Debug.LogError("  ✘ playerCamera : NULL (cherche dans les enfants...)");
+            else
+                Debug.Log($"  ✔ playerCamera : {playerCamera.name}");
+
+            if (_inventory == null)
+                Debug.LogError("  ✘ InventorySystem : introuvable sur ce GameObject ou sur le parent !");
+            else
+                Debug.Log($"  ✔ InventorySystem : {_inventory.name} ({_inventory.MaxSlots} slot(s))");
+
+            Debug.Log($"  • interactionRange : {interactionRange}m");
+            Debug.Log($"  • interactionLayer : {interactionLayer.value} " +
+                      $"({(interactionLayer.value == -1 ? "ALL layers" : "layers filtrés")})");
+            Debug.Log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }
     }
 }
