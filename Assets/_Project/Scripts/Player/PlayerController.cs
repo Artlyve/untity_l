@@ -2,15 +2,24 @@ using UnityEngine;
 
 namespace ProjectFPS.Player
 {
+    /// <summary>
+    /// Contrôle FPS : déplacement, regard souris, accroupissement.
+    ///
+    /// BUGS CORRIGÉS :
+    ///  1. applyRootMotion désactivé en Awake → le modèle ne dérive plus devant la caméra.
+    ///  2. CameraHolder auto-positionné à hauteur des yeux si son Z local = 0
+    ///     → évite de voir l'intérieur de la tête au démarrage.
+    ///     Ajustez cameraEyeHeight et cameraForwardOffset dans l'Inspecteur si besoin.
+    /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Références")]
         [SerializeField] private Transform cameraHolder;
-        [SerializeField] private Animator animator;
+        [SerializeField] private Animator  animator;
 
         [Header("Vitesses")]
-        [SerializeField] private float walkSpeed = 3f;
+        [SerializeField] private float walkSpeed   = 3f;
         [SerializeField] private float sprintSpeed = 6f;
         [SerializeField] private float crouchSpeed = 1.5f;
 
@@ -18,24 +27,51 @@ namespace ProjectFPS.Player
         [SerializeField] private float mouseSensitivity = 2f;
 
         [Header("Crouch")]
-        [SerializeField] private float standHeight = 2f;
-        [SerializeField] private float crouchHeight = 1f;
+        [SerializeField] private float standHeight         = 2f;
+        [SerializeField] private float crouchHeight        = 1f;
         [SerializeField] private float crouchTransitionSpeed = 8f;
 
         [Header("Gravité")]
         [SerializeField] private float gravity = -9.81f;
 
-        private CharacterController _characterController;
+        [Header("Positionnement caméra (FPS)")]
+        [Tooltip("Hauteur des yeux relative à la base du CharacterController.")]
+        [SerializeField] private float cameraEyeHeight    = 1.7f;
+        [Tooltip("Décalage avant de la caméra pour éviter de clipper dans le mesh de la tête.")]
+        [SerializeField] private float cameraForwardOffset = 0.12f;
+
+        private CharacterController _cc;
         private float _verticalVelocity;
         private float _cameraPitch;
-        private bool _isCrouching;
+        private bool  _isCrouching;
 
         private static readonly int SpeedParam       = Animator.StringToHash("Speed");
         private static readonly int IsCrouchingParam = Animator.StringToHash("IsCrouching");
 
         private void Awake()
         {
-            _characterController = GetComponent<CharacterController>();
+            _cc = GetComponent<CharacterController>();
+
+            // ── FIX 1 : désactiver la Root Motion pour éviter que le modèle
+            //            glisse indépendamment de la caméra.
+            if (animator != null)
+                animator.applyRootMotion = false;
+
+            // ── FIX 2 : positionner le CameraHolder à hauteur des yeux.
+            //    On ne touche à la position que si le CameraHolder est encore à (0,0,0)
+            //    ou si son Z local est nul (caméra dans la tête).
+            if (cameraHolder != null)
+            {
+                Vector3 lp = cameraHolder.localPosition;
+
+                bool needsEyeHeight = Mathf.Approximately(lp.y, 0f);
+                bool needsForward   = lp.z < cameraForwardOffset;
+
+                if (needsEyeHeight) lp.y = cameraEyeHeight;
+                if (needsForward)   lp.z = cameraForwardOffset;
+
+                cameraHolder.localPosition = lp;
+            }
         }
 
         private void Start()
@@ -52,7 +88,7 @@ namespace ProjectFPS.Player
             HandleCrouch();
         }
 
-        // Verrouillage / libération du curseur avec Escape
+        // ── Curseur ───────────────────────────────────────────────────────────────
         private void HandleCursorLock()
         {
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -67,7 +103,7 @@ namespace ProjectFPS.Player
             }
         }
 
-        // Rotation horizontale du joueur + rotation verticale de la caméra
+        // ── Regard ────────────────────────────────────────────────────────────────
         private void HandleMouseLook()
         {
             if (Cursor.lockState != CursorLockMode.Locked) return;
@@ -84,7 +120,7 @@ namespace ProjectFPS.Player
                 cameraHolder.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
         }
 
-        // Déplacement WASD + sprint + gravité custom (pas de saut)
+        // ── Déplacement ───────────────────────────────────────────────────────────
         private void HandleMovement()
         {
             float horizontal = Input.GetAxis("Horizontal");
@@ -96,16 +132,13 @@ namespace ProjectFPS.Player
             Vector3 moveDir = transform.right * horizontal + transform.forward * vertical;
             moveDir = Vector3.ClampMagnitude(moveDir, 1f);
 
-            // Gravité : petite valeur négative quand au sol pour garder le contact
-            if (_characterController.isGrounded && _verticalVelocity < 0f)
+            if (_cc.isGrounded && _verticalVelocity < 0f)
                 _verticalVelocity = -2f;
 
             _verticalVelocity += gravity * Time.deltaTime;
 
-            Vector3 velocity = moveDir * currentSpeed + Vector3.up * _verticalVelocity;
-            _characterController.Move(velocity * Time.deltaTime);
+            _cc.Move((moveDir * currentSpeed + Vector3.up * _verticalVelocity) * Time.deltaTime);
 
-            // Mise à jour de l'Animator (Speed normalisé 0-1)
             if (animator != null)
             {
                 float inputMag        = new Vector2(horizontal, vertical).magnitude;
@@ -114,23 +147,18 @@ namespace ProjectFPS.Player
             }
         }
 
-        // Accroupissement avec interpolation de hauteur du CharacterController
+        // ── Accroupissement ───────────────────────────────────────────────────────
         private void HandleCrouch()
         {
             if (Input.GetKeyDown(KeyCode.LeftControl))
                 _isCrouching = !_isCrouching;
 
             float targetHeight = _isCrouching ? crouchHeight : standHeight;
-            _characterController.height = Mathf.Lerp(
-                _characterController.height,
-                targetHeight,
-                crouchTransitionSpeed * Time.deltaTime
-            );
+            _cc.height = Mathf.Lerp(_cc.height, targetHeight, crouchTransitionSpeed * Time.deltaTime);
 
-            // Maintient le centre du CharacterController aligné avec la hauteur
-            Vector3 center = _characterController.center;
-            center.y = _characterController.height / 2f;
-            _characterController.center = center;
+            Vector3 center = _cc.center;
+            center.y  = _cc.height / 2f;
+            _cc.center = center;
 
             if (animator != null)
                 animator.SetBool(IsCrouchingParam, _isCrouching);

@@ -12,9 +12,9 @@ namespace ProjectFPS.UI
         [SerializeField] private TextMeshProUGUI debugText;
 
         [Header("Références joueur")]
-        [SerializeField] private Transform         playerTransform;
-        [SerializeField] private CharacterController characterController;
-        [SerializeField] private InventorySystem   inventorySystem;
+        [SerializeField] private Transform            playerTransform;
+        [SerializeField] private CharacterController  characterController;
+        [SerializeField] private InventorySystem      inventorySystem;
 
         private bool  _isVisible;
         private float _fps;
@@ -39,14 +39,12 @@ namespace ProjectFPS.UI
             }
         }
 
-        // Affiche ou cache le panneau de débogage
         private void TogglePanel()
         {
             _isVisible = !_isVisible;
             panel.SetActive(_isVisible);
         }
 
-        // Calcule le FPS moyen toutes les FpsUpdateInterval secondes
         private void RefreshFps()
         {
             _fpsTimer += Time.deltaTime;
@@ -57,7 +55,6 @@ namespace ProjectFPS.UI
             }
         }
 
-        // Reconstruit le texte de débogage à chaque frame (tant que le panel est visible)
         private void RefreshText()
         {
             if (debugText == null) return;
@@ -65,15 +62,21 @@ namespace ProjectFPS.UI
             Vector3 pos   = playerTransform     != null ? playerTransform.position           : Vector3.zero;
             float   speed = characterController != null ? characterController.velocity.magnitude : 0f;
             string  role  = RoleManager.Instance?.CurrentRole?.RoleName ?? "Aucun";
-            int     items = inventorySystem     != null ? inventorySystem.Items.Count         : 0;
+
+            // Utilise OccupiedSlotCount (nouvelle API, évite Items.Count inexistant)
+            int     items = inventorySystem != null ? inventorySystem.OccupiedSlotCount : 0;
+            int     resources = inventorySystem != null ? inventorySystem.PersonalResources : 0;
+            int     globalRes = ResourceSystem.Instance?.GlobalTotal ?? 0;
+            int     winThreshold = ResourceSystem.Instance?.WinThreshold ?? 0;
 
             debugText.text =
                 $"<b>DEBUG</b>\n" +
-                $"Position : ({pos.x:F1}, {pos.y:F1}, {pos.z:F1})\n" +
-                $"Vitesse  : {speed:F2} m/s\n" +
-                $"Rôle     : {role}\n" +
-                $"Items    : {items}\n" +
-                $"FPS      : {Mathf.RoundToInt(_fps)}";
+                $"Position  : ({pos.x:F1}, {pos.y:F1}, {pos.z:F1})\n" +
+                $"Vitesse   : {speed:F2} m/s\n" +
+                $"Rôle      : {role}\n" +
+                $"Slots     : {items}/{(inventorySystem != null ? inventorySystem.MaxSlots : 0)}\n" +
+                $"Ressources: {resources} perso | {globalRes}/{winThreshold} global\n" +
+                $"FPS       : {Mathf.RoundToInt(_fps)}";
         }
     }
 }
