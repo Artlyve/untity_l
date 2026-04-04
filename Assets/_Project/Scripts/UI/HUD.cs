@@ -20,23 +20,23 @@ namespace ProjectFPS.UI
         [Header("Slots d'inventaire")]
         [SerializeField] private Transform         slotsContainer;
         [SerializeField] private GameObject        slotPrefab;
-        // Couleurs de surbrillance du slot actif
         [SerializeField] private Color             selectedSlotColor   = Color.yellow;
         [SerializeField] private Color             deselectedSlotColor = Color.white;
 
         [Header("Prompt d'interaction")]
         [SerializeField] private TextMeshProUGUI   interactionPrompt;
 
+        [Header("Ressources joueur")]
+        [SerializeField] private TextMeshProUGUI   resourceText;   // optionnel — affiche les pts perso
+
         [Header("Références joueur")]
         [SerializeField] private PlayerState       playerState;
         [SerializeField] private InventorySystem   inventorySystem;
         [SerializeField] private PlayerInteraction playerInteraction;
 
-        // Images de fond des slots (index = numéro de slot)
         private Image[] _slotBackgrounds;
 
-        // ─── Lifecycle ──────────────────────────────────────────────────────────
-
+        // ── Lifecycle ─────────────────────────────────────────────────────────────
         private void Awake()
         {
             if (interactionPrompt != null)
@@ -49,13 +49,17 @@ namespace ProjectFPS.UI
                 playerState.OnHealthChanged += UpdateHealthBar;
 
             if (inventorySystem != null)
+            {
                 inventorySystem.OnInventoryChanged += UpdateInventorySlots;
+                inventorySystem.OnResourceChanged  += UpdateResourceText;
+            }
 
             if (RoleManager.Instance != null)
                 RoleManager.Instance.OnRoleChanged += UpdateRoleDisplay;
 
+            // Nouvelle API : OnInteractionPrompt porte déjà le texte complet
             if (playerInteraction != null)
-                playerInteraction.OnLookAtPickup += UpdateInteractionPrompt;
+                playerInteraction.OnInteractionPrompt += UpdateInteractionPrompt;
         }
 
         private void OnDisable()
@@ -64,20 +68,22 @@ namespace ProjectFPS.UI
                 playerState.OnHealthChanged -= UpdateHealthBar;
 
             if (inventorySystem != null)
+            {
                 inventorySystem.OnInventoryChanged -= UpdateInventorySlots;
+                inventorySystem.OnResourceChanged  -= UpdateResourceText;
+            }
 
             if (RoleManager.Instance != null)
                 RoleManager.Instance.OnRoleChanged -= UpdateRoleDisplay;
 
             if (playerInteraction != null)
-                playerInteraction.OnLookAtPickup -= UpdateInteractionPrompt;
+                playerInteraction.OnInteractionPrompt -= UpdateInteractionPrompt;
         }
 
         private void Start()
         {
             InitializeSlots();
 
-            // Peuplement initial depuis les états courants
             if (playerState != null)
                 UpdateHealthBar(playerState.CurrentHealth, playerState.MaxHealth);
 
@@ -85,6 +91,7 @@ namespace ProjectFPS.UI
                 UpdateRoleDisplay(RoleManager.Instance.CurrentRole);
 
             UpdateInventorySlots();
+            UpdateResourceText(inventorySystem != null ? inventorySystem.PersonalResources : 0);
         }
 
         private void Update()
@@ -92,9 +99,7 @@ namespace ProjectFPS.UI
             UpdateSelectedSlotHighlight();
         }
 
-        // ─── Initialisation des slots ────────────────────────────────────────────
-
-        // Crée les slots visuels selon le nombre de slots max de l'inventaire
+        // ── Slots ─────────────────────────────────────────────────────────────────
         private void InitializeSlots()
         {
             if (slotsContainer == null || slotPrefab == null) return;
@@ -102,20 +107,18 @@ namespace ProjectFPS.UI
             foreach (Transform child in slotsContainer)
                 Destroy(child.gameObject);
 
-            int count = inventorySystem != null ? inventorySystem.MaxSlots : 4;
+            int count       = inventorySystem != null ? inventorySystem.MaxSlots : 1;
             _slotBackgrounds = new Image[count];
 
             for (int i = 0; i < count; i++)
             {
-                GameObject slot = Instantiate(slotPrefab, slotsContainer);
-                // Le prefab doit avoir une Image racine (fond du slot) et un enfant "ItemIcon" (Image)
+                var slot = Instantiate(slotPrefab, slotsContainer);
+                // Prefab attendu : Image racine (fond) + enfant "ItemIcon" (Image)
                 _slotBackgrounds[i] = slot.GetComponent<Image>();
             }
         }
 
-        // ─── Callbacks des events ────────────────────────────────────────────────
-
-        // Met à jour le slider et le texte de vie
+        // ── Callbacks ─────────────────────────────────────────────────────────────
         private void UpdateHealthBar(float current, float max)
         {
             if (healthBar != null)
@@ -125,7 +128,6 @@ namespace ProjectFPS.UI
                 healthText.text = $"{Mathf.CeilToInt(current)} / {Mathf.CeilToInt(max)}";
         }
 
-        // Met à jour le nom et l'icône du rôle affiché
         private void UpdateRoleDisplay(RoleData role)
         {
             if (role == null) return;
@@ -138,31 +140,38 @@ namespace ProjectFPS.UI
                 roleIcon.sprite  = role.Icon;
                 roleIcon.enabled = role.Icon != null;
             }
+
+            // Recréer les slots si le nombre change avec le rôle
+            InitializeSlots();
         }
 
-        // Rafraîchit les icônes des slots d'inventaire
         private void UpdateInventorySlots()
         {
             if (_slotBackgrounds == null || inventorySystem == null) return;
+
+            // Si le nombre de slots a changé (changement de rôle), recréer
+            if (_slotBackgrounds.Length != inventorySystem.MaxSlots)
+            {
+                InitializeSlots();
+                return;
+            }
 
             for (int i = 0; i < _slotBackgrounds.Length; i++)
             {
                 if (_slotBackgrounds[i] == null) continue;
 
-                // L'icône se trouve dans l'enfant "ItemIcon"
                 Transform iconTransform = _slotBackgrounds[i].transform.Find("ItemIcon");
                 if (iconTransform == null) continue;
 
-                Image  iconImage = iconTransform.GetComponent<Image>();
+                Image    iconImage = iconTransform.GetComponent<Image>();
                 if (iconImage == null) continue;
 
-                ItemData item    = inventorySystem.GetItem(i);
-                iconImage.sprite = item?.Icon;
-                iconImage.enabled = item != null;
+                ItemData item      = inventorySystem.GetItem(i);
+                iconImage.sprite   = item?.Icon;
+                iconImage.enabled  = item != null;
             }
         }
 
-        // Surligne le fond du slot actif chaque frame
         private void UpdateSelectedSlotHighlight()
         {
             if (_slotBackgrounds == null || inventorySystem == null) return;
@@ -176,20 +185,29 @@ namespace ProjectFPS.UI
             }
         }
 
-        // Affiche le prompt "[E] Ramasser <nom>" ou le cache
-        private void UpdateInteractionPrompt(string itemName)
+        /// <summary>
+        /// Reçoit le texte de prompt complet depuis PlayerInteraction.OnInteractionPrompt.
+        /// null = masquer, string = afficher tel quel.
+        /// </summary>
+        private void UpdateInteractionPrompt(string promptText)
         {
             if (interactionPrompt == null) return;
 
-            if (itemName != null)
+            if (promptText != null)
             {
-                interactionPrompt.text = $"[E] Ramasser {itemName}";
+                interactionPrompt.text = promptText;
                 interactionPrompt.gameObject.SetActive(true);
             }
             else
             {
                 interactionPrompt.gameObject.SetActive(false);
             }
+        }
+
+        private void UpdateResourceText(int personalResources)
+        {
+            if (resourceText != null)
+                resourceText.text = $"Ressources : {personalResources}";
         }
     }
 }
