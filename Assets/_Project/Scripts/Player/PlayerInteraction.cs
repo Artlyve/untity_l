@@ -76,7 +76,10 @@ namespace ProjectFPS.Player
 
             Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, interactionLayer))
+            // QueryTriggerInteraction.Collide : le raycast détecte aussi les Trigger colliders
+            // (les items en état Floating utilisent isTrigger = true)
+            if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, interactionLayer,
+                                QueryTriggerInteraction.Collide))
             {
                 // ── Item monde ────────────────────────────────────────────────────
                 var worldItem = hit.collider.GetComponent<ItemWorldObject>()
