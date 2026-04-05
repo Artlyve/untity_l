@@ -119,6 +119,14 @@ namespace ProjectFPS.Player
         private int _layerUpperBody = -1;  // "UpperBody"
         private int _layerFullBody  = -1;  // "FullBody"
 
+        // ─── Timer pour le layer UpperBody (Hit) ─────────────────────────────────
+        // Le layer UpperBody doit rester à weight=0 la plupart du temps.
+        // Il monte à 1 quand le Hit joue, puis redescend automatiquement.
+        [Header("Hit (UpperBody layer)")]
+        [Tooltip("Durée (s) pendant laquelle le layer UpperBody reste actif après un coup.")]
+        [SerializeField] private float hitLayerDuration = 0.8f;
+        private float _hitLayerTimer;
+
         // ─── Hash des paramètres Animator ────────────────────────────────────────
         private static readonly int MoveXParam      = Animator.StringToHash("MoveX");
         private static readonly int MoveYParam      = Animator.StringToHash("MoveY");
@@ -357,7 +365,9 @@ namespace ProjectFPS.Player
             animator.SetBool(IsGroundedParam, _isGrounded);
             animator.SetBool(IsFallingParam,  isFalling);
 
-            // Poids du layer Crouch (lerp vers 1 si accroupi, 0 sinon)
+            // ── Layer Crouch : weight 0→1 piloté par IsCrouching ─────────────────
+            // IMPORTANT : mettre le layer Crouch à weight=0 dans Unity,
+            // ce code gère la transition.
             if (_layerCrouch >= 0)
             {
                 float target  = _isCrouching ? 1f : 0f;
@@ -367,9 +377,23 @@ namespace ProjectFPS.Player
                     Mathf.Lerp(current, target, crouchTransitionSpeed * Time.deltaTime));
             }
 
+            // ── Layer UpperBody : weight 0 normalement, monte à 1 lors d'un Hit ──
+            // IMPORTANT : mettre le layer UpperBody à weight=0 dans Unity.
+            // Sans ça, l'Empty state en Override force la bind-pose → torse figé.
+            if (_layerUpperBody >= 0)
+            {
+                _hitLayerTimer = Mathf.Max(0f, _hitLayerTimer - Time.deltaTime);
+                float targetUB  = _hitLayerTimer > 0f ? 1f : 0f;
+                float currentUB = animator.GetLayerWeight(_layerUpperBody);
+                animator.SetLayerWeight(
+                    _layerUpperBody,
+                    Mathf.Lerp(currentUB, targetUB, 12f * Time.deltaTime));
+            }
+
             if (logAnimParams)
                 Debug.Log($"[Anim] MoveX={_animMoveX:F2} MoveY={_animMoveY:F2}" +
-                    $" | Grounded={_isGrounded} | Falling={isFalling} | Crouch={_isCrouching}");
+                    $" | Grounded={_isGrounded} | Falling={isFalling} | Crouch={_isCrouching}" +
+                    $" | HitTimer={_hitLayerTimer:F2}");
         }
 
         // ═════════════════════════════════════════════════════════════════════════
@@ -465,6 +489,7 @@ namespace ProjectFPS.Player
         {
             if (_isDead || animator == null) return;
             animator.SetTrigger(HitParam);
+            _hitLayerTimer = hitLayerDuration;  // active le layer UpperBody temporairement
 
             if (logAnimParams)
                 Debug.Log("[Anim] Hit trigger");
