@@ -16,9 +16,9 @@ namespace ProjectFPS.Inventory
     ///   Poison    → −20% vitesse + −50% PV immédiats (10s)
     ///   Géant     → ×1.5 taille + ×1.3 vitesse (45s) → revert automatique
     ///   Invisible → body mesh en ShadowsOnly, invisible mais ombre gardée (30s)
+    ///   Ouïe      → portée interaction ×2 + pulse de détection toutes les 3s (60s)
     ///   Vie       → protection résurrection : soigne 50% PV si mort (60s)
     ///   Aveuglant → overlay noir plein écran sur la caméra de la cible (45s)
-    ///   Ouïe      → à implémenter plus tard
     /// </summary>
     public class EffectSystem : MonoBehaviour
     {
@@ -26,6 +26,12 @@ namespace ProjectFPS.Inventory
         [Header("Références visuelles")]
         [Tooltip("Root du mesh du joueur (pour Invisible). Null = auto-cherché parmi les enfants.")]
         [SerializeField] private Transform bodyRoot;
+
+        [Header("Ouïe")]
+        [Tooltip("Rayon de détection du pulse Ouïe (joueurs et items).")]
+        [SerializeField] private float hearingRadius = 12f;
+        [Tooltip("Intervalle en secondes entre chaque pulse Ouïe.")]
+        [SerializeField] private float hearingPulseInterval = 3f;
 
         // ── État interne ──────────────────────────────────────────────────────────
         private readonly List<ActiveEffect> _effects = new List<ActiveEffect>();
@@ -43,6 +49,9 @@ namespace ProjectFPS.Inventory
         // Aveuglant
         private bool  _isBlinded;
         private Image _blindOverlay;
+
+        // Ouïe
+        private float _hearingPulseTimer;
 
         // ── Propriétés calculées ──────────────────────────────────────────────────
 
@@ -67,13 +76,28 @@ namespace ProjectFPS.Inventory
 
         public bool IsInvisible         => _isInvisible;
         public bool IsBlinded           => _isBlinded;
+        public bool IsEnhancedHearing   => HasEffect(PotionType.Ouïe);
         public bool HasReviveProtection => HasEffect(PotionType.Vie);
+
+        /// <summary>
+        /// Multiplicateur de portée d'interaction.
+        /// ×2 avec Ouïe active, ×1 sinon.
+        /// Utilisé par PlayerInteraction.
+        /// </summary>
+        public float InteractionRangeMultiplier => IsEnhancedHearing ? 2f : 1f;
 
         /// <summary>Effets actifs exposés en lecture seule pour le HUD.</summary>
         public IReadOnlyList<ActiveEffect> ActiveEffects => _effects;
 
         /// <summary>Déclenché à chaque modification de la liste des effets.</summary>
         public event Action OnEffectsChanged;
+
+        /// <summary>
+        /// Déclenché par le pulse Ouïe (toutes les 3s quand actif).
+        /// Paramètre : liste des descriptions des entités détectées à portée.
+        /// Abonnez-vous pour afficher des indicateurs visuels.
+        /// </summary>
+        public event Action<List<string>> OnHearingPulse;
 
         // ── Lifecycle ─────────────────────────────────────────────────────────────
         private void Awake()
@@ -98,15 +122,30 @@ namespace ProjectFPS.Inventory
 
                 if (_effects[i].TimeRemaining <= 0f)
                 {
-                    string name = _effects[i].DisplayName;
+                    string expiredName = _effects[i].DisplayName;
                     RevertVisualEffect(_effects[i].Type);
                     _effects.RemoveAt(i);
-                    Debug.Log($"[EffectSystem] ⏱ Effet '{name}' expiré sur {gameObject.name}.");
+                    Debug.Log($"[EffectSystem] ⏱ Effet '{expiredName}' expiré sur {gameObject.name}.");
                 }
             }
 
             if (changed)
                 OnEffectsChanged?.Invoke();
+
+            // ── Pulse Ouïe ───────────────────────────────────────────────────────
+            if (IsEnhancedHearing)
+            {
+                _hearingPulseTimer -= Time.deltaTime;
+                if (_hearingPulseTimer <= 0f)
+                {
+                    _hearingPulseTimer = hearingPulseInterval;
+                    PerformHearingPulse();
+                }
+            }
+            else
+            {
+                _hearingPulseTimer = 0f; // reset pour que le 1er pulse soit immédiat
+            }
         }
 
         private void OnDestroy()
@@ -161,7 +200,8 @@ namespace ProjectFPS.Inventory
 
                 case PotionType.Ouïe:
                     AddOrRefresh(type, 60f, "Ouïe 👂", itemData.Icon);
-                    Debug.Log($"[EffectSystem] Ouïe : effet à venir.");
+                    _hearingPulseTimer = 0f; // déclenche le 1er pulse immédiatement
+                    Debug.Log($"[EffectSystem] Ouïe : portée interaction ×2, détection ennemis/items toutes les {hearingPulseInterval}s.");
                     break;
 
                 case PotionType.Vie:
@@ -296,6 +336,52 @@ namespace ProjectFPS.Inventory
             _blindOverlay.color = new Color(0f, 0f, 0f, 0.92f);
 
             Debug.Log($"[EffectSystem] BlindCanvas créé sur {gameObject.name}");
+        }
+
+        // ── Effet Ouïe : pulse de détection ──────────────────────────────────────
+
+        /// <summary>
+        /// Détecte joueurs et items dans le rayon hearingRadius.
+        /// Déclenche OnHearingPulse avec la liste des entités trouvées.
+        /// Extensible : abonnez-vous à OnHearingPulse pour afficher des indicateurs.
+        /// </summary>
+        private void PerformHearingPulse()
+        {
+            var detected = new List<string>();
+            var cols = Physics.OverlapSphere(transform.position, hearingRadius);
+
+            foreach (var c in cols)
+            {
+                // Ignore les colliders sur soi-même
+                if (c.transform == transform || c.transform.IsChildOf(transform)) continue;
+
+                // Joueur à portée
+                var ps = c.GetComponent<PlayerState>() ?? c.GetComponentInParent<PlayerState>();
+                if (ps != null)
+                {
+                    float dist = Vector3.Distance(transform.position, ps.transform.position);
+                    string entry = $"Joueur '{ps.name}' à {dist:F1}m (PV: {Mathf.CeilToInt(ps.CurrentHealth)}/{Mathf.CeilToInt(ps.MaxHealth)})";
+                    // Évite les doublons (plusieurs colliders sur le même objet)
+                    if (!detected.Contains(entry)) detected.Add(entry);
+                    continue;
+                }
+
+                // Item à portée
+                var iwo = c.GetComponent<ItemWorldObject>() ?? c.GetComponentInParent<ItemWorldObject>();
+                if (iwo != null && iwo.Data != null)
+                {
+                    float dist = Vector3.Distance(transform.position, iwo.transform.position);
+                    string entry = $"Item '{iwo.Data.ItemName}' à {dist:F1}m";
+                    if (!detected.Contains(entry)) detected.Add(entry);
+                }
+            }
+
+            OnHearingPulse?.Invoke(detected);
+
+            if (detected.Count > 0)
+                Debug.Log($"[EffectSystem] 👂 Ouïe pulse sur {gameObject.name} : " + string.Join(" | ", detected));
+            else
+                Debug.Log($"[EffectSystem] 👂 Ouïe pulse sur {gameObject.name} : rien détecté dans {hearingRadius}m.");
         }
 
         // ── Dispatch revert à l'expiration ───────────────────────────────────────
