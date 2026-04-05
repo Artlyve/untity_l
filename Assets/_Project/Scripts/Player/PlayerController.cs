@@ -1,5 +1,6 @@
 using UnityEngine;
 using ProjectFPS.Inventory;
+using ProjectFPS.UI;
 
 namespace ProjectFPS.Player
 {
@@ -90,6 +91,10 @@ namespace ProjectFPS.Player
         private void Update()
         {
             HandleCursorLock();
+
+            // Bloque mouvement + visée quand le menu de classes est ouvert
+            if (RoleSelectionUI.IsOpen) return;
+
             HandleMouseLook();
             HandleMovement();
             HandleCrouch();
@@ -98,12 +103,12 @@ namespace ProjectFPS.Player
         // ── Curseur ───────────────────────────────────────────────────────────────
         private void HandleCursorLock()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible   = true;
-            }
-            else if (Input.GetMouseButtonDown(0) && Cursor.lockState == CursorLockMode.None)
+            // Échap est géré par RoleSelectionUI (ouvre/ferme le menu + gère le curseur).
+            // On ne relockle le curseur que si aucun menu n'est ouvert et que le joueur
+            // clique après avoir déverrouillé le curseur via un autre moyen.
+            if (!RoleSelectionUI.IsOpen
+                && Input.GetMouseButtonDown(0)
+                && Cursor.lockState == CursorLockMode.None)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible   = false;
