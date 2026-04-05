@@ -83,7 +83,11 @@ namespace ProjectFPS.Player
             var dir    = playerCamera.transform.forward;
             var ray    = new Ray(origin, dir);
 
-            bool hitSomething = Physics.Raycast(ray, out RaycastHit hit, interactionRange,
+            // Portée doublée si l'effet Ouïe est actif
+            float effectiveRange = interactionRange
+                * (_effectSystem != null ? _effectSystem.InteractionRangeMultiplier : 1f);
+
+            bool hitSomething = Physics.Raycast(ray, out RaycastHit hit, effectiveRange,
                                                 interactionLayer,
                                                 QueryTriggerInteraction.Collide);
 
@@ -162,12 +166,13 @@ namespace ProjectFPS.Player
                 // ── Rien détecté ──────────────────────────────────────────────────
                 if (debugMode)
                 {
-                    Debug.DrawRay(origin, dir * interactionRange, debugRayMiss);
+                    Debug.DrawRay(origin, dir * effectiveRange, debugRayMiss);
 
                     if (Time.time - _lastMissLogTime > MissLogInterval)
                     {
                         _lastMissLogTime = Time.time;
-                        Debug.Log($"[PlayerInteraction] Raycast: rien détecté sur {interactionRange}m. " +
+                        Debug.Log($"[PlayerInteraction] Raycast: rien détecté sur {effectiveRange:F1}m" +
+                                  $"{(effectiveRange > interactionRange ? " (Ouïe ×2)" : "")}. " +
                                   $"LayerMask={interactionLayer.value} " +
                                   $"(~0 = tout détecter, vérifiez la valeur si un layer est exclu).");
                     }
@@ -354,7 +359,7 @@ namespace ProjectFPS.Player
             else
                 Debug.Log($"  ✔ InventorySystem : {_inventory.name} ({_inventory.MaxSlots} slot(s))");
 
-            Debug.Log($"  • interactionRange : {interactionRange}m");
+            Debug.Log($"  • interactionRange : {interactionRange}m (×2 avec Ouïe)");
             Debug.Log($"  • interactionLayer : {interactionLayer.value} " +
                       $"({(interactionLayer.value == -1 ? "ALL layers" : "layers filtrés")})");
             Debug.Log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");

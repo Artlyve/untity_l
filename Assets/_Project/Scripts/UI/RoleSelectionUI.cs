@@ -10,14 +10,15 @@ namespace ProjectFPS.UI
     /// Menu de sélection de classe en jeu.
     ///
     /// CONTRÔLES :
-    ///   Échap → ouvre / ferme le menu
+    ///   = (Égal) → ouvre / ferme le menu
     ///
-    /// SETUP SCENE :
-    ///   Aucun setup requis. Tout le UI est créé automatiquement en code si les
-    ///   champs panelRoot / buttonContainer / roleButtonPrefab ne sont pas assignés.
+    /// SETUP SCÈNE :
+    ///   IMPORTANT : ce composant doit être sur le Canvas (ou tout objet toujours actif),
+    ///   PAS sur le RoleSelectionPanel. Le panel peut commencer désactivé — c'est ce script
+    ///   qui l'active/désactive.
     ///
-    ///   Si vous voulez personnaliser le visuel, créez un panel dans le Canvas et
-    ///   assignez-le à panelRoot. Le script générera les boutons dedans.
+    ///   Si les champs panelRoot / buttonContainer / roleButtonPrefab ne sont pas assignés,
+    ///   le menu est créé entièrement en code.
     ///
     /// CAPACITÉS PAR CLASSE :
     ///   Villageois   → Aucune capacité spéciale
@@ -66,7 +67,7 @@ namespace ProjectFPS.UI
             if (RoleManager.Instance != null)
                 RoleManager.Instance.OnRoleChanged += OnRoleChanged;
 
-            Debug.Log("[RoleSelectionUI] Démarré — Échap pour ouvrir/fermer le menu de classe.");
+            Debug.Log("[RoleSelectionUI] Démarré — touche '=' pour ouvrir/fermer le menu de classe.");
         }
 
         private void OnDestroy()
@@ -77,8 +78,12 @@ namespace ProjectFPS.UI
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            // Touche "=" pour ouvrir/fermer le menu de classe
+            if (Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadEquals))
+            {
+                Debug.Log("[RoleSelectionUI] Touche '=' détectée → toggle menu");
                 TogglePanel();
+            }
         }
 
         // ── Toggle ────────────────────────────────────────────────────────────────
@@ -461,7 +466,7 @@ namespace ProjectFPS.UI
             var closeTRT  = closeTGO.AddComponent<RectTransform>();
             closeTRT.anchorMin = Vector2.zero; closeTRT.anchorMax = Vector2.one; closeTRT.sizeDelta = Vector2.zero;
             var closeTMP  = closeTGO.AddComponent<TextMeshProUGUI>();
-            closeTMP.text      = "Fermer  [Échap]";
+            closeTMP.text      = "Fermer  [=]";
             closeTMP.alignment = TextAlignmentOptions.Center;
             closeTMP.fontSize  = 16f;
             closeTMP.color     = Color.white;
@@ -470,7 +475,7 @@ namespace ProjectFPS.UI
             buttonContainer = contentGO.transform;
 
             Debug.Log("[RoleSelectionUI] Menu créé automatiquement. " +
-                "Appuyez sur Échap en jeu pour l'ouvrir.");
+                "Appuyez sur '=' en jeu pour l'ouvrir.");
         }
     }
 }
