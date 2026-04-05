@@ -111,10 +111,13 @@ namespace ProjectFPS.Editor
             interTextGO.SetActive(false);
 
             // ── RoleSelectionPanel (Panel, désactivé par défaut) ──────────────────
+            // IMPORTANT : RoleSelectionUI est sur le Canvas (toujours actif), PAS sur le panel.
+            // Un script sur un panel désactivé ne s'exécute jamais (Start/Update bloqués).
+            AddIfMissing<RoleSelectionUI>(canvasGO);
+
             GameObject rolePanel = FindOrCreateChild("RoleSelectionPanel", canvasGO.transform);
             StretchRT(rolePanel);
             GetOrAdd<Image>(rolePanel).color = new Color(0f, 0f, 0f, 0.85f);
-            AddIfMissing<RoleSelectionUI>(rolePanel);
 
             //    ButtonContainer (Vertical Layout Group)
             GameObject btnContainer = FindOrCreateChild("ButtonContainer", rolePanel.transform);
@@ -158,7 +161,7 @@ namespace ProjectFPS.Editor
 
             // ── Câblage automatique des champs sérialisés ─────────────────────────
             WireHUD(hudPanel, healthBarGO, roleTMP, slotsGO, slotPrefab, interTMP);
-            WireRoleSelectionUI(rolePanel, btnContainer, roleButtonPrefab);
+            WireRoleSelectionUI(canvasGO, rolePanel, btnContainer, roleButtonPrefab);
             WireDebugPanel(debugPanel, debugTextGO);
 
             // ── Marquer la scène comme modifiée ───────────────────────────────────
@@ -189,9 +192,12 @@ namespace ProjectFPS.Editor
             so.ApplyModifiedProperties();
         }
 
-        static void WireRoleSelectionUI(GameObject panelGO, GameObject containerGO, GameObject prefab)
+        // canvasGO = objet qui porte le composant RoleSelectionUI (toujours actif)
+        // panelGO  = RoleSelectionPanel (peut être désactivé, contrôlé par le script)
+        static void WireRoleSelectionUI(GameObject canvasGO, GameObject panelGO,
+            GameObject containerGO, GameObject prefab)
         {
-            var so = new SerializedObject(panelGO.GetComponent<RoleSelectionUI>());
+            var so = new SerializedObject(canvasGO.GetComponent<RoleSelectionUI>());
             so.FindProperty("panelRoot").objectReferenceValue        = panelGO;
             so.FindProperty("buttonContainer").objectReferenceValue  = containerGO.transform;
             so.FindProperty("roleButtonPrefab").objectReferenceValue = prefab;

@@ -103,12 +103,16 @@ namespace ProjectFPS.Player
         // ── Curseur ───────────────────────────────────────────────────────────────
         private void HandleCursorLock()
         {
-            // Échap est géré par RoleSelectionUI (ouvre/ferme le menu + gère le curseur).
-            // On ne relockle le curseur que si aucun menu n'est ouvert et que le joueur
-            // clique après avoir déverrouillé le curseur via un autre moyen.
-            if (!RoleSelectionUI.IsOpen
-                && Input.GetMouseButtonDown(0)
-                && Cursor.lockState == CursorLockMode.None)
+            // Le menu de classe utilise "=" (géré par RoleSelectionUI).
+            // Escape reste disponible comme fallback pour débloquer la souris.
+            if (Input.GetKeyDown(KeyCode.Escape) && !RoleSelectionUI.IsOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible   = true;
+            }
+            else if (Input.GetMouseButtonDown(0)
+                     && !RoleSelectionUI.IsOpen
+                     && Cursor.lockState == CursorLockMode.None)
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible   = false;
