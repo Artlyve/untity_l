@@ -14,9 +14,11 @@ namespace ProjectFPS.Roles
         [SerializeField] private PlayerRole roleType;
 
         [Header("Statistiques")]
+        [Tooltip("Modificateur de vitesse de base pour ce rôle (1 = normal, 1.2 = +20%, etc.)")]
         [SerializeField] private float speedMultiplier  = 1f;
         [SerializeField] private float healthMultiplier = 1f;
-        [SerializeField] private int   inventorySlots   = 4;
+        [Tooltip("Nombre de slots d'inventaire utilitaire. Villageois/Chasseur/Loup = 1, Fils_Chasseur = 2.")]
+        [SerializeField] private int   inventorySlots   = 1;
 
         // Propriétés publiques en lecture seule
         public string     RoleName         => roleName;

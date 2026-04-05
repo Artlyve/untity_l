@@ -36,19 +36,53 @@ namespace ProjectFPS.Roles
 
         private void Start()
         {
+            // Diagnostics de démarrage
+            Debug.Log($"[RoleManager] Démarré — {availableRoles.Count} rôle(s) disponible(s)" +
+                      $", rôle par défaut : '{defaultRole?.RoleName ?? "aucun"}'");
+
+            if (availableRoles.Count == 0)
+                Debug.LogError("[RoleManager] AvailableRoles est vide ! " +
+                    "Assignez des RoleData ScriptableObjects dans la liste AvailableRoles.");
+
             // Applique le rôle par défaut au démarrage
             if (defaultRole != null)
                 SetRole(defaultRole);
             else if (availableRoles.Count > 0)
                 SetRole(availableRoles[0]);
+            else
+                Debug.LogError("[RoleManager] Impossible d'appliquer un rôle : aucun rôle configuré !");
         }
 
-        // Définit le rôle actif et notifie les abonnés
+        /// <summary>
+        /// Définit le rôle actif et notifie tous les abonnés à OnRoleChanged.
+        /// </summary>
         public void SetRole(RoleData role)
         {
-            if (role == null) return;
+            if (role == null) { Debug.LogWarning("[RoleManager] SetRole(null) ignoré."); return; }
 
             _currentRole = role;
+
+            Debug.Log($"[RoleManager] ▶ SetRole → '{role.RoleName}'" +
+                $" | type={role.RoleType}" +
+                $" | slots={role.InventorySlots}" +
+                $" | vitesse={role.SpeedMultiplier}" +
+                $" | abonnés={OnRoleChanged?.GetInvocationList().Length ?? 0}");
+
+            OnRoleChanged?.Invoke(_currentRole);
+        }
+
+        /// <summary>
+        /// Ré-envoie l'événement OnRoleChanged avec le rôle courant.
+        /// Utile pour forcer la re-synchronisation des systèmes (debug, spawn tardif).
+        /// </summary>
+        public void ForceReapplyCurrentRole()
+        {
+            if (_currentRole == null)
+            {
+                Debug.LogWarning("[RoleManager] ForceReapplyCurrentRole : aucun rôle courant.");
+                return;
+            }
+            Debug.Log($"[RoleManager] Force-reapply → {_currentRole.RoleName}");
             OnRoleChanged?.Invoke(_currentRole);
         }
     }

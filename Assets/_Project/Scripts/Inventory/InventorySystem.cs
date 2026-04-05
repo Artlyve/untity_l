@@ -45,13 +45,28 @@ namespace ProjectFPS.Inventory
             _slots    = new ItemData[_maxSlots];
         }
 
-        private void OnEnable()
+        private void Start()
         {
+            // Subscription dans Start() (pas OnEnable) pour garantir que
+            // RoleManager.Instance est initialisé (son Awake a forcément tourné avant).
             if (RoleManager.Instance != null)
+            {
                 RoleManager.Instance.OnRoleChanged += HandleRoleChanged;
+                // Applique immédiatement le rôle courant (couvre le cas où RoleManager.Start
+                // a déjà appelé SetRole avant notre abonnement).
+                HandleRoleChanged(RoleManager.Instance.CurrentRole);
+            }
+            else
+            {
+                Debug.LogError("[InventorySystem] RoleManager.Instance est NULL au démarrage ! " +
+                    "Ajoutez un GameObject RoleManager dans la scène.");
+            }
+
+            Debug.Log($"[InventorySystem] Démarré — {_maxSlots} slot(s), " +
+                      $"rôle actuel : '{RoleManager.Instance?.CurrentRole?.RoleName ?? "aucun"}'");
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             if (RoleManager.Instance != null)
                 RoleManager.Instance.OnRoleChanged -= HandleRoleChanged;
@@ -68,7 +83,21 @@ namespace ProjectFPS.Inventory
         {
             int newMax = role != null ? Mathf.Max(1, role.InventorySlots) : defaultUtilitySlots;
 
-            if (newMax == _maxSlots) return;
+            Debug.Log($"[InventorySystem] Rôle reçu : '{role?.RoleName ?? "null"}' " +
+                      $"→ InventorySlots configuré = {role?.InventorySlots.ToString() ?? "?"} " +
+                      $"→ slots effectifs = {newMax} (avant : {_maxSlots})");
+
+            if (newMax == _maxSlots)
+            {
+                // Log explicite pour aider au diagnostic
+                if (role != null && role.InventorySlots <= 0)
+                    Debug.LogWarning($"[InventorySystem] '{role.RoleName}' a InventorySlots = {role.InventorySlots} " +
+                        "(valeur <= 0, forcé à 1). Vérifiez le champ dans le ScriptableObject.");
+                else
+                    Debug.Log($"[InventorySystem] Même nombre de slots ({_maxSlots}), pas de changement. " +
+                        "Si ce n'est pas attendu, vérifiez le champ 'Inventory Slots' du RoleData.");
+                return;
+            }
 
             var old   = _slots;
             _maxSlots = newMax;
@@ -79,6 +108,8 @@ namespace ProjectFPS.Inventory
 
             _selectedSlot = Mathf.Clamp(_selectedSlot, 0, _maxSlots - 1);
             OnInventoryChanged?.Invoke();
+
+            Debug.Log($"[InventorySystem] ✔ Slots mis à jour : {_maxSlots} slot(s) actifs.");
         }
 
         // ── Sélection de slot ─────────────────────────────────────────────────────

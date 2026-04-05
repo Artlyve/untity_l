@@ -43,16 +43,20 @@ namespace ProjectFPS.Player
         private bool          _isAiming;
         private bool          _isWolfForm;
         private float         _attackCooldown;
+        private float         _roleBaseSpeedMult = 1f;  // depuis RoleData.SpeedMultiplier
         private const float   AttackCooldownTime = 0.8f;
 
-        /// <summary>Multiplicateur de vitesse issu de la capacité de rôle (Chasseur visée, Loup).</summary>
+        /// <summary>
+        /// Multiplicateur de vitesse total du rôle :
+        ///   base (RoleData.SpeedMultiplier) × situationnel (visée / forme loup).
+        /// </summary>
         public float RoleSpeedMultiplier
         {
             get
             {
-                if (_isAiming)   return aimSpeedPenalty;
-                if (_isWolfForm) return wolfSpeedBonus;
-                return 1f;
+                if (_isAiming)   return _roleBaseSpeedMult * aimSpeedPenalty;
+                if (_isWolfForm) return _roleBaseSpeedMult * wolfSpeedBonus;
+                return _roleBaseSpeedMult;
             }
         }
 
@@ -71,18 +75,38 @@ namespace ProjectFPS.Player
                 normalFOV = playerCamera.fieldOfView;
         }
 
-        private void OnEnable()
+        private void Start()
+        {
+            // Subscription dans Start() : garantit que RoleManager.Instance est prêt.
+            if (RoleManager.Instance != null)
+            {
+                RoleManager.Instance.OnRoleChanged += OnRoleChanged;
+                // Applique immédiatement le rôle courant (couvre le cas où RoleManager.Start
+                // a déjà tiré SetRole avant notre abonnement).
+                OnRoleChanged(RoleManager.Instance.CurrentRole);
+            }
+            else
+            {
+                Debug.LogError("[RoleAbilityController] RoleManager.Instance est NULL ! " +
+                    "Ajoutez un GameObject RoleManager dans la scène.");
+            }
+
+            // Diagnostic de démarrage
+            Debug.Log("[RoleAbilityController] Démarré :" +
+                $"\n  Rôle actuel   : {_role}" +
+                $"\n  Camera        : {(playerCamera != null ? playerCamera.name : "NULL ← vérifiez !")}" +
+                $"\n  Human Mesh    : {(humanMesh != null ? humanMesh.name : "non assigné (optionnel)")}" +
+                $"\n  Wolf Mesh     : {(wolfMesh  != null ? wolfMesh.name  : "non assigné (optionnel)")}");
+        }
+
+        private void OnDestroy()
         {
             if (RoleManager.Instance != null)
-                RoleManager.Instance.OnRoleChanged += OnRoleChanged;
+                RoleManager.Instance.OnRoleChanged -= OnRoleChanged;
         }
 
         private void OnDisable()
         {
-            if (RoleManager.Instance != null)
-                RoleManager.Instance.OnRoleChanged -= OnRoleChanged;
-
-            // Nettoyer l'état de visée quand désactivé
             if (_isAiming) ExitAim();
         }
 
@@ -182,14 +206,36 @@ namespace ProjectFPS.Player
 
         private void OnRoleChanged(RoleData role)
         {
-            if (role == null) return;
-            _role = role.RoleType;
+            if (role == null)
+            {
+                Debug.LogWarning("[RoleAbilityController] OnRoleChanged reçu avec role == null.");
+                return;
+            }
 
-            // Réinitialisation états
+            _role              = role.RoleType;
+            _roleBaseSpeedMult = role.SpeedMultiplier > 0f ? role.SpeedMultiplier : 1f;
+
+            // Réinitialise les états situationnels
             if (_isAiming)   ExitAim();
-            if (_isWolfForm) ToggleWolfForm();  // force retour humain
+            if (_isWolfForm) ToggleWolfForm();  // force retour humain au changement de rôle
 
-            Debug.Log($"[RoleAbilityController] Rôle changé → {_role}");
+            Debug.Log($"[RoleAbilityController] ✔ Rôle appliqué : {_role}" +
+                $" | vitesse de base ×{_roleBaseSpeedMult}" +
+                $" | inventorySlots = {role.InventorySlots}");
+
+            // Guide de capacités selon le rôle
+            switch (_role)
+            {
+                case PlayerRole.Loup:
+                    Debug.Log("[RoleAbilityController] Loup actif → R : transformer | LMB (loup) : attaque");
+                    break;
+                case PlayerRole.Chasseur:
+                    Debug.Log("[RoleAbilityController] Chasseur actif → RMB : viser (ralentit)");
+                    break;
+                case PlayerRole.Fils_Chasseur:
+                    Debug.Log($"[RoleAbilityController] Fils_Chasseur actif → {role.InventorySlots} slots | 1/2 ou molette");
+                    break;
+            }
         }
     }
 }
