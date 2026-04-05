@@ -1,55 +1,80 @@
 using UnityEngine;
 using ProjectFPS.Roles;
-using ProjectFPS.Player;
 using ProjectFPS.Inventory;
 
 namespace ProjectFPS.Player
 {
     /// <summary>
-    /// Gère les capacités spéciales propres à chaque rôle.
+    /// Gère les capacités spéciales par rôle + la transformation Loup.
     ///
-    /// Rôles et capacités :
-    ///   Chasseur    → [RMB] Mode visée : réduit FOV et vitesse pendant la visée
-    ///   Loup        → [R] Transformation : toggle entre forme humaine et loup
-    ///                 [LMB] Attaque : dégâts en corps-à-corps (forme loup)
-    ///   Fils_Chasseur → [1][2] ou Scroll pour changer de slot actif
+    /// ═══ RÔLES ════════════════════════════════════════════════════════════════
+    ///   Chasseur / Fils_Chasseur  → [Clic droit] Mode visée (réduit FOV + vitesse)
+    ///   Loup                      → [R] Transformation humain ↔ loup
+    ///                               [Clic gauche] Attaque en corps-à-corps (forme loup)
     ///
-    /// Ajouter ce composant sur le même GameObject que PlayerController.
+    /// ═══ MESHES LOUP ══════════════════════════════════════════════════════════
+    ///   Option A (recommandée) : nommez les enfants "HumanMesh" et "WolfMesh"
+    ///   Option B              : assignez-les dans l'Inspecteur
+    ///
+    /// ═══ ANIMATOR CONTROLLERS LOUP ════════════════════════════════════════════
+    ///   Créez deux Animator Controllers dans Assets/_Project/Models/Anim/ :
+    ///     • HumanAnimController.controller  → même que le controller existant
+    ///     • WolfAnimController.controller   → animations loup (locomotion + attaque)
+    ///   Assignez-les dans l'Inspecteur (champs "Human Anim Controller" / "Wolf Anim Controller").
+    ///   Si non assignés → seuls les meshes sont swappés, pas l'animator.
+    ///
+    /// ═══ PARAMÈTRE ANIMATOR (WolfAnimController) ══════════════════════════════
+    ///   Trigger  WolfAttack  → déclenche l'animation d'attaque loup
+    ///   (Tous les autres params : MoveX, MoveY, IsGrounded, etc. → identiques)
     /// </summary>
     [RequireComponent(typeof(PlayerController))]
     public class RoleAbilityController : MonoBehaviour
     {
-        // ── Références ────────────────────────────────────────────────────────────
+        // ─── Références ───────────────────────────────────────────────────────────
         [Header("Références")]
-        [SerializeField] private Camera playerCamera;
+        [SerializeField] private Camera   playerCamera;
+        [SerializeField] private Animator animator;
 
+        // ─── Animator Controllers (Human vs Loup) ────────────────────────────────
+        [Header("Animator Controllers Loup")]
+        [Tooltip("Controller humain — laissez vide pour conserver celui déjà assigné sur l'Animator.")]
+        [SerializeField] private RuntimeAnimatorController humanAnimController;
+        [Tooltip("Controller loup — assignez ici votre WolfAnimController.controller.")]
+        [SerializeField] private RuntimeAnimatorController wolfAnimController;
+
+        // ─── Chasseur : Visée ────────────────────────────────────────────────────
         [Header("Chasseur – Visée")]
-        [SerializeField] private float aimFOV          = 40f;
-        [SerializeField] private float normalFOV        = 70f;
-        [SerializeField] private float aimSpeedPenalty  = 0.4f;   // multiplicateur vitesse en visée
+        [SerializeField] private float aimFOV             = 40f;
+        [SerializeField] private float normalFOV          = 70f;
+        [SerializeField] private float aimSpeedPenalty    = 0.4f;
         [SerializeField] private float fovTransitionSpeed = 10f;
 
+        // ─── Loup : Transformation ────────────────────────────────────────────────
         [Header("Loup – Transformation")]
+        [Tooltip("Enfant nommé 'HumanMesh' trouvé automatiquement si non assigné.")]
         [SerializeField] private GameObject humanMesh;
+        [Tooltip("Enfant nommé 'WolfMesh' trouvé automatiquement si non assigné.")]
         [SerializeField] private GameObject wolfMesh;
-        [SerializeField] private float      wolfSpeedBonus   = 1.5f;   // multiplicateur vitesse en forme loup
+        [SerializeField] private float      wolfSpeedBonus   = 1.5f;
         [SerializeField] private float      wolfAttackDamage = 30f;
         [SerializeField] private float      wolfAttackRange  = 2f;
         [SerializeField] private LayerMask  wolfAttackLayer  = ~0;
 
-        // ── État interne ──────────────────────────────────────────────────────────
-        private PlayerRole    _role          = PlayerRole.Villageois;
+        // ─── État interne ─────────────────────────────────────────────────────────
+        private PlayerRole _role              = PlayerRole.Villageois;
         private InventorySystem _inventory;
-        private bool          _isAiming;
-        private bool          _isWolfForm;
-        private float         _attackCooldown;
-        private float         _roleBaseSpeedMult = 1f;  // depuis RoleData.SpeedMultiplier
-        private const float   AttackCooldownTime = 0.8f;
+        private bool       _isAiming;
+        private bool       _isWolfForm;
+        private float      _attackCooldown;
+        private float      _roleBaseSpeedMult = 1f;
+        private const float AttackCooldownTime = 0.8f;
 
-        /// <summary>
-        /// Multiplicateur de vitesse total du rôle :
-        ///   base (RoleData.SpeedMultiplier) × situationnel (visée / forme loup).
-        /// </summary>
+        // ─── Hash paramètres Animator ─────────────────────────────────────────────
+        private static readonly int IsAimingParam     = Animator.StringToHash("IsAiming");
+        private static readonly int IsWolfFormParam   = Animator.StringToHash("IsWolfForm");
+        private static readonly int WolfAttackParam   = Animator.StringToHash("WolfAttack");
+
+        // ─── Propriétés publiques ─────────────────────────────────────────────────
         public float RoleSpeedMultiplier
         {
             get
@@ -60,10 +85,12 @@ namespace ProjectFPS.Player
             }
         }
 
-        /// <summary>Vrai si le joueur est en forme loup.</summary>
         public bool IsWolfForm => _isWolfForm;
 
-        // ── Lifecycle ─────────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Lifecycle
+        // ═════════════════════════════════════════════════════════════════════════
+
         private void Awake()
         {
             _inventory = GetComponent<InventorySystem>();
@@ -71,32 +98,41 @@ namespace ProjectFPS.Player
             if (playerCamera == null)
                 playerCamera = GetComponentInChildren<Camera>();
 
+            if (animator == null)
+                animator = GetComponent<Animator>();
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
+
             if (playerCamera != null)
                 normalFOV = playerCamera.fieldOfView;
+
+            // Mémoriser le controller humain actuel si non assigné
+            if (humanAnimController == null && animator != null)
+                humanAnimController = animator.runtimeAnimatorController;
+
+            TryAutoFindMeshes();
         }
 
         private void Start()
         {
-            // Subscription dans Start() : garantit que RoleManager.Instance est prêt.
             if (RoleManager.Instance != null)
             {
                 RoleManager.Instance.OnRoleChanged += OnRoleChanged;
-                // Applique immédiatement le rôle courant (couvre le cas où RoleManager.Start
-                // a déjà tiré SetRole avant notre abonnement).
                 OnRoleChanged(RoleManager.Instance.CurrentRole);
             }
             else
             {
-                Debug.LogError("[RoleAbilityController] RoleManager.Instance est NULL ! " +
-                    "Ajoutez un GameObject RoleManager dans la scène.");
+                Debug.LogError("[RoleAbilityController] RoleManager.Instance est NULL !");
             }
 
-            // Diagnostic de démarrage
             Debug.Log("[RoleAbilityController] Démarré :" +
-                $"\n  Rôle actuel   : {_role}" +
-                $"\n  Camera        : {(playerCamera != null ? playerCamera.name : "NULL ← vérifiez !")}" +
-                $"\n  Human Mesh    : {(humanMesh != null ? humanMesh.name : "non assigné (optionnel)")}" +
-                $"\n  Wolf Mesh     : {(wolfMesh  != null ? wolfMesh.name  : "non assigné (optionnel)")}");
+                $"\n  Rôle             : {_role}" +
+                $"\n  Camera           : {(playerCamera != null ? playerCamera.name : "NULL !")}" +
+                $"\n  Animator         : {(animator != null ? animator.name : "non assigné")}" +
+                $"\n  Human Controller : {(humanAnimController != null ? humanAnimController.name : "NULL ← auto-capturé au démarrage")}" +
+                $"\n  Wolf Controller  : {(wolfAnimController  != null ? wolfAnimController.name  : "NULL ← assignez dans l'Inspecteur")}" +
+                $"\n  Human Mesh       : {(humanMesh != null ? humanMesh.name : "NULL ← enfant 'HumanMesh' non trouvé")}" +
+                $"\n  Wolf Mesh        : {(wolfMesh  != null ? wolfMesh.name  : "NULL ← enfant 'WolfMesh' non trouvé")}");
         }
 
         private void OnDestroy()
@@ -127,7 +163,7 @@ namespace ProjectFPS.Player
                     break;
             }
 
-            // Transition FOV (Chasseur visée)
+            // Transition FOV (Chasseur / Fils_Chasseur)
             if (playerCamera != null)
             {
                 float targetFOV = _isAiming ? aimFOV : normalFOV;
@@ -137,31 +173,65 @@ namespace ProjectFPS.Player
             }
         }
 
-        // ── Chasseur ──────────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Auto-détection des meshes
+        // ═════════════════════════════════════════════════════════════════════════
+
+        private void TryAutoFindMeshes()
+        {
+            if (humanMesh == null)
+            {
+                var t = FindChildByName(transform, "HumanMesh");
+                if (t != null) humanMesh = t.gameObject;
+            }
+
+            if (wolfMesh == null)
+            {
+                var t = FindChildByName(transform, "WolfMesh");
+                if (t != null) wolfMesh = t.gameObject;
+            }
+        }
+
+        private static Transform FindChildByName(Transform parent, string childName)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child.name == childName) return child;
+                var found = FindChildByName(child, childName);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Chasseur – Visée
+        // ═════════════════════════════════════════════════════════════════════════
 
         private void HandleChasseurInputs()
         {
-            if (Input.GetMouseButtonDown(1))  // RMB
-                EnterAim();
-            else if (Input.GetMouseButtonUp(1))
-                ExitAim();
+            if (Input.GetMouseButtonDown(1))      EnterAim();
+            else if (Input.GetMouseButtonUp(1))   ExitAim();
         }
 
         private void EnterAim()
         {
             if (_isAiming) return;
             _isAiming = true;
-            Debug.Log("[RoleAbilityController] Chasseur : mode visée activé.");
+            if (animator != null) animator.SetBool(IsAimingParam, true);
+            Debug.Log("[RoleAbilityController] Chasseur : visée ON.");
         }
 
         private void ExitAim()
         {
             if (!_isAiming) return;
             _isAiming = false;
-            Debug.Log("[RoleAbilityController] Chasseur : mode visée désactivé.");
+            if (animator != null) animator.SetBool(IsAimingParam, false);
+            Debug.Log("[RoleAbilityController] Chasseur : visée OFF.");
         }
 
-        // ── Loup ──────────────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Loup – Transformation + Attaque
+        // ═════════════════════════════════════════════════════════════════════════
 
         private void HandleLoupInputs()
         {
@@ -175,15 +245,53 @@ namespace ProjectFPS.Player
         private void ToggleWolfForm()
         {
             _isWolfForm = !_isWolfForm;
-            Debug.Log($"[RoleAbilityController] Loup : forme {(_isWolfForm ? "loup" : "humaine")}.");
 
-            if (humanMesh != null) humanMesh.SetActive(!_isWolfForm);
-            if (wolfMesh  != null) wolfMesh.SetActive(_isWolfForm);
+            // ── Swap meshes ───────────────────────────────────────────────────────
+            if (humanMesh != null)
+                humanMesh.SetActive(!_isWolfForm);
+            else
+                Debug.LogWarning("[RoleAbilityController] HumanMesh manquant — " +
+                    "créez un enfant nommé 'HumanMesh' ou assignez dans l'Inspecteur.");
+
+            if (wolfMesh != null)
+                wolfMesh.SetActive(_isWolfForm);
+            else
+                Debug.LogWarning("[RoleAbilityController] WolfMesh manquant — " +
+                    "créez un enfant nommé 'WolfMesh' ou assignez dans l'Inspecteur.");
+
+            // ── Swap Animator Controller ──────────────────────────────────────────
+            if (animator != null)
+            {
+                RuntimeAnimatorController target =
+                    _isWolfForm ? wolfAnimController : humanAnimController;
+
+                if (target != null)
+                {
+                    animator.runtimeAnimatorController = target;
+                    // Réappliquer les bools après le swap (le controller est reset)
+                    animator.SetBool(IsWolfFormParam, _isWolfForm);
+                    Debug.Log($"[RoleAbilityController] Controller swappé → {target.name}");
+                }
+                else
+                {
+                    // Pas de wolf controller → juste le bool
+                    animator.SetBool(IsWolfFormParam, _isWolfForm);
+                    if (_isWolfForm)
+                        Debug.LogWarning("[RoleAbilityController] WolfAnimController non assigné — " +
+                            "le controller ne change pas, seulement le mesh.");
+                }
+            }
+
+            Debug.Log($"[RoleAbilityController] Transformation → {(_isWolfForm ? "LOUP" : "HUMAIN")}");
         }
 
         private void WolfAttack()
         {
             _attackCooldown = AttackCooldownTime;
+
+            if (animator != null)
+                animator.SetTrigger(WolfAttackParam);
+
             Debug.Log("[RoleAbilityController] Loup : attaque !");
 
             if (playerCamera == null) return;
@@ -194,46 +302,47 @@ namespace ProjectFPS.Player
             {
                 var target = hit.collider.GetComponentInParent<PlayerState>()
                           ?? hit.collider.GetComponent<PlayerState>();
+
                 if (target != null && target.gameObject != gameObject)
                 {
                     target.TakeDamage(wolfAttackDamage);
-                    Debug.Log($"[RoleAbilityController] Loup attaque '{hit.collider.name}' : -{wolfAttackDamage} PV");
+                    Debug.Log($"[RoleAbilityController] Touché '{hit.collider.name}' : -{wolfAttackDamage} PV");
                 }
             }
         }
 
-        // ── Callback rôle ─────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Callback rôle
+        // ═════════════════════════════════════════════════════════════════════════
 
         private void OnRoleChanged(RoleData role)
         {
             if (role == null)
             {
-                Debug.LogWarning("[RoleAbilityController] OnRoleChanged reçu avec role == null.");
+                Debug.LogWarning("[RoleAbilityController] OnRoleChanged — role est null.");
                 return;
             }
 
             _role              = role.RoleType;
             _roleBaseSpeedMult = role.SpeedMultiplier > 0f ? role.SpeedMultiplier : 1f;
 
-            // Réinitialise les états situationnels
             if (_isAiming)   ExitAim();
-            if (_isWolfForm) ToggleWolfForm();  // force retour humain au changement de rôle
+            if (_isWolfForm) ToggleWolfForm(); // repasse en forme humaine au changement de rôle
 
-            Debug.Log($"[RoleAbilityController] ✔ Rôle appliqué : {_role}" +
-                $" | vitesse de base ×{_roleBaseSpeedMult}" +
-                $" | inventorySlots = {role.InventorySlots}");
+            Debug.Log($"[RoleAbilityController] ✔ Rôle : {_role}" +
+                $" | vitesse ×{_roleBaseSpeedMult}" +
+                $" | slots = {role.InventorySlots}");
 
-            // Guide de capacités selon le rôle
             switch (_role)
             {
                 case PlayerRole.Loup:
-                    Debug.Log("[RoleAbilityController] Loup actif → R : transformer | LMB (loup) : attaque");
+                    Debug.Log("[RoleAbilityController] → [R] transformer | [LMB] attaque loup");
                     break;
                 case PlayerRole.Chasseur:
-                    Debug.Log("[RoleAbilityController] Chasseur actif → RMB : viser (ralentit)");
+                    Debug.Log("[RoleAbilityController] → [RMB] viser");
                     break;
                 case PlayerRole.Fils_Chasseur:
-                    Debug.Log($"[RoleAbilityController] Fils_Chasseur actif → {role.InventorySlots} slots | 1/2 ou molette");
+                    Debug.Log($"[RoleAbilityController] → {role.InventorySlots} slots");
                     break;
             }
         }
