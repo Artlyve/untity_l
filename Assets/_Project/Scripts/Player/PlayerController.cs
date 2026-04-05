@@ -209,16 +209,23 @@ namespace ProjectFPS.Player
             if (RoleSelectionUI.IsOpen) return;
 
             HandleMouseLook();
-            HandleGravityAndJump();
+            ComputeJumpVelocity();   // calcule _verticalVelocity, PAS de Move ici
 
-            if (!_isRolling)
+            if (_isRolling)
             {
-                HandleMovement();
-                HandleCrouch();
-                HandleRollInput();
+                // La roulade gère son propre Move dans la coroutine
+                _isGrounded = _cc.isGrounded;
+                UpdateAnimatorState();
+                return;
             }
 
-            UpdateAnimatorLocomotion();
+            HandleMovement();        // UN SEUL _cc.Move (horizontal + vertical fusionnés)
+            HandleCrouch();
+            HandleRollInput();
+
+            // isGrounded lu APRÈS le Move pour être fiable
+            _isGrounded = _cc.isGrounded;
+            UpdateAnimatorState();
         }
 
         // ═════════════════════════════════════════════════════════════════════════
@@ -262,23 +269,21 @@ namespace ProjectFPS.Player
         }
 
         // ═════════════════════════════════════════════════════════════════════════
-        // Gravité + Saut
+        // Calcul de la vélocité verticale (PAS de _cc.Move ici)
+        // Le Move est fait dans HandleMovement() avec un seul appel fusionné.
         // ═════════════════════════════════════════════════════════════════════════
 
-        private void HandleGravityAndJump()
+        private void ComputeJumpVelocity()
         {
-            bool wasGrounded = _isGrounded;
-            _isGrounded = _cc.isGrounded;
+            // Coller au sol (basé sur l'état de la frame précédente)
+            if (_isGrounded && _verticalVelocity < 0f)
+                _verticalVelocity = -2f;
 
-            // Coyote time : on peut encore sauter quelques frames après un bord
+            // Coyote time
             if (_isGrounded)
                 _coyoteTimer = coyoteTime;
             else
                 _coyoteTimer -= Time.deltaTime;
-
-            // Coller au sol
-            if (_isGrounded && _verticalVelocity < 0f)
-                _verticalVelocity = -2f;
 
             // Input saut
             bool canJump = _coyoteTimer > 0f && !_isCrouching && !_isRolling;
@@ -294,22 +299,8 @@ namespace ProjectFPS.Player
                     Debug.Log("[Anim] JumpStart trigger");
             }
 
-            // Gravité
+            // Accumule la gravité
             _verticalVelocity += gravity * Time.deltaTime;
-
-            // Appliquer le déplacement vertical
-            _cc.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
-
-            // Paramètres animator
-            if (animator != null)
-            {
-                bool falling = !_isGrounded && _verticalVelocity < -1f;
-                animator.SetBool(IsGroundedParam, _isGrounded);
-                animator.SetBool(IsFallingParam, falling);
-
-                if (logAnimParams && wasGrounded != _isGrounded)
-                    Debug.Log($"[Anim] IsGrounded={_isGrounded} | IsFalling={falling}");
-            }
         }
 
         // ═════════════════════════════════════════════════════════════════════════
@@ -332,7 +323,11 @@ namespace ProjectFPS.Player
 
             Vector3 moveDir = transform.right * horizontal + transform.forward * vertical;
             moveDir = Vector3.ClampMagnitude(moveDir, 1f);
-            _cc.Move(moveDir * currentSpeed * Time.deltaTime);
+
+            // ── UN SEUL _cc.Move par frame — horizontal + vertical fusionnés ────
+            // Essentiel : séparer les deux Move() rendait isGrounded non fiable
+            // (Falling jouait trop longtemps après l'atterrissage).
+            _cc.Move((moveDir * currentSpeed + Vector3.up * _verticalVelocity) * Time.deltaTime);
 
             // ── Mise à l'échelle animation ─────────────────────────────────────
             // walk × 0.3 = positions "Walking" du Blend Tree
@@ -346,15 +341,21 @@ namespace ProjectFPS.Player
         }
 
         // ═════════════════════════════════════════════════════════════════════════
-        // Mise à jour Animator (locomotion)
+        // Mise à jour Animator — appelé après le Move(), donc isGrounded est frais
         // ═════════════════════════════════════════════════════════════════════════
 
-        private void UpdateAnimatorLocomotion()
+        private void UpdateAnimatorState()
         {
             if (animator == null) return;
 
+            // Locomotion
             animator.SetFloat(MoveXParam, _animMoveX);
             animator.SetFloat(MoveYParam, _animMoveY);
+
+            // Sol / Chute — lus après _cc.Move donc fiables
+            bool isFalling = !_isGrounded && _verticalVelocity < -1f;
+            animator.SetBool(IsGroundedParam, _isGrounded);
+            animator.SetBool(IsFallingParam,  isFalling);
 
             // Poids du layer Crouch (lerp vers 1 si accroupi, 0 sinon)
             if (_layerCrouch >= 0)
@@ -367,10 +368,8 @@ namespace ProjectFPS.Player
             }
 
             if (logAnimParams)
-            {
                 Debug.Log($"[Anim] MoveX={_animMoveX:F2} MoveY={_animMoveY:F2}" +
-                    $" | Crouch={_isCrouching} | Grounded={_isGrounded}");
-            }
+                    $" | Grounded={_isGrounded} | Falling={isFalling} | Crouch={_isCrouching}");
         }
 
         // ═════════════════════════════════════════════════════════════════════════
@@ -442,10 +441,14 @@ namespace ProjectFPS.Player
 
             while (elapsed < rollDuration)
             {
-                _cc.Move(rollDir * rollSpeed * Time.deltaTime);
-                // Gravité pendant la roulade
+                // Gravité + déplacement horizontal → UN SEUL Move par frame
                 _verticalVelocity += gravity * Time.deltaTime;
-                _cc.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
+                if (_cc.isGrounded && _verticalVelocity < 0f)
+                    _verticalVelocity = -2f;
+
+                _cc.Move((rollDir * rollSpeed + Vector3.up * _verticalVelocity) * Time.deltaTime);
+                _isGrounded = _cc.isGrounded;
+
                 elapsed += Time.deltaTime;
                 yield return null;
             }
