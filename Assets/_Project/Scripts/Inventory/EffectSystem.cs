@@ -1,34 +1,52 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Rendering;
 using ProjectFPS.Player;
 
 namespace ProjectFPS.Inventory
 {
     /// <summary>
     /// Gère les effets de potions actifs sur le joueur.
+    /// Ajouter sur le même GameObject que PlayerState.
     ///
-    /// Ajouter ce composant sur le même GameObject que PlayerState.
-    ///
-    /// Effets supportés :
-    ///   Vitesse   → +50% vitesse pendant 60s
-    ///   Poison    → −20% vitesse pendant 10s + −50% PV immédiats (si lancé sur cible)
-    ///   Géant     → +30% vitesse + visuel "géant" pendant 45s  (TODO visuel)
-    ///   Invisible → cache le mesh du joueur pendant 30s          (TODO visuel)
-    ///   Ouïe      → TODO (effet gameplay à définir)
-    ///   Vie       → protection résurrection pendant 60s
-    ///   Aveuglant → aveugle la cible pendant 45s                 (TODO overlay caméra)
+    /// Effets implémentés :
+    ///   Vitesse   → +50% vitesse (60s)
+    ///   Poison    → −20% vitesse + −50% PV immédiats (10s)
+    ///   Géant     → ×1.5 taille + ×1.3 vitesse (45s) → revert automatique
+    ///   Invisible → body mesh en ShadowsOnly, invisible mais ombre gardée (30s)
+    ///   Vie       → protection résurrection : soigne 50% PV si mort (60s)
+    ///   Aveuglant → overlay noir plein écran sur la caméra de la cible (45s)
+    ///   Ouïe      → à implémenter plus tard
     /// </summary>
     public class EffectSystem : MonoBehaviour
     {
-        // ── État courant ──────────────────────────────────────────────────────────
-        private readonly List<ActiveEffect> _effects  = new List<ActiveEffect>();
-        private PlayerState                 _playerState;
+        // ── Références ────────────────────────────────────────────────────────────
+        [Header("Références visuelles")]
+        [Tooltip("Root du mesh du joueur (pour Invisible). Null = auto-cherché parmi les enfants.")]
+        [SerializeField] private Transform bodyRoot;
 
-        // ── Propriétés calculées en temps réel ───────────────────────────────────
+        // ── État interne ──────────────────────────────────────────────────────────
+        private readonly List<ActiveEffect> _effects = new List<ActiveEffect>();
+        private PlayerState _playerState;
+        private Camera      _cam;
 
-        /// <summary>Multiplicateur de vitesse cumulé par les effets actifs.</summary>
+        // Géant
+        private bool    _isGiant;
+        private Vector3 _originalScale;
+
+        // Invisible
+        private bool                _isInvisible;
+        private readonly List<Renderer> _hiddenRenderers = new List<Renderer>();
+
+        // Aveuglant
+        private bool  _isBlinded;
+        private Image _blindOverlay;
+
+        // ── Propriétés calculées ──────────────────────────────────────────────────
+
+        /// <summary>Multiplicateur de vitesse cumulé de tous les effets actifs.</summary>
         public float SpeedMultiplier
         {
             get
@@ -38,30 +56,35 @@ namespace ProjectFPS.Inventory
                 {
                     switch (e.Type)
                     {
-                        case PotionType.Vitesse:  m *= 1.5f;  break;
-                        case PotionType.Poison:   m *= 0.8f;  break;
-                        case PotionType.Géant:    m *= 1.3f;  break;
+                        case PotionType.Vitesse: m *= 1.5f; break;
+                        case PotionType.Poison:  m *= 0.8f; break;
+                        case PotionType.Géant:   m *= 1.3f; break;
                     }
                 }
                 return m;
             }
         }
 
-        public bool IsInvisible        => HasEffect(PotionType.Invisible);
-        public bool IsBlinded          => HasEffect(PotionType.Aveuglant);
+        public bool IsInvisible         => _isInvisible;
+        public bool IsBlinded           => _isBlinded;
         public bool HasReviveProtection => HasEffect(PotionType.Vie);
 
-        /// <summary>Effets actifs (lecture seule pour le HUD).</summary>
+        /// <summary>Effets actifs exposés en lecture seule pour le HUD.</summary>
         public IReadOnlyList<ActiveEffect> ActiveEffects => _effects;
 
-        // ── Événements ────────────────────────────────────────────────────────────
-        /// <summary>Déclenché à chaque ajout, retrait ou tick d'effet.</summary>
+        /// <summary>Déclenché à chaque modification de la liste des effets.</summary>
         public event Action OnEffectsChanged;
 
         // ── Lifecycle ─────────────────────────────────────────────────────────────
         private void Awake()
         {
-            _playerState = GetComponent<PlayerState>();
+            _playerState   = GetComponent<PlayerState>();
+            _cam           = GetComponentInChildren<Camera>();
+            _originalScale = transform.localScale;
+
+            // Auto-cherche le body root si non assigné dans l'Inspector
+            if (bodyRoot == null)
+                bodyRoot = transform;
         }
 
         private void Update()
@@ -75,8 +98,10 @@ namespace ProjectFPS.Inventory
 
                 if (_effects[i].TimeRemaining <= 0f)
                 {
-                    Debug.Log($"[EffectSystem] Effet '{_effects[i].DisplayName}' expiré.");
+                    string name = _effects[i].DisplayName;
+                    RevertVisualEffect(_effects[i].Type);
                     _effects.RemoveAt(i);
+                    Debug.Log($"[EffectSystem] ⏱ Effet '{name}' expiré sur {gameObject.name}.");
                 }
             }
 
@@ -84,61 +109,70 @@ namespace ProjectFPS.Inventory
                 OnEffectsChanged?.Invoke();
         }
 
+        private void OnDestroy()
+        {
+            // Nettoie les effets visuels si l'objet est détruit
+            RevertGiant();
+            RevertInvisible();
+            RevertBlind();
+        }
+
         // ── API publique ──────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Applique l'effet d'une potion.
-        /// selfApplied = true si le joueur l'utilise sur lui-même ([F]).
-        /// selfApplied = false si elle lui est lancée dessus ([Q] d'un autre joueur).
+        /// Applique l'effet d'une potion sur ce joueur.
+        /// Appelé par PlayerInteraction ([F]) ou ItemWorldObject (lancé).
         /// </summary>
         public void ApplyEffect(ItemData itemData)
         {
             if (itemData == null || itemData.Type != ItemType.Potion) return;
 
             var type = itemData.PotionSubType;
-
-            Debug.Log($"[EffectSystem] Application de l'effet '{type}' sur {name}");
+            Debug.Log($"[EffectSystem] ▶ Application effet '{type}' sur {gameObject.name}");
 
             switch (type)
             {
                 case PotionType.Vitesse:
-                    AddOrRefresh(type, 60f, "Vitesse", itemData.Icon);
+                    AddOrRefresh(type, 60f, "Vitesse ⚡", itemData.Icon);
+                    Debug.Log($"[EffectSystem] Vitesse : +50% vitesse pour 60s");
                     break;
 
                 case PotionType.Poison:
-                    AddOrRefresh(type, 10f, "Poison", itemData.Icon);
-                    // Dégâts immédiats : −50% PV
+                    AddOrRefresh(type, 10f, "Poison ☠", itemData.Icon);
                     if (_playerState != null)
                     {
                         float dmg = _playerState.MaxHealth * 0.5f;
                         _playerState.TakeDamage(dmg);
-                        Debug.Log($"[EffectSystem] Poison → dégâts immédiats {dmg} PV sur {name}");
+                        Debug.Log($"[EffectSystem] Poison : dégâts immédiats {dmg} PV sur {gameObject.name}");
                     }
                     break;
 
                 case PotionType.Géant:
-                    AddOrRefresh(type, 45f, "Géant", itemData.Icon);
-                    // TODO : agrandir le modèle (transform.localScale)
+                    bool wasGiant = _isGiant;
+                    AddOrRefresh(type, 45f, "Géant 🗿", itemData.Icon);
+                    if (!wasGiant) ApplyGiant();
                     break;
 
                 case PotionType.Invisible:
-                    AddOrRefresh(type, 30f, "Invisible", itemData.Icon);
-                    // TODO : désactiver Renderer du body mesh
+                    bool wasInvisible = _isInvisible;
+                    AddOrRefresh(type, 30f, "Invisible 👻", itemData.Icon);
+                    if (!wasInvisible) ApplyInvisible();
                     break;
 
                 case PotionType.Ouïe:
-                    AddOrRefresh(type, 60f, "Ouïe", itemData.Icon);
-                    // TODO : effet gameplay ouïe
+                    AddOrRefresh(type, 60f, "Ouïe 👂", itemData.Icon);
+                    Debug.Log($"[EffectSystem] Ouïe : effet à venir.");
                     break;
 
                 case PotionType.Vie:
-                    AddOrRefresh(type, 60f, "Résurrection", itemData.Icon);
-                    Debug.Log($"[EffectSystem] Protection résurrection active sur {name} (60s).");
+                    AddOrRefresh(type, 60f, "Résurrection ❤", itemData.Icon);
+                    Debug.Log($"[EffectSystem] Vie : protection résurrection active sur {gameObject.name} (60s).");
                     break;
 
                 case PotionType.Aveuglant:
-                    AddOrRefresh(type, 45f, "Aveuglant", itemData.Icon);
-                    // TODO : overlay noir sur la caméra de la cible
+                    bool wasBlinded = _isBlinded;
+                    AddOrRefresh(type, 45f, "Aveuglant 🌑", itemData.Icon);
+                    if (!wasBlinded) ApplyBlind();
                     break;
             }
 
@@ -158,10 +192,122 @@ namespace ProjectFPS.Inventory
             if (_playerState != null)
             {
                 _playerState.Heal(_playerState.MaxHealth * 0.5f);
-                Debug.Log($"[EffectSystem] {name} résurrection ! (potion Vie consommée, 50% PV restaurés)");
+                Debug.Log($"[EffectSystem] ✨ {gameObject.name} résurrection ! (potion Vie consommée, 50% PV restaurés)");
             }
             OnEffectsChanged?.Invoke();
             return true;
+        }
+
+        // ── Effets visuels : Géant ────────────────────────────────────────────────
+
+        private void ApplyGiant()
+        {
+            if (_isGiant) return;
+            _isGiant       = true;
+            _originalScale = transform.localScale;
+            transform.localScale = _originalScale * 1.5f;
+            Debug.Log($"[EffectSystem] Géant : taille ×1.5 appliquée sur {gameObject.name}");
+        }
+
+        private void RevertGiant()
+        {
+            if (!_isGiant) return;
+            _isGiant             = false;
+            transform.localScale = _originalScale;
+            Debug.Log($"[EffectSystem] Géant : taille normale restaurée sur {gameObject.name}");
+        }
+
+        // ── Effets visuels : Invisible ────────────────────────────────────────────
+
+        private void ApplyInvisible()
+        {
+            if (_isInvisible) return;
+            _isInvisible = true;
+            _hiddenRenderers.Clear();
+
+            foreach (var r in bodyRoot.GetComponentsInChildren<Renderer>())
+            {
+                // On garde les renderers directement sous la caméra (armes FPS, bras visibles)
+                if (_cam != null && r.transform.IsChildOf(_cam.transform)) continue;
+
+                _hiddenRenderers.Add(r);
+                // ShadowsOnly : objet invisible mais projette quand même son ombre
+                r.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+            }
+
+            Debug.Log($"[EffectSystem] Invisible : {_hiddenRenderers.Count} renderer(s) masqué(s) sur {gameObject.name} (ombres gardées)");
+        }
+
+        private void RevertInvisible()
+        {
+            if (!_isInvisible) return;
+            _isInvisible = false;
+
+            foreach (var r in _hiddenRenderers)
+                if (r != null) r.shadowCastingMode = ShadowCastingMode.On;
+
+            _hiddenRenderers.Clear();
+            Debug.Log($"[EffectSystem] Invisible : renderers restaurés sur {gameObject.name}");
+        }
+
+        // ── Effets visuels : Aveuglant ────────────────────────────────────────────
+
+        private void ApplyBlind()
+        {
+            if (_isBlinded) return;
+            _isBlinded = true;
+            EnsureBlindOverlay();
+            if (_blindOverlay != null)
+                _blindOverlay.transform.parent.gameObject.SetActive(true);
+            Debug.Log($"[EffectSystem] Aveuglant : overlay activé sur {gameObject.name}");
+        }
+
+        private void RevertBlind()
+        {
+            if (!_isBlinded) return;
+            _isBlinded = false;
+            if (_blindOverlay != null)
+                _blindOverlay.transform.parent.gameObject.SetActive(false);
+            Debug.Log($"[EffectSystem] Aveuglant : overlay désactivé sur {gameObject.name}");
+        }
+
+        /// <summary>Crée un Canvas fullscreen avec Image noire comme overlay.</summary>
+        private void EnsureBlindOverlay()
+        {
+            if (_blindOverlay != null) return;
+
+            // Canvas Screen Space Overlay (indépendant de la caméra)
+            var canvasGO    = new GameObject("BlindCanvas");
+            canvasGO.transform.SetParent(transform, false);
+            var canvas      = canvasGO.AddComponent<Canvas>();
+            canvas.renderMode  = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 999;
+            canvasGO.AddComponent<CanvasScaler>();
+            canvasGO.SetActive(false); // désactivé par défaut
+
+            // Image noire plein écran
+            var imgGO    = new GameObject("BlindImage");
+            imgGO.transform.SetParent(canvasGO.transform, false);
+            var rt       = imgGO.AddComponent<RectTransform>();
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.sizeDelta = Vector2.zero;
+            _blindOverlay       = imgGO.AddComponent<Image>();
+            _blindOverlay.color = new Color(0f, 0f, 0f, 0.92f);
+
+            Debug.Log($"[EffectSystem] BlindCanvas créé sur {gameObject.name}");
+        }
+
+        // ── Dispatch revert à l'expiration ───────────────────────────────────────
+
+        private void RevertVisualEffect(PotionType type)
+        {
+            switch (type)
+            {
+                case PotionType.Géant:    RevertGiant();     break;
+                case PotionType.Invisible: RevertInvisible(); break;
+                case PotionType.Aveuglant: RevertBlind();     break;
+            }
         }
 
         // ── Helpers ───────────────────────────────────────────────────────────────
@@ -173,7 +319,7 @@ namespace ProjectFPS.Inventory
             return false;
         }
 
-        /// <summary>Ajoute un effet ou remet sa durée à zéro s'il est déjà actif.</summary>
+        /// <summary>Ajoute l'effet ou rafraîchit sa durée s'il est déjà actif.</summary>
         private void AddOrRefresh(PotionType type, float duration, string displayName, Sprite icon)
         {
             foreach (var e in _effects)
@@ -181,18 +327,25 @@ namespace ProjectFPS.Inventory
                 if (e.Type == type)
                 {
                     e.TimeRemaining = duration;
-                    Debug.Log($"[EffectSystem] Effet '{displayName}' rafraîchi ({duration}s).");
+                    Debug.Log($"[EffectSystem] ↺ Effet '{displayName}' rafraîchi ({duration}s) sur {gameObject.name}.");
                     return;
                 }
             }
             _effects.Add(new ActiveEffect(type, duration, displayName, icon));
-            Debug.Log($"[EffectSystem] Nouvel effet '{displayName}' ajouté ({duration}s).");
+            Debug.Log($"[EffectSystem] ✚ Nouvel effet '{displayName}' ajouté ({duration}s) sur {gameObject.name}.");
         }
 
         private void RemoveEffect(PotionType type)
         {
             for (int i = _effects.Count - 1; i >= 0; i--)
-                if (_effects[i].Type == type) { _effects.RemoveAt(i); return; }
+            {
+                if (_effects[i].Type == type)
+                {
+                    RevertVisualEffect(type);
+                    _effects.RemoveAt(i);
+                    return;
+                }
+            }
         }
     }
 }
