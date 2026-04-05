@@ -33,6 +33,7 @@ namespace ProjectFPS.Player
 
         // ── Références internes ───────────────────────────────────────────────────
         private InventorySystem _inventory;
+        private EffectSystem    _effectSystem;
         private ItemWorldObject _lookedAtItem;
         private RitualZone      _lookedAtRitual;
 
@@ -46,8 +47,10 @@ namespace ProjectFPS.Player
         // ── Lifecycle ─────────────────────────────────────────────────────────────
         private void Awake()
         {
-            _inventory = GetComponent<InventorySystem>()
-                      ?? GetComponentInParent<InventorySystem>();
+            _inventory    = GetComponent<InventorySystem>()
+                         ?? GetComponentInParent<InventorySystem>();
+            _effectSystem = GetComponent<EffectSystem>()
+                         ?? GetComponentInParent<EffectSystem>();
 
             if (playerCamera == null)
                 playerCamera = GetComponentInChildren<Camera>();
@@ -295,7 +298,18 @@ namespace ProjectFPS.Player
         {
             switch (item.Type)
             {
-                case ItemType.Potion:      Debug.Log("[PlayerInteraction] Potion → soin. (TODO)"); break;
+                case ItemType.Potion:
+                    if (_effectSystem != null)
+                    {
+                        _effectSystem.ApplyEffect(item);
+                        Debug.Log($"[PlayerInteraction] Potion '{item.ItemName}' appliquée via EffectSystem.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[PlayerInteraction] EffectSystem introuvable sur le Player ! " +
+                                         "Ajoutez le composant EffectSystem.");
+                    }
+                    break;
                 case ItemType.Balle:       Debug.Log("[PlayerInteraction] Balle → tir. (TODO)"); break;
                 case ItemType.Armure:      Debug.Log("[PlayerInteraction] Armure → bouclier. (TODO)"); break;
                 case ItemType.MalusEnnemi: Debug.Log("[PlayerInteraction] Malus → debuff. (TODO)"); break;

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using ProjectFPS.Roles;
+using ProjectFPS.Inventory;
 
 namespace ProjectFPS.Player
 {
@@ -36,7 +37,18 @@ namespace ProjectFPS.Player
             OnHealthChanged?.Invoke(_currentHealth, maxHealth);
 
             if (_currentHealth <= 0f)
+            {
+                // Vérifie si la potion Vie peut ressusciter le joueur
+                var effects = GetComponent<EffectSystem>();
+                if (effects != null && effects.TryRevive())
+                {
+                    Debug.Log($"[PlayerState] {name} serait mort, mais la potion Vie l'a sauvé !");
+                    return;
+                }
+
+                Debug.Log($"[PlayerState] {name} est mort (PV = 0).");
                 OnDeath?.Invoke();
+            }
         }
 
         // Soigne le joueur sans dépasser le maximum

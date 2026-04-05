@@ -29,6 +29,9 @@ namespace ProjectFPS.Inventory
         [Tooltip("Prefab instancié quand l'objet est posé ou lancé dans le monde.")]
         [SerializeField] private GameObject worldPrefab;
 
+        [Header("Sous-type Potion (ignoré si Type ≠ Potion)")]
+        [SerializeField] private PotionType potionSubType;
+
         [Header("Propriétés")]
         [Tooltip("Force appliquée lors du lancer (ItemType throwable uniquement).")]
         [SerializeField] private float throwForce    = 12f;
@@ -43,6 +46,8 @@ namespace ProjectFPS.Inventory
         public GameObject WorldPrefab   => worldPrefab;
         public float      ThrowForce    => throwForce;
         public int        ResourceValue => resourceValue;
+        /// <summary>Sous-type actif uniquement quand Type == ItemType.Potion.</summary>
+        public PotionType PotionSubType => potionSubType;
 
         // ── Capacités dérivées (lecture seule, pas de flags à cocher) ─────────────
 

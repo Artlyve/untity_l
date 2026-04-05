@@ -191,6 +191,15 @@ namespace ProjectFPS.Inventory
         public ItemData GetSelectedItem()
             => _slots[_selectedSlot];
 
+        /// <summary>Sélectionne un slot par index (pour RoleAbilityController ou autres systèmes).</summary>
+        public void SelectSlot(int index)
+        {
+            index = Mathf.Clamp(index, 0, _maxSlots - 1);
+            if (_selectedSlot == index) return;
+            _selectedSlot = index;
+            OnInventoryChanged?.Invoke();
+        }
+
         /// <summary>Nombre de slots occupés (pour le DebugPanel).</summary>
         public int OccupiedSlotCount
         {

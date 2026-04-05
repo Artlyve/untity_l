@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -35,15 +36,35 @@ namespace ProjectFPS.UI
         [SerializeField] private Color             reticleHighlight    = new Color(1f, 0.85f, 0f);
 
         [Header("Ressources joueur")]
-        [SerializeField] private TextMeshProUGUI   resourceText;   // optionnel — affiche les pts perso
+        [SerializeField] private TextMeshProUGUI   resourceText;
+
+        [Header("Effets actifs")]
+        [Tooltip("Conteneur des icônes d'effets (HorizontalLayoutGroup recommandé). Laissez vide pour créer automatiquement.")]
+        [SerializeField] private Transform         effectsContainer;
+        [Tooltip("Largeur/hauteur en pixels de chaque icône d'effet.")]
+        [SerializeField] private float             effectIconSize      = 48f;
 
         [Header("Références joueur")]
         [SerializeField] private PlayerState       playerState;
         [SerializeField] private InventorySystem   inventorySystem;
         [SerializeField] private PlayerInteraction playerInteraction;
+        [SerializeField] private EffectSystem      effectSystem;
 
+        // ── Internes ──────────────────────────────────────────────────────────────
         private Image[] _slotBackgrounds;
-        private bool    _hasInteractable;   // vrai si l'item visé est interactif (pour le réticule)
+        private bool    _hasInteractable;
+
+        // Pool d'icônes d'effets : associe ActiveEffect → entrée UI
+        private readonly List<EffectIconEntry> _effectIcons = new List<EffectIconEntry>();
+
+        private struct EffectIconEntry
+        {
+            public ActiveEffect Effect;
+            public GameObject   Root;
+            public Image        IconImage;
+            public Image        CooldownFill;
+            public TextMeshProUGUI TimerText;
+        }
 
         // ── Lifecycle ─────────────────────────────────────────────────────────────
         private void Awake()
@@ -52,6 +73,11 @@ namespace ProjectFPS.UI
                 interactionPrompt.gameObject.SetActive(false);
 
             EnsureReticle();
+            EnsureEffectsContainer();
+
+            // Auto-résolution du EffectSystem si non assigné
+            if (effectSystem == null)
+                effectSystem = FindFirstObjectByType<EffectSystem>();
         }
 
         private void OnEnable()
@@ -68,9 +94,11 @@ namespace ProjectFPS.UI
             if (RoleManager.Instance != null)
                 RoleManager.Instance.OnRoleChanged += UpdateRoleDisplay;
 
-            // Nouvelle API : OnInteractionPrompt porte déjà le texte complet
             if (playerInteraction != null)
                 playerInteraction.OnInteractionPrompt += UpdateInteractionPrompt;
+
+            if (effectSystem != null)
+                effectSystem.OnEffectsChanged += RefreshEffectIcons;
         }
 
         private void OnDisable()
@@ -89,6 +117,9 @@ namespace ProjectFPS.UI
 
             if (playerInteraction != null)
                 playerInteraction.OnInteractionPrompt -= UpdateInteractionPrompt;
+
+            if (effectSystem != null)
+                effectSystem.OnEffectsChanged -= RefreshEffectIcons;
         }
 
         private void Start()
@@ -103,11 +134,13 @@ namespace ProjectFPS.UI
 
             UpdateInventorySlots();
             UpdateResourceText(inventorySystem != null ? inventorySystem.PersonalResources : 0);
+            RefreshEffectIcons();
         }
 
         private void Update()
         {
             UpdateSelectedSlotHighlight();
+            UpdateEffectTimers();
         }
 
         // ── Slots ─────────────────────────────────────────────────────────────────
@@ -267,6 +300,161 @@ namespace ProjectFPS.UI
         {
             if (resourceText != null)
                 resourceText.text = $"Ressources : {personalResources}";
+        }
+
+        // ── Effets actifs ─────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Garantit l'existence d'un conteneur d'effets (HLG centré en bas-gauche du HUD).
+        /// </summary>
+        private void EnsureEffectsContainer()
+        {
+            if (effectsContainer != null) return;
+
+            var go = new GameObject("EffectsContainer");
+            go.transform.SetParent(transform, false);
+            var rt = go.AddComponent<RectTransform>();
+            rt.anchorMin        = new Vector2(0f, 0f);
+            rt.anchorMax        = new Vector2(0f, 0f);
+            rt.pivot            = new Vector2(0f, 0f);
+            rt.anchoredPosition = new Vector2(10f, 80f);
+            rt.sizeDelta        = new Vector2(300f, effectIconSize + 4f);
+
+            var hlg = go.AddComponent<HorizontalLayoutGroup>();
+            hlg.spacing            = 4f;
+            hlg.childAlignment     = TextAnchor.LowerLeft;
+            hlg.childForceExpandWidth  = false;
+            hlg.childForceExpandHeight = false;
+
+            effectsContainer = go.transform;
+        }
+
+        /// <summary>
+        /// Reconstruit les icônes d'effets depuis la liste active de l'EffectSystem.
+        /// Appelé à chaque OnEffectsChanged.
+        /// </summary>
+        private void RefreshEffectIcons()
+        {
+            if (effectsContainer == null) return;
+
+            var activeEffects = effectSystem != null
+                ? effectSystem.ActiveEffects
+                : (IReadOnlyList<ActiveEffect>)System.Array.Empty<ActiveEffect>();
+
+            // Supprimer les icônes des effets qui ont expiré
+            for (int i = _effectIcons.Count - 1; i >= 0; i--)
+            {
+                bool stillActive = false;
+                foreach (var e in activeEffects)
+                    if (e == _effectIcons[i].Effect) { stillActive = true; break; }
+
+                if (!stillActive)
+                {
+                    if (_effectIcons[i].Root != null)
+                        Destroy(_effectIcons[i].Root);
+                    _effectIcons.RemoveAt(i);
+                }
+            }
+
+            // Ajouter les icônes des nouveaux effets
+            foreach (var effect in activeEffects)
+            {
+                bool exists = false;
+                foreach (var entry in _effectIcons)
+                    if (entry.Effect == effect) { exists = true; break; }
+
+                if (!exists)
+                    _effectIcons.Add(BuildEffectIcon(effect));
+            }
+        }
+
+        /// <summary>
+        /// Construit une icône d'effet : fond semi-transparent + icône sprite + timer texte.
+        /// </summary>
+        private EffectIconEntry BuildEffectIcon(ActiveEffect effect)
+        {
+            float sz = effectIconSize;
+
+            // Conteneur racine
+            var root = new GameObject($"Effect_{effect.DisplayName}");
+            root.transform.SetParent(effectsContainer, false);
+            var rootRT       = root.AddComponent<RectTransform>();
+            rootRT.sizeDelta = new Vector2(sz, sz);
+
+            // Fond (noir semi-transparent)
+            var bg = new GameObject("BG");
+            bg.transform.SetParent(root.transform, false);
+            var bgRT         = bg.AddComponent<RectTransform>();
+            bgRT.anchorMin   = Vector2.zero; bgRT.anchorMax = Vector2.one;
+            bgRT.sizeDelta   = Vector2.zero;
+            var bgImg        = bg.AddComponent<Image>();
+            bgImg.color      = new Color(0f, 0f, 0f, 0.6f);
+
+            // Remplissage cooldown (radial ou simple, selon disponibilité)
+            var fill = new GameObject("CooldownFill");
+            fill.transform.SetParent(root.transform, false);
+            var fillRT       = fill.AddComponent<RectTransform>();
+            fillRT.anchorMin = Vector2.zero; fillRT.anchorMax = Vector2.one;
+            fillRT.sizeDelta = Vector2.zero;
+            var fillImg      = fill.AddComponent<Image>();
+            fillImg.color    = new Color(1f, 1f, 1f, 0.25f);
+            fillImg.type     = Image.Type.Filled;
+            fillImg.fillMethod = Image.FillMethod.Radial360;
+            fillImg.fillOrigin = (int)Image.Origin360.Top;
+            fillImg.fillClockwise = false;
+            fillImg.fillAmount = 1f;
+
+            // Icône de l'effet
+            var icon = new GameObject("Icon");
+            icon.transform.SetParent(root.transform, false);
+            var iconRT       = icon.AddComponent<RectTransform>();
+            iconRT.anchorMin = new Vector2(0.1f, 0.3f);
+            iconRT.anchorMax = new Vector2(0.9f, 0.9f);
+            iconRT.sizeDelta = Vector2.zero;
+            var iconImg      = icon.AddComponent<Image>();
+            iconImg.sprite   = effect.Icon;
+            iconImg.preserveAspect = true;
+            if (effect.Icon == null) iconImg.color = new Color(1f, 1f, 1f, 0.4f);
+
+            // Timer texte (bas de l'icône)
+            var timerGO = new GameObject("Timer");
+            timerGO.transform.SetParent(root.transform, false);
+            var timerRT        = timerGO.AddComponent<RectTransform>();
+            timerRT.anchorMin  = new Vector2(0f, 0f);
+            timerRT.anchorMax  = new Vector2(1f, 0.35f);
+            timerRT.sizeDelta  = Vector2.zero;
+            var timerTMP       = timerGO.AddComponent<TextMeshProUGUI>();
+            timerTMP.alignment = TextAlignmentOptions.Center;
+            timerTMP.fontSize  = sz * 0.22f;
+            timerTMP.color     = Color.white;
+            timerTMP.text      = $"{Mathf.CeilToInt(effect.TimeRemaining)}s";
+
+            return new EffectIconEntry
+            {
+                Effect       = effect,
+                Root         = root,
+                IconImage    = iconImg,
+                CooldownFill = fillImg,
+                TimerText    = timerTMP,
+            };
+        }
+
+        /// <summary>
+        /// Mise à jour en temps réel des timers et du remplissage radial.
+        /// Appelé dans Update().
+        /// </summary>
+        private void UpdateEffectTimers()
+        {
+            foreach (var entry in _effectIcons)
+            {
+                if (entry.Effect == null) continue;
+
+                if (entry.CooldownFill != null)
+                    entry.CooldownFill.fillAmount = entry.Effect.Progress;
+
+                if (entry.TimerText != null)
+                    entry.TimerText.text = $"{Mathf.CeilToInt(entry.Effect.TimeRemaining)}s";
+            }
         }
     }
 }

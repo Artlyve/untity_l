@@ -1,4 +1,5 @@
 using UnityEngine;
+using ProjectFPS.Inventory;
 
 namespace ProjectFPS.Player
 {
@@ -42,7 +43,9 @@ namespace ProjectFPS.Player
         [Tooltip("Décalage avant de la caméra pour éviter de clipper dans le mesh de la tête.")]
         [SerializeField] private float cameraForwardOffset = 0.12f;
 
-        private CharacterController _cc;
+        private CharacterController   _cc;
+        private EffectSystem          _effectSystem;
+        private RoleAbilityController _roleAbility;
         private float _verticalVelocity;
         private float _cameraPitch;
         private bool  _isCrouching;
@@ -52,7 +55,9 @@ namespace ProjectFPS.Player
 
         private void Awake()
         {
-            _cc = GetComponent<CharacterController>();
+            _cc           = GetComponent<CharacterController>();
+            _effectSystem = GetComponent<EffectSystem>();
+            _roleAbility  = GetComponent<RoleAbilityController>();
 
             // ── FIX 1 : désactiver la Root Motion pour éviter que le modèle
             //            glisse indépendamment de la caméra.
@@ -129,7 +134,10 @@ namespace ProjectFPS.Player
             float vertical   = Input.GetAxis("Vertical");
 
             bool  isSprinting  = Input.GetKey(KeyCode.LeftShift) && !_isCrouching;
-            float currentSpeed = _isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : walkSpeed);
+            float baseSpeed    = _isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : walkSpeed);
+            float effectMult   = _effectSystem != null ? _effectSystem.SpeedMultiplier : 1f;
+            float roleMult     = _roleAbility  != null ? _roleAbility.RoleSpeedMultiplier : 1f;
+            float currentSpeed = baseSpeed * effectMult * roleMult;
 
             Vector3 moveDir = transform.right * horizontal + transform.forward * vertical;
             moveDir = Vector3.ClampMagnitude(moveDir, 1f);
