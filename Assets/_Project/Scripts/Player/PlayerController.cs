@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using ProjectFPS.Inventory;
 using ProjectFPS.UI;
@@ -5,94 +6,158 @@ using ProjectFPS.UI;
 namespace ProjectFPS.Player
 {
     /// <summary>
-    /// Contrôle FPS : déplacement, regard souris, accroupissement.
+    /// Contrôleur FPS complet — déplacement, regard, saut, roulade, accroupissement.
     ///
-    /// Paramètres Animator attendus :
-    ///   Speed       (float) — magnitude d'input normalisée 0..1
-    ///   IsRunning   (bool)  — vrai si sprint actif
-    ///   IsCrouching (bool)  — vrai si accroupi
-    ///   MoveX       (float) — input horizontal -1..1 (pour blend tree directionnel)
-    ///   MoveY       (float) — input vertical   -1..1
+    /// ═══ PARAMÈTRES ANIMATOR (à créer dans Unity) ═══════════════════════════════
     ///
-    /// BUGS CORRIGÉS :
-    ///  1. applyRootMotion désactivé en Awake → le modèle ne dérive plus.
-    ///  2. CameraHolder auto-positionné à hauteur des yeux si position = 0.
-    ///  3. normalizedSpeed utilisait ×0.5 en marche → déclenchait la course.
-    ///     Maintenant : marche = inputMag (0..1), sprint = bool IsRunning séparé.
+    ///   Float   MoveX       Input horizontal mis à l'échelle (-1..1)
+    ///   Float   MoveY       Input vertical mis à l'échelle (-1..1)
+    ///                         walk = ×0.3  →  walk positions (0.3) du Blend Tree
+    ///                         run  = ×1.0  →  run  positions (1.0) du Blend Tree
+    ///   Bool    IsGrounded  Vrai si le joueur touche le sol
+    ///   Bool    IsFalling   Vrai si en chute (vertical velocity < -1)
+    ///   Bool    IsCrouching Vrai si accroupi
+    ///   Trigger JumpStart   Déclenche l'animation de saut
+    ///   Trigger Roll        Déclenche la roulade
+    ///   Float   RollDirX    Direction roulade X (-1/0/1) — régler AVANT le trigger
+    ///   Float   RollDirY    Direction roulade Y (-1/0/1)
+    ///   Trigger Hit         Déclenche l'animation de coup reçu
+    ///   Bool    IsDead      Vrai si mort (état terminal)
+    ///
+    /// ═══ LAYERS ANIMATOR (optionnels mais recommandés) ═══════════════════════════
+    ///
+    ///   Layer 0 : Base      Blend Tree locomotion (existant)
+    ///   Layer 1 : Crouch    Blend Tree accroupi   (même params MoveX/MoveY)
+    ///                         → weight piloté par IsCrouching (lerp 0→1 en code)
+    ///   Layer 2 : UpperBody Hit reaction (masque Avatar = Spine only)
+    ///   Layer 3 : FullBody  Jump SSM + Roll SSM + Death (override total)
+    ///
+    /// ═══ SAUT ════════════════════════════════════════════════════════════════════
+    ///   [Espace] → JumpStart trigger → gravité physique dans CharacterController
+    ///   Coyote time (0.15 s) = tolérance en bord de plateforme
+    ///
+    /// ═══ ROULADE ═════════════════════════════════════════════════════════════════
+    ///   [Alt gauche] → roulade dans la direction du mouvement (avant si immobile)
+    ///   Bloque les inputs de déplacement pendant la durée de la roulade.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public class PlayerController : MonoBehaviour
     {
+        // ─── Références ───────────────────────────────────────────────────────────
         [Header("Références")]
         [SerializeField] private Transform cameraHolder;
         [SerializeField] private Animator  animator;
 
+        // ─── Vitesses ─────────────────────────────────────────────────────────────
         [Header("Vitesses")]
         [SerializeField] private float walkSpeed   = 3f;
         [SerializeField] private float sprintSpeed = 6f;
         [SerializeField] private float crouchSpeed = 1.5f;
+        [SerializeField] private float rollSpeed   = 7f;
 
+        // ─── Souris ───────────────────────────────────────────────────────────────
         [Header("Souris")]
         [SerializeField] private float mouseSensitivity = 2f;
 
+        // ─── Caméra FPS ───────────────────────────────────────────────────────────
+        [Header("Caméra (FPS)")]
+        [SerializeField] private float cameraEyeHeight       = 1.7f;
+        [SerializeField] private float cameraEyeHeightCrouch = 0.85f;
+        [SerializeField] private float cameraForwardOffset   = 0.12f;
+
+        // ─── Accroupissement ──────────────────────────────────────────────────────
         [Header("Crouch")]
         [SerializeField] private float standHeight           = 2f;
         [SerializeField] private float crouchHeight          = 1f;
         [SerializeField] private float crouchTransitionSpeed = 8f;
 
-        [Header("Gravité")]
-        [SerializeField] private float gravity = -9.81f;
+        // ─── Saut ─────────────────────────────────────────────────────────────────
+        [Header("Saut")]
+        [SerializeField] private float jumpHeight = 1.5f;
+        [SerializeField] private float gravity    = -9.81f;
+        [Tooltip("Durée (s) pendant laquelle le saut est encore possible après avoir quitté un bord.")]
+        [SerializeField] private float coyoteTime = 0.15f;
 
-        [Header("Positionnement caméra (FPS)")]
-        [Tooltip("Hauteur des yeux en position debout (relative à la base du CharacterController).")]
-        [SerializeField] private float cameraEyeHeight       = 1.7f;
-        [Tooltip("Hauteur des yeux en position accroupie.")]
-        [SerializeField] private float cameraEyeHeightCrouch = 0.85f;
-        [Tooltip("Décalage avant de la caméra pour éviter de clipper dans le mesh de la tête.")]
-        [SerializeField] private float cameraForwardOffset   = 0.12f;
+        // ─── Roulade ──────────────────────────────────────────────────────────────
+        [Header("Roulade")]
+        [SerializeField] private float   rollDuration = 0.55f;
+        [SerializeField] private KeyCode rollKey      = KeyCode.LeftAlt;
 
-        // ── Composants ────────────────────────────────────────────────────────────
+        // ─── Animation Smoothing ──────────────────────────────────────────────────
+        [Header("Animation")]
+        [Tooltip("Temps de lissage SmoothDamp pour MoveX/MoveY (s). 0.05–0.15 recommandé.")]
+        [SerializeField] private float animSmoothTime = 0.08f;
+
+        // ─── Debug ────────────────────────────────────────────────────────────────
+        [Header("Debug")]
+        [Tooltip("Logue les paramètres Animator dans la Console à chaque changement.")]
+        [SerializeField] private bool logAnimParams = false;
+
+        // ─── Composants ───────────────────────────────────────────────────────────
         private CharacterController   _cc;
         private EffectSystem          _effectSystem;
         private RoleAbilityController _roleAbility;
+        private PlayerState           _playerState;
 
-        // ── État ──────────────────────────────────────────────────────────────────
+        // ─── État ─────────────────────────────────────────────────────────────────
         private float _verticalVelocity;
         private float _cameraPitch;
         private bool  _isCrouching;
+        private bool  _isGrounded;
+        private bool  _isDead;
+        private bool  _isRolling;
+        private float _coyoteTimer;
 
-        // ── Paramètres Animator ───────────────────────────────────────────────────
-        private static readonly int SpeedParam       = Animator.StringToHash("Speed");
-        private static readonly int IsRunningParam   = Animator.StringToHash("IsRunning");
+        // ─── SmoothDamp pour MoveX/MoveY ─────────────────────────────────────────
+        private float _animMoveX;
+        private float _animMoveY;
+        private float _velX;
+        private float _velY;
+
+        // ─── Layer indices (trouvés en Start) ────────────────────────────────────
+        private int _layerCrouch    = -1;  // "Crouch"
+        private int _layerUpperBody = -1;  // "UpperBody"
+        private int _layerFullBody  = -1;  // "FullBody"
+
+        // ─── Hash des paramètres Animator ────────────────────────────────────────
+        private static readonly int MoveXParam      = Animator.StringToHash("MoveX");
+        private static readonly int MoveYParam      = Animator.StringToHash("MoveY");
+        private static readonly int IsGroundedParam  = Animator.StringToHash("IsGrounded");
+        private static readonly int IsFallingParam   = Animator.StringToHash("IsFalling");
         private static readonly int IsCrouchingParam = Animator.StringToHash("IsCrouching");
-        private static readonly int MoveXParam       = Animator.StringToHash("MoveX");
-        private static readonly int MoveYParam       = Animator.StringToHash("MoveY");
+        private static readonly int JumpStartParam   = Animator.StringToHash("JumpStart");
+        private static readonly int RollParam        = Animator.StringToHash("Roll");
+        private static readonly int RollDirXParam    = Animator.StringToHash("RollDirX");
+        private static readonly int RollDirYParam    = Animator.StringToHash("RollDirY");
+        private static readonly int HitParam         = Animator.StringToHash("Hit");
+        private static readonly int IsDeadParam      = Animator.StringToHash("IsDead");
 
-        // ── Lifecycle ─────────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Lifecycle
+        // ═════════════════════════════════════════════════════════════════════════
+
         private void Awake()
         {
             _cc           = GetComponent<CharacterController>();
             _effectSystem = GetComponent<EffectSystem>();
             _roleAbility  = GetComponent<RoleAbilityController>();
+            _playerState  = GetComponent<PlayerState>();
 
-            // Désactiver la Root Motion pour éviter que le modèle glisse seul.
+            // Root motion désactivé pour éviter le glissement du modèle
             if (animator != null)
                 animator.applyRootMotion = false;
 
-            // Positionner le CameraHolder à hauteur des yeux si pas encore configuré.
+            // CameraHolder : position initiale
             if (cameraHolder != null)
             {
                 Vector3 lp = cameraHolder.localPosition;
-
                 if (Mathf.Approximately(lp.y, 0f)) lp.y = cameraEyeHeight;
                 if (lp.z < cameraForwardOffset)     lp.z = cameraForwardOffset;
-
                 cameraHolder.localPosition = lp;
             }
             else
             {
-                Debug.LogError("[PlayerController] CameraHolder est NULL ! " +
-                    "Assignez le Transform CameraHolder dans l'Inspecteur.");
+                Debug.LogError("[PlayerController] CameraHolder non assigné dans l'Inspecteur !");
             }
         }
 
@@ -101,25 +166,65 @@ namespace ProjectFPS.Player
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
 
+            // Abonnement aux événements PlayerState
+            if (_playerState != null)
+            {
+                _playerState.OnDamageReceived += OnDamageReceived;
+                _playerState.OnDeath          += OnDied;
+            }
+
+            // Trouver les indices de layers (optionnels)
+            if (animator != null)
+            {
+                _layerCrouch    = animator.GetLayerIndex("Crouch");
+                _layerUpperBody = animator.GetLayerIndex("UpperBody");
+                _layerFullBody  = animator.GetLayerIndex("FullBody");
+            }
+
             Debug.Log("[PlayerController] Démarré :" +
-                $"\n  CameraHolder   : {(cameraHolder != null ? cameraHolder.name + " pos=" + cameraHolder.localPosition : "NULL !")}" +
-                $"\n  Animator       : {(animator != null ? animator.name : "non assigné")}" +
-                $"\n  walkSpeed      : {walkSpeed} | sprintSpeed : {sprintSpeed}");
+                $"\n  CameraHolder  : {(cameraHolder != null ? cameraHolder.name + " " + cameraHolder.localPosition : "NULL !")}" +
+                $"\n  Animator      : {(animator != null ? animator.name : "non assigné")}" +
+                $"\n  Layers        : Crouch={_layerCrouch} | UpperBody={_layerUpperBody} | FullBody={_layerFullBody}" +
+                $"\n  Walk/Sprint   : {walkSpeed}/{sprintSpeed} m/s | Roll : {rollSpeed} m/s");
         }
+
+        private void OnDestroy()
+        {
+            if (_playerState != null)
+            {
+                _playerState.OnDamageReceived -= OnDamageReceived;
+                _playerState.OnDeath          -= OnDied;
+            }
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Update
+        // ═════════════════════════════════════════════════════════════════════════
 
         private void Update()
         {
             HandleCursorLock();
 
-            // Bloque mouvement + visée quand le menu de classes est ouvert
+            if (_isDead) return;
             if (RoleSelectionUI.IsOpen) return;
 
             HandleMouseLook();
-            HandleMovement();
-            HandleCrouch();
+            HandleGravityAndJump();
+
+            if (!_isRolling)
+            {
+                HandleMovement();
+                HandleCrouch();
+                HandleRollInput();
+            }
+
+            UpdateAnimatorLocomotion();
         }
 
-        // ── Curseur ───────────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Curseur
+        // ═════════════════════════════════════════════════════════════════════════
+
         private void HandleCursorLock()
         {
             if (Input.GetKeyDown(KeyCode.Escape) && !RoleSelectionUI.IsOpen)
@@ -136,7 +241,10 @@ namespace ProjectFPS.Player
             }
         }
 
-        // ── Regard ────────────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Regard souris
+        // ═════════════════════════════════════════════════════════════════════════
+
         private void HandleMouseLook()
         {
             if (Cursor.lockState != CursorLockMode.Locked) return;
@@ -144,10 +252,8 @@ namespace ProjectFPS.Player
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
             float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-            // Rotation horizontale → tourne le joueur entier (FPS standard)
             transform.Rotate(Vector3.up, mouseX);
 
-            // Rotation verticale → incline seulement la caméra
             _cameraPitch -= mouseY;
             _cameraPitch  = Mathf.Clamp(_cameraPitch, -85f, 85f);
 
@@ -155,54 +261,127 @@ namespace ProjectFPS.Player
                 cameraHolder.localRotation = Quaternion.Euler(_cameraPitch, 0f, 0f);
         }
 
-        // ── Déplacement ───────────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Gravité + Saut
+        // ═════════════════════════════════════════════════════════════════════════
+
+        private void HandleGravityAndJump()
+        {
+            bool wasGrounded = _isGrounded;
+            _isGrounded = _cc.isGrounded;
+
+            // Coyote time : on peut encore sauter quelques frames après un bord
+            if (_isGrounded)
+                _coyoteTimer = coyoteTime;
+            else
+                _coyoteTimer -= Time.deltaTime;
+
+            // Coller au sol
+            if (_isGrounded && _verticalVelocity < 0f)
+                _verticalVelocity = -2f;
+
+            // Input saut
+            bool canJump = _coyoteTimer > 0f && !_isCrouching && !_isRolling;
+            if (Input.GetKeyDown(KeyCode.Space) && canJump)
+            {
+                _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                _coyoteTimer      = 0f;
+
+                if (animator != null)
+                    animator.SetTrigger(JumpStartParam);
+
+                if (logAnimParams)
+                    Debug.Log("[Anim] JumpStart trigger");
+            }
+
+            // Gravité
+            _verticalVelocity += gravity * Time.deltaTime;
+
+            // Appliquer le déplacement vertical
+            _cc.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
+
+            // Paramètres animator
+            if (animator != null)
+            {
+                bool falling = !_isGrounded && _verticalVelocity < -1f;
+                animator.SetBool(IsGroundedParam, _isGrounded);
+                animator.SetBool(IsFallingParam, falling);
+
+                if (logAnimParams && wasGrounded != _isGrounded)
+                    Debug.Log($"[Anim] IsGrounded={_isGrounded} | IsFalling={falling}");
+            }
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Déplacement
+        // ═════════════════════════════════════════════════════════════════════════
+
         private void HandleMovement()
         {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical   = Input.GetAxis("Vertical");
 
-            // Sprint uniquement avec Shift maintenu, pas en accroupi
-            bool  isSprinting  = Input.GetKey(KeyCode.LeftShift) && !_isCrouching
-                                  && new Vector2(horizontal, vertical).magnitude > 0.1f;
+            bool isSprinting = Input.GetKey(KeyCode.LeftShift)
+                               && !_isCrouching
+                               && new Vector2(horizontal, vertical).magnitude > 0.1f;
 
             float baseSpeed    = _isCrouching ? crouchSpeed : (isSprinting ? sprintSpeed : walkSpeed);
             float effectMult   = _effectSystem != null ? _effectSystem.SpeedMultiplier : 1f;
             float roleMult     = _roleAbility  != null ? _roleAbility.RoleSpeedMultiplier : 1f;
             float currentSpeed = baseSpeed * effectMult * roleMult;
 
-            // FPS classique : strafe sans rotation du corps
             Vector3 moveDir = transform.right * horizontal + transform.forward * vertical;
             moveDir = Vector3.ClampMagnitude(moveDir, 1f);
+            _cc.Move(moveDir * currentSpeed * Time.deltaTime);
 
-            // Gravité
-            if (_cc.isGrounded && _verticalVelocity < 0f)
-                _verticalVelocity = -2f;
-            _verticalVelocity += gravity * Time.deltaTime;
+            // ── Mise à l'échelle animation ─────────────────────────────────────
+            // walk × 0.3 = positions "Walking" du Blend Tree
+            // run  × 1.0 = positions "Run"     du Blend Tree
+            float speedMult    = isSprinting ? 1f : 0.3f;
+            float targetMoveX  = horizontal * speedMult;
+            float targetMoveY  = vertical   * speedMult;
 
-            _cc.Move((moveDir * currentSpeed + Vector3.up * _verticalVelocity) * Time.deltaTime);
+            _animMoveX = Mathf.SmoothDamp(_animMoveX, targetMoveX, ref _velX, animSmoothTime);
+            _animMoveY = Mathf.SmoothDamp(_animMoveY, targetMoveY, ref _velY, animSmoothTime);
+        }
 
-            // ── Animator ──────────────────────────────────────────────────────────
-            if (animator != null)
+        // ═════════════════════════════════════════════════════════════════════════
+        // Mise à jour Animator (locomotion)
+        // ═════════════════════════════════════════════════════════════════════════
+
+        private void UpdateAnimatorLocomotion()
+        {
+            if (animator == null) return;
+
+            animator.SetFloat(MoveXParam, _animMoveX);
+            animator.SetFloat(MoveYParam, _animMoveY);
+
+            // Poids du layer Crouch (lerp vers 1 si accroupi, 0 sinon)
+            if (_layerCrouch >= 0)
             {
-                float inputMag = new Vector2(horizontal, vertical).magnitude;
+                float target  = _isCrouching ? 1f : 0f;
+                float current = animator.GetLayerWeight(_layerCrouch);
+                animator.SetLayerWeight(
+                    _layerCrouch,
+                    Mathf.Lerp(current, target, crouchTransitionSpeed * Time.deltaTime));
+            }
 
-                // Speed : 0 = immobile, 1 = plein mouvement (walk ou run selon IsRunning)
-                animator.SetFloat(SpeedParam,     inputMag,     0.1f, Time.deltaTime);
-                animator.SetBool (IsRunningParam, isSprinting);
-
-                // MoveX / MoveY pour blend tree directionnel (strafe / recul)
-                animator.SetFloat(MoveXParam, horizontal, 0.1f, Time.deltaTime);
-                animator.SetFloat(MoveYParam, vertical,   0.1f, Time.deltaTime);
+            if (logAnimParams)
+            {
+                Debug.Log($"[Anim] MoveX={_animMoveX:F2} MoveY={_animMoveY:F2}" +
+                    $" | Crouch={_isCrouching} | Grounded={_isGrounded}");
             }
         }
 
-        // ── Accroupissement ───────────────────────────────────────────────────────
+        // ═════════════════════════════════════════════════════════════════════════
+        // Accroupissement
+        // ═════════════════════════════════════════════════════════════════════════
+
         private void HandleCrouch()
         {
             if (Input.GetKeyDown(KeyCode.LeftControl))
                 _isCrouching = !_isCrouching;
 
-            // Hauteur du CharacterController
             float targetHeight = _isCrouching ? crouchHeight : standHeight;
             _cc.height = Mathf.Lerp(_cc.height, targetHeight, crouchTransitionSpeed * Time.deltaTime);
 
@@ -210,7 +389,6 @@ namespace ProjectFPS.Player
             center.y  = _cc.height / 2f;
             _cc.center = center;
 
-            // Caméra suit la hauteur des yeux en temps réel
             if (cameraHolder != null)
             {
                 float targetEyeY = _isCrouching ? cameraEyeHeightCrouch : cameraEyeHeight;
@@ -221,6 +399,103 @@ namespace ProjectFPS.Player
 
             if (animator != null)
                 animator.SetBool(IsCrouchingParam, _isCrouching);
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Roulade
+        // ═════════════════════════════════════════════════════════════════════════
+
+        private void HandleRollInput()
+        {
+            if (!Input.GetKeyDown(rollKey)) return;
+            if (!_isGrounded)               return;
+
+            // Direction de la roulade = input courant (avant si aucun input)
+            float h = Input.GetAxisRaw("Horizontal");
+            float v = Input.GetAxisRaw("Vertical");
+            if (Mathf.Approximately(h, 0f) && Mathf.Approximately(v, 0f)) v = 1f;
+
+            StartCoroutine(RollCoroutine(h, v));
+        }
+
+        private IEnumerator RollCoroutine(float dirX, float dirY)
+        {
+            _isRolling = true;
+
+            // Remettre le crouching à false pendant la roulade
+            bool wasCrouching = _isCrouching;
+            _isCrouching = false;
+
+            if (animator != null)
+            {
+                // Régler la direction AVANT le trigger
+                animator.SetFloat(RollDirXParam, dirX);
+                animator.SetFloat(RollDirYParam, dirY);
+                animator.SetTrigger(RollParam);
+            }
+
+            if (logAnimParams)
+                Debug.Log($"[Anim] Roll trigger — dir=({dirX:F0},{dirY:F0})");
+
+            Vector3 rollDir = (transform.right * dirX + transform.forward * dirY).normalized;
+            float elapsed   = 0f;
+
+            while (elapsed < rollDuration)
+            {
+                _cc.Move(rollDir * rollSpeed * Time.deltaTime);
+                // Gravité pendant la roulade
+                _verticalVelocity += gravity * Time.deltaTime;
+                _cc.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            _isRolling   = false;
+            _isCrouching = wasCrouching;
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Hit / Mort — déclenchés par PlayerState
+        // ═════════════════════════════════════════════════════════════════════════
+
+        private void OnDamageReceived()
+        {
+            if (_isDead || animator == null) return;
+            animator.SetTrigger(HitParam);
+
+            if (logAnimParams)
+                Debug.Log("[Anim] Hit trigger");
+        }
+
+        private void OnDied()
+        {
+            _isDead = true;
+
+            if (animator != null)
+                animator.SetBool(IsDeadParam, true);
+
+            // Débloquer le curseur à la mort
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible   = true;
+
+            Debug.Log("[PlayerController] Joueur mort — inputs bloqués.");
+        }
+
+        /// <summary>Réinitialise l'état mort (pour respawn).</summary>
+        public void Respawn()
+        {
+            _isDead      = false;
+            _isRolling   = false;
+            _isCrouching = false;
+            _verticalVelocity = 0f;
+
+            if (animator != null)
+                animator.SetBool(IsDeadParam, false);
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
+
+            Debug.Log("[PlayerController] Respawn — état réinitialisé.");
         }
     }
 }

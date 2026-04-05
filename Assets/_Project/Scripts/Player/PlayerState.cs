@@ -12,15 +12,14 @@ namespace ProjectFPS.Player
 
         private float _currentHealth;
 
-        // Rôle actif lu depuis le Singleton RoleManager
         public RoleData ActiveRole => RoleManager.Instance?.CurrentRole;
 
-        // Accesseurs lecture seule
         public float CurrentHealth => _currentHealth;
         public float MaxHealth     => maxHealth;
 
-        // Événements : (currentHealth, maxHealth) et mort
+        // Événements
         public event Action<float, float> OnHealthChanged;
+        public event Action               OnDamageReceived; // ← nouveau : déclenche l'animation de coup
         public event Action               OnDeath;
 
         private void Awake()
@@ -28,7 +27,6 @@ namespace ProjectFPS.Player
             _currentHealth = maxHealth;
         }
 
-        // Inflige des dégâts au joueur
         public void TakeDamage(float amount)
         {
             if (_currentHealth <= 0f || amount <= 0f) return;
@@ -36,9 +34,11 @@ namespace ProjectFPS.Player
             _currentHealth = Mathf.Max(0f, _currentHealth - amount);
             OnHealthChanged?.Invoke(_currentHealth, maxHealth);
 
+            // Déclenche l'animation de coup reçu
+            OnDamageReceived?.Invoke();
+
             if (_currentHealth <= 0f)
             {
-                // Vérifie si la potion Vie peut ressusciter le joueur
                 var effects = GetComponent<EffectSystem>();
                 if (effects != null && effects.TryRevive())
                 {
@@ -51,7 +51,6 @@ namespace ProjectFPS.Player
             }
         }
 
-        // Soigne le joueur sans dépasser le maximum
         public void Heal(float amount)
         {
             if (_currentHealth <= 0f || amount <= 0f) return;
@@ -60,7 +59,6 @@ namespace ProjectFPS.Player
             OnHealthChanged?.Invoke(_currentHealth, maxHealth);
         }
 
-        // Remet le joueur à pleine santé
         public void ResetState()
         {
             _currentHealth = maxHealth;
