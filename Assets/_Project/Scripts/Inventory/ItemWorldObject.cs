@@ -1,4 +1,5 @@
 using UnityEngine;
+using ProjectFPS.Player;
 
 namespace ProjectFPS.Inventory
 {
@@ -20,6 +21,11 @@ namespace ProjectFPS.Inventory
 
         [Header("Données")]
         [SerializeField] private ItemData _data;
+
+        [Header("Impact Potion (état Thrown)")]
+        [Tooltip("Rayon dans lequel les joueurs sont affectés à l'impact (potions lancées).")]
+        [SerializeField] private float impactRadius = 3f;
+        [SerializeField] private LayerMask playerLayer = ~0;
 
         [Header("Animation flottante (état Floating)")]
         [Tooltip("Désactivé par défaut : les objets restent statiques au sol.")]
@@ -137,9 +143,8 @@ namespace ProjectFPS.Inventory
             switch (_data.Type)
             {
                 case ItemType.Potion:
-                    // ✅ Explosion à l'impact → applique soin/dégâts en zone
-                    Debug.Log($"[ItemWorldObject] Potion explose à {transform.position}");
-                    // TODO: Instantiate explosion VFX, apply heal/damage in radius
+                    Debug.Log($"[ItemWorldObject] Potion '{_data.ItemName}' explose à {transform.position} (rayon {impactRadius}m)");
+                    ApplyPotionAreaEffect();
                     Destroy(gameObject);
                     break;
 
@@ -164,6 +169,31 @@ namespace ProjectFPS.Inventory
                     if (_rb != null) _rb.isKinematic = true;
                     break;
             }
+        }
+
+        // ── Effet de potion en zone ───────────────────────────────────────────────
+
+        private void ApplyPotionAreaEffect()
+        {
+            if (_data == null) return;
+
+            // Détecte tous les colliders dans le rayon
+            var hits = Physics.OverlapSphere(transform.position, impactRadius, playerLayer);
+            int affected = 0;
+
+            foreach (var hit in hits)
+            {
+                var effects = hit.GetComponent<EffectSystem>()
+                           ?? hit.GetComponentInParent<EffectSystem>();
+                if (effects == null) continue;
+
+                effects.ApplyEffect(_data);
+                affected++;
+                Debug.Log($"[ItemWorldObject] Potion '{_data.ItemName}' appliquée à '{hit.name}'");
+            }
+
+            if (affected == 0)
+                Debug.Log($"[ItemWorldObject] Potion '{_data.ItemName}' : aucun joueur dans le rayon {impactRadius}m.");
         }
 
         // ── Ramassage ─────────────────────────────────────────────────────────────

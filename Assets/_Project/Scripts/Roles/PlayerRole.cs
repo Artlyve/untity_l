@@ -8,7 +8,8 @@ namespace ProjectFPS.Roles
         Sorcier,
         Maire,
         Ancien,
-        Fils_Chasseur
+        Fils_Chasseur,
+        Loup
 
     }
 }
