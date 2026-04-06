@@ -80,6 +80,10 @@ namespace ProjectFPS.Player
         [Tooltip("Hauteur (m) au-dessus du sol à laquelle l'animation Landing se déclenche en avance.\n" +
                  "Augmente cette valeur si Landing commence trop tard.")]
         [SerializeField] private float landingAnticipationHeight = 0.6f;
+        [Tooltip("Hauteur de la capsule pendant le saut (en l'air).\n" +
+                 "Réduis cette valeur si le personnage se coince sous des plafonds bas pendant le jump.\n" +
+                 "Recommandé : 80-90% de standHeight.")]
+        [SerializeField] private float jumpColliderHeight = 1.6f;
 
         // ─── Roulade ──────────────────────────────────────────────────────────────
         [Header("Roulade")]
@@ -109,6 +113,7 @@ namespace ProjectFPS.Player
         private bool  _isGrounded;
         private bool  _isDead;
         private bool  _isRolling;
+        private bool  _isJumping;   // vrai de JumpStart jusqu'à l'atterrissage
         private float _coyoteTimer;
 
         // ─── SmoothDamp pour MoveX/MoveY ─────────────────────────────────────────
@@ -287,6 +292,10 @@ namespace ProjectFPS.Player
 
         private void ComputeJumpVelocity()
         {
+            // Atterrissage : reset _isJumping
+            if (_isJumping && _isGrounded)
+                _isJumping = false;
+
             // Coller au sol (basé sur l'état de la frame précédente)
             if (_isGrounded && _verticalVelocity < 0f)
                 _verticalVelocity = -2f;
@@ -303,6 +312,7 @@ namespace ProjectFPS.Player
             {
                 _verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
                 _coyoteTimer      = 0f;
+                _isJumping        = true;
 
                 if (animator != null)
                     animator.SetTrigger(JumpStartParam);
@@ -419,10 +429,19 @@ namespace ProjectFPS.Player
 
         private void HandleCrouch()
         {
-            if (Input.GetKeyDown(KeyCode.LeftControl))
+            if (Input.GetKeyDown(KeyCode.LeftControl) && !_isJumping)
                 _isCrouching = !_isCrouching;
 
-            float targetHeight = _isCrouching ? crouchHeight : standHeight;
+            // Hauteur cible de la capsule selon l'état
+            //   Crouch  → crouchHeight        (ex. 1.0)
+            //   Jump    → jumpColliderHeight   (ex. 1.6) — plus petit que debout
+            //             pour passer sous les plafonds bas pendant l'animation
+            //   Debout  → standHeight          (ex. 2.0)
+            float targetHeight;
+            if (_isCrouching)       targetHeight = crouchHeight;
+            else if (_isJumping)    targetHeight = jumpColliderHeight;
+            else                    targetHeight = standHeight;
+
             _cc.height = Mathf.Lerp(_cc.height, targetHeight, crouchTransitionSpeed * Time.deltaTime);
 
             Vector3 center = _cc.center;
