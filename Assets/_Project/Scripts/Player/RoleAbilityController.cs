@@ -274,14 +274,19 @@ namespace ProjectFPS.Player
                 if (target != null)
                 {
                     animator.runtimeAnimatorController = target;
+                    animator.applyRootMotion = false;
                     Debug.Log($"[RoleAbilityController] Controller swappé → {target.name}");
 
-                    // Recharger les layers et paramètres valides dans PlayerController
-                    // OBLIGATOIRE : les indices de layers et les params diffèrent entre
-                    // Human et Wolf controller → sans ça, "Invalid Layer Index" warnings.
-                    GetComponent<PlayerController>()?.RefreshAnimatorSetup();
+                    // Synchronise la référence Animator de PlayerController avec celle-ci.
+                    // ESSENTIEL : si PlayerController.animator et RoleAbilityController.animator
+                    // pointaient vers deux objets différents, PlayerController envoyait ses
+                    // paramètres (MoveX/Y etc.) à l'ancien Animator humain → loup sans animation.
+                    var playerCtrl = GetComponent<PlayerController>();
+                    if (playerCtrl != null)
+                        playerCtrl.SetAnimator(animator); // SetAnimator appelle RefreshAnimatorSetup en interne
 
-                    // Réappliquer IsWolfForm après refresh (controller reset = params remis à 0)
+                    // Réappliquer IsWolfForm (controller reset = params remis à 0)
+                    RebuildValidParams();
                     if (_validParams.Contains(IsWolfFormParam))
                         animator.SetBool(IsWolfFormParam, _isWolfForm);
                 }

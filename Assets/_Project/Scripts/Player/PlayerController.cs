@@ -217,9 +217,22 @@ namespace ProjectFPS.Player
         // ═════════════════════════════════════════════════════════════════════════
 
         /// <summary>
+        /// Change la référence Animator utilisée par PlayerController.
+        /// À appeler par RoleAbilityController après chaque transformation
+        /// si les deux composants n'utilisent pas le même Animator.
+        /// </summary>
+        public void SetAnimator(Animator newAnimator)
+        {
+            if (newAnimator == null) return;
+            animator = newAnimator;
+            animator.applyRootMotion = false;   // évite que le mesh dérive
+            RefreshAnimatorSetup();
+            Debug.Log($"[PlayerController] Animator mis à jour → '{animator.name}' " +
+                $"(controller : {animator.runtimeAnimatorController?.name})");
+        }
+
+        /// <summary>
         /// Recharge les indices de layers et la liste des paramètres valides.
-        /// Doit être appelé par RoleAbilityController après chaque swap de
-        /// runtimeAnimatorController.
         /// </summary>
         public void RefreshAnimatorSetup()
         {
