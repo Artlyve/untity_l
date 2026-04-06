@@ -248,16 +248,22 @@ namespace ProjectFPS.Player
 
             // ── Swap meshes ───────────────────────────────────────────────────────
             if (humanMesh != null)
+            {
                 humanMesh.SetActive(!_isWolfForm);
+                Debug.Log($"[RoleAbilityController] HumanMesh '{humanMesh.name}' → activé={!_isWolfForm}");
+            }
             else
-                Debug.LogWarning("[RoleAbilityController] HumanMesh manquant — " +
-                    "créez un enfant nommé 'HumanMesh' ou assignez dans l'Inspecteur.");
+                Debug.LogWarning("[RoleAbilityController] HumanMesh NULL — " +
+                    "nommez l'enfant 'HumanMesh' ou assignez dans l'Inspecteur.");
 
             if (wolfMesh != null)
+            {
                 wolfMesh.SetActive(_isWolfForm);
+                Debug.Log($"[RoleAbilityController] WolfMesh '{wolfMesh.name}' → activé={_isWolfForm}");
+            }
             else
-                Debug.LogWarning("[RoleAbilityController] WolfMesh manquant — " +
-                    "créez un enfant nommé 'WolfMesh' ou assignez dans l'Inspecteur.");
+                Debug.LogWarning("[RoleAbilityController] WolfMesh NULL — " +
+                    "nommez l'enfant 'WolfMesh' ou assignez dans l'Inspecteur.");
 
             // ── Swap Animator Controller ──────────────────────────────────────────
             if (animator != null)
@@ -268,21 +274,38 @@ namespace ProjectFPS.Player
                 if (target != null)
                 {
                     animator.runtimeAnimatorController = target;
-                    // Réappliquer les bools après le swap (le controller est reset)
-                    animator.SetBool(IsWolfFormParam, _isWolfForm);
                     Debug.Log($"[RoleAbilityController] Controller swappé → {target.name}");
+
+                    // Recharger les layers et paramètres valides dans PlayerController
+                    // OBLIGATOIRE : les indices de layers et les params diffèrent entre
+                    // Human et Wolf controller → sans ça, "Invalid Layer Index" warnings.
+                    GetComponent<PlayerController>()?.RefreshAnimatorSetup();
+
+                    // Réappliquer IsWolfForm après refresh (controller reset = params remis à 0)
+                    if (_validParams.Contains(IsWolfFormParam))
+                        animator.SetBool(IsWolfFormParam, _isWolfForm);
                 }
                 else
                 {
-                    // Pas de wolf controller → juste le bool
-                    animator.SetBool(IsWolfFormParam, _isWolfForm);
                     if (_isWolfForm)
                         Debug.LogWarning("[RoleAbilityController] WolfAnimController non assigné — " +
-                            "le controller ne change pas, seulement le mesh.");
+                            "assignez-le dans l'Inspecteur de RoleAbilityController.");
                 }
             }
 
             Debug.Log($"[RoleAbilityController] Transformation → {(_isWolfForm ? "LOUP" : "HUMAIN")}");
+        }
+
+        // HashSet des params valides du controller actuel (sync avec PlayerController)
+        private readonly System.Collections.Generic.HashSet<int> _validParams
+            = new System.Collections.Generic.HashSet<int>();
+
+        private void RebuildValidParams()
+        {
+            _validParams.Clear();
+            if (animator == null) return;
+            foreach (var p in animator.parameters)
+                _validParams.Add(p.nameHash);
         }
 
         private void WolfAttack()

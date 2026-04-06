@@ -122,14 +122,18 @@ namespace ProjectFPS.Player
         private float _velX;
         private float _velY;
 
-        // ─── Layer indices (trouvés en Start) ────────────────────────────────────
+        // ─── Layer indices (rechargés à chaque swap de controller) ───────────────
         private int _layerCrouch    = -1;  // "Crouch"
         private int _layerUpperBody = -1;  // "UpperBody"
         private int _layerFullBody  = -1;  // "FullBody"
 
+        // ─── Paramètres valides dans le controller actuel ─────────────────────────
+        // Rechargés lors de chaque swap — évite "Parameter does not exist" quand
+        // le Wolf Controller n'a pas tous les params du Human Controller.
+        private readonly System.Collections.Generic.HashSet<int> _validParams
+            = new System.Collections.Generic.HashSet<int>();
+
         // ─── Timer pour le layer UpperBody (Hit) ─────────────────────────────────
-        // Le layer UpperBody doit rester à weight=0 la plupart du temps.
-        // Il monte à 1 quand le Hit joue, puis redescend automatiquement.
         [Header("Hit (UpperBody layer)")]
         [Tooltip("Durée (s) pendant laquelle le layer UpperBody reste actif après un coup.")]
         [SerializeField] private float hitLayerDuration = 0.8f;
@@ -190,13 +194,7 @@ namespace ProjectFPS.Player
                 _playerState.OnDeath          += OnDied;
             }
 
-            // Trouver les indices de layers (optionnels)
-            if (animator != null)
-            {
-                _layerCrouch    = animator.GetLayerIndex("Crouch");
-                _layerUpperBody = animator.GetLayerIndex("UpperBody");
-                _layerFullBody  = animator.GetLayerIndex("FullBody");
-            }
+            RefreshAnimatorSetup();
 
             Debug.Log("[PlayerController] Démarré :" +
                 $"\n  CameraHolder  : {(cameraHolder != null ? cameraHolder.name + " " + cameraHolder.localPosition : "NULL !")}" +
@@ -212,6 +210,50 @@ namespace ProjectFPS.Player
                 _playerState.OnDamageReceived -= OnDamageReceived;
                 _playerState.OnDeath          -= OnDied;
             }
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Refresh Animator — appelé au Start et après chaque swap de controller
+        // ═════════════════════════════════════════════════════════════════════════
+
+        /// <summary>
+        /// Recharge les indices de layers et la liste des paramètres valides.
+        /// Doit être appelé par RoleAbilityController après chaque swap de
+        /// runtimeAnimatorController.
+        /// </summary>
+        public void RefreshAnimatorSetup()
+        {
+            if (animator == null) return;
+
+            _layerCrouch    = animator.GetLayerIndex("Crouch");
+            _layerUpperBody = animator.GetLayerIndex("UpperBody");
+            _layerFullBody  = animator.GetLayerIndex("FullBody");
+
+            _validParams.Clear();
+            foreach (var p in animator.parameters)
+                _validParams.Add(p.nameHash);
+
+            Debug.Log($"[PlayerController] Animator rechargé → controller : '{animator.runtimeAnimatorController?.name}'" +
+                $" | layers : Crouch={_layerCrouch} UpperBody={_layerUpperBody} FullBody={_layerFullBody}" +
+                $" | {animator.parameterCount} paramètres valides");
+        }
+
+        // Wrappers sûrs : ignorés silencieusement si le paramètre n'existe pas
+        // dans le controller actuel (ex. IsCrouching absent du Wolf Controller).
+        private void SafeSetBool(int hash, bool value)
+        {
+            if (animator != null && _validParams.Contains(hash))
+                animator.SetBool(hash, value);
+        }
+        private void SafeSetFloat(int hash, float value)
+        {
+            if (animator != null && _validParams.Contains(hash))
+                animator.SetFloat(hash, value);
+        }
+        private void SafeSetTrigger(int hash)
+        {
+            if (animator != null && _validParams.Contains(hash))
+                animator.SetTrigger(hash);
         }
 
         // ═════════════════════════════════════════════════════════════════════════
@@ -314,8 +356,7 @@ namespace ProjectFPS.Player
                 _coyoteTimer      = 0f;
                 _isJumping        = true;
 
-                if (animator != null)
-                    animator.SetTrigger(JumpStartParam);
+                SafeSetTrigger(JumpStartParam);
 
                 if (logAnimParams)
                     Debug.Log("[Anim] JumpStart trigger");
@@ -371,26 +412,24 @@ namespace ProjectFPS.Player
             if (animator == null) return;
 
             // Locomotion
-            animator.SetFloat(MoveXParam, _animMoveX);
-            animator.SetFloat(MoveYParam, _animMoveY);
+            SafeSetFloat(MoveXParam, _animMoveX);
+            SafeSetFloat(MoveYParam, _animMoveY);
 
             // Sol / Chute — lus après _cc.Move donc fiables
             bool isFalling = !_isGrounded && _verticalVelocity < -1f;
-            animator.SetBool(IsGroundedParam, _isGrounded);
-            animator.SetBool(IsFallingParam,  isFalling);
+            SafeSetBool(IsGroundedParam, _isGrounded);
+            SafeSetBool(IsFallingParam,  isFalling);
 
             // IsNearGround : vrai quand le sol est à moins de landingAnticipationHeight
-            // → déclenche Landing en avance pour laisser l'animation se jouer
-            // Raycast depuis le centre du CharacterController vers le bas
             bool isNearGround = _isGrounded;
             if (!_isGrounded && isFalling)
             {
-                Vector3 origin = transform.position + Vector3.up * (_cc.height * 0.5f);
+                Vector3 origin    = transform.position + Vector3.up * (_cc.height * 0.5f);
                 float   checkDist = _cc.height * 0.5f + landingAnticipationHeight;
                 if (Physics.Raycast(origin, Vector3.down, checkDist, ~0, QueryTriggerInteraction.Ignore))
                     isNearGround = true;
             }
-            animator.SetBool(IsNearGroundParam, isNearGround);
+            SafeSetBool(IsNearGroundParam, isNearGround);
 
             // ── Layer Crouch : weight 0→1 piloté par IsCrouching ─────────────────
             // IMPORTANT : mettre le layer Crouch à weight=0 dans Unity,
@@ -456,8 +495,7 @@ namespace ProjectFPS.Player
                 cameraHolder.localPosition = lp;
             }
 
-            if (animator != null)
-                animator.SetBool(IsCrouchingParam, _isCrouching);
+            SafeSetBool(IsCrouchingParam, _isCrouching);
         }
 
         // ═════════════════════════════════════════════════════════════════════════
@@ -485,13 +523,9 @@ namespace ProjectFPS.Player
             bool wasCrouching = _isCrouching;
             _isCrouching = false;
 
-            if (animator != null)
-            {
-                // Régler la direction AVANT le trigger
-                animator.SetFloat(RollDirXParam, dirX);
-                animator.SetFloat(RollDirYParam, dirY);
-                animator.SetTrigger(RollParam);
-            }
+            SafeSetFloat(RollDirXParam, dirX);
+            SafeSetFloat(RollDirYParam, dirY);
+            SafeSetTrigger(RollParam);
 
             if (logAnimParams)
                 Debug.Log($"[Anim] Roll trigger — dir=({dirX:F0},{dirY:F0})");
@@ -523,9 +557,9 @@ namespace ProjectFPS.Player
 
         private void OnDamageReceived()
         {
-            if (_isDead || animator == null) return;
-            animator.SetTrigger(HitParam);
-            _hitLayerTimer = hitLayerDuration;  // active le layer UpperBody temporairement
+            if (_isDead) return;
+            SafeSetTrigger(HitParam);
+            _hitLayerTimer = hitLayerDuration;
 
             if (logAnimParams)
                 Debug.Log("[Anim] Hit trigger");
@@ -534,11 +568,8 @@ namespace ProjectFPS.Player
         private void OnDied()
         {
             _isDead = true;
+            SafeSetBool(IsDeadParam, true);
 
-            if (animator != null)
-                animator.SetBool(IsDeadParam, true);
-
-            // Débloquer le curseur à la mort
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible   = true;
 
@@ -552,9 +583,8 @@ namespace ProjectFPS.Player
             _isRolling   = false;
             _isCrouching = false;
             _verticalVelocity = 0f;
-
-            if (animator != null)
-                animator.SetBool(IsDeadParam, false);
+            RefreshAnimatorSetup();
+            SafeSetBool(IsDeadParam, false);
 
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
