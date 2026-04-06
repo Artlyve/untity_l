@@ -77,6 +77,9 @@ namespace ProjectFPS.Player
         [SerializeField] private float gravity    = -9.81f;
         [Tooltip("Durée (s) pendant laquelle le saut est encore possible après avoir quitté un bord.")]
         [SerializeField] private float coyoteTime = 0.15f;
+        [Tooltip("Hauteur (m) au-dessus du sol à laquelle l'animation Landing se déclenche en avance.\n" +
+                 "Augmente cette valeur si Landing commence trop tard.")]
+        [SerializeField] private float landingAnticipationHeight = 0.6f;
 
         // ─── Roulade ──────────────────────────────────────────────────────────────
         [Header("Roulade")]
@@ -137,8 +140,9 @@ namespace ProjectFPS.Player
         private static readonly int RollParam        = Animator.StringToHash("Roll");
         private static readonly int RollDirXParam    = Animator.StringToHash("RollDirX");
         private static readonly int RollDirYParam    = Animator.StringToHash("RollDirY");
-        private static readonly int HitParam         = Animator.StringToHash("Hit");
-        private static readonly int IsDeadParam      = Animator.StringToHash("IsDead");
+        private static readonly int HitParam           = Animator.StringToHash("Hit");
+        private static readonly int IsDeadParam        = Animator.StringToHash("IsDead");
+        private static readonly int IsNearGroundParam  = Animator.StringToHash("IsNearGround");
 
         // ═════════════════════════════════════════════════════════════════════════
         // Lifecycle
@@ -364,6 +368,19 @@ namespace ProjectFPS.Player
             bool isFalling = !_isGrounded && _verticalVelocity < -1f;
             animator.SetBool(IsGroundedParam, _isGrounded);
             animator.SetBool(IsFallingParam,  isFalling);
+
+            // IsNearGround : vrai quand le sol est à moins de landingAnticipationHeight
+            // → déclenche Landing en avance pour laisser l'animation se jouer
+            // Raycast depuis le centre du CharacterController vers le bas
+            bool isNearGround = _isGrounded;
+            if (!_isGrounded && isFalling)
+            {
+                Vector3 origin = transform.position + Vector3.up * (_cc.height * 0.5f);
+                float   checkDist = _cc.height * 0.5f + landingAnticipationHeight;
+                if (Physics.Raycast(origin, Vector3.down, checkDist, ~0, QueryTriggerInteraction.Ignore))
+                    isNearGround = true;
+            }
+            animator.SetBool(IsNearGroundParam, isNearGround);
 
             // ── Layer Crouch : weight 0→1 piloté par IsCrouching ─────────────────
             // IMPORTANT : mettre le layer Crouch à weight=0 dans Unity,
