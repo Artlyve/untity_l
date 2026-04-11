@@ -32,11 +32,14 @@ namespace ProjectFPS.Editor
         public static void SetupLobbyCanvas()
         {
             // ── Canvas ────────────────────────────────────────────────────────────
-            Canvas canvas = Object.FindObjectOfType<Canvas>();
-            GameObject canvasGO;
-            if (canvas == null)
+            // Always use a canvas named "LobbyCanvas" so we never contaminate
+            // the game HUD canvas (which may already exist in the scene).
+            const string canvasName = "LobbyCanvas";
+            GameObject canvasGO = GameObject.Find(canvasName);
+            Canvas canvas;
+            if (canvasGO == null)
             {
-                canvasGO = new GameObject("Canvas");
+                canvasGO = new GameObject(canvasName);
                 canvas   = canvasGO.AddComponent<Canvas>();
                 var scaler             = canvasGO.AddComponent<CanvasScaler>();
                 scaler.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -47,7 +50,8 @@ namespace ProjectFPS.Editor
             }
             else
             {
-                canvasGO = canvas.gameObject;
+                canvas = canvasGO.GetComponent<Canvas>();
+                if (canvas == null) canvas = canvasGO.AddComponent<Canvas>();
             }
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
