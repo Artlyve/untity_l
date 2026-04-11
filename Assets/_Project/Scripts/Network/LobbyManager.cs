@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using FishNet;
 using FishNet.Connection;
+using FishNet.Transporting;
 using FishNet.Managing.Client;
 using FishNet.Managing.Server;
 using FishNet.Managing.Scened;
