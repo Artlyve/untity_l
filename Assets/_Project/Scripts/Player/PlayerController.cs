@@ -183,15 +183,16 @@ namespace ProjectFPS.Player
             }
         }
 
+        // Callback FishNet — appelé uniquement sur le client propriétaire, APRÈS init réseau
+        public override void OnStartOwner()
+        {
+            base.OnStartOwner();
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible   = false;
+        }
+
         private void Start()
         {
-            // Curseur verrouillé uniquement sur le client propriétaire
-            if (IsOwner)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible   = false;
-            }
-
             // Abonnement aux événements PlayerState
             if (_playerState != null)
             {
