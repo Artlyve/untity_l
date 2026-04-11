@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fd6f4ea030b92248bb6b70922b7903e, type: 3}
+  m_Name: "Fumig\xE8ne"
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectFPS.Inventory.ItemData
+  itemName: "Fumig\xE8ne"
+  description: 
+  icon: {fileID: 21300000, guid: 2bccd332882fcd14b9e4c377e432c587, type: 3}
+  itemType: 3
+  worldPrefab: {fileID: 560146365298135811, guid: a6b5fc2e40a7d334e85663cf54184c08, type: 3}
+  potionSubType: 0
+  throwForce: 12
+  resourceValue: 10
