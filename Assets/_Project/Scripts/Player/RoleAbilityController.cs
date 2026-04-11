@@ -9,7 +9,7 @@ namespace ProjectFPS.Player
     {
         // ─── Références ───────────────────────────────────────────────────────────
         [Header("Références")]
-        [SerializeField] private Camera   playerCamera;
+        [SerializeField] private Camera playerCamera;
 
         // ─── Chasseur : Visée ────────────────────────────────────────────────────
         [Header("Chasseur – Visée")]
@@ -20,9 +20,7 @@ namespace ProjectFPS.Player
 
         // ─── Loup : Transformation ────────────────────────────────────────────────
         [Header("Loup – Transformation")]
-        [Tooltip("Glissez le GameObject HumanMesh depuis la Hierarchy.")]
         [SerializeField] private GameObject humanMesh;
-        [Tooltip("Glissez le GameObject WolfMesh depuis la Hierarchy.")]
         [SerializeField] private GameObject wolfMesh;
         [SerializeField] private float      wolfSpeedBonus   = 1.5f;
         [SerializeField] private float      wolfAttackDamage = 30f;
@@ -38,7 +36,7 @@ namespace ProjectFPS.Player
         private float           _roleBaseSpeedMult = 1f;
         private const float     AttackCooldownTime = 0.8f;
 
-        // Animator actif — pointe vers l'Animator du mesh visible
+        // Animator du mesh actuellement visible (humain ou loup)
         private Animator _activeAnimator;
 
         // ─── Hash paramètres Animator ─────────────────────────────────────────────
@@ -76,10 +74,10 @@ namespace ProjectFPS.Player
 
         private void Start()
         {
-            // Au démarrage : l'Animator actif est celui du HumanMesh
-            _activeAnimator = humanMesh != null ? humanMesh.GetComponent<Animator>() : null;
-            if (_activeAnimator == null)
-                _activeAnimator = GetComponentInChildren<Animator>();
+            // Animator actif au démarrage = HumanMesh
+            _activeAnimator = humanMesh != null
+                ? humanMesh.GetComponent<Animator>()
+                : GetComponentInChildren<Animator>();
 
             if (_activeAnimator != null)
             {
@@ -87,12 +85,9 @@ namespace ProjectFPS.Player
                 GetComponent<PlayerController>()?.SetAnimator(_activeAnimator);
             }
 
-            // Désactive la root motion sur le WolfMesh aussi
-            if (wolfMesh != null)
-            {
-                var wolfAnim = wolfMesh.GetComponent<Animator>();
-                if (wolfAnim != null) wolfAnim.applyRootMotion = false;
-            }
+            // Désactive root motion sur WolfMesh aussi (évite drift à l'activation)
+            var wolfAnim = wolfMesh != null ? wolfMesh.GetComponent<Animator>() : null;
+            if (wolfAnim != null) wolfAnim.applyRootMotion = false;
 
             if (RoleManager.Instance != null)
             {
@@ -105,10 +100,10 @@ namespace ProjectFPS.Player
             }
 
             Debug.Log("[RoleAbilityController] Démarré :" +
-                $"\n  Rôle         : {_role}" +
-                $"\n  Camera       : {(playerCamera != null ? playerCamera.name : "NULL")}" +
-                $"\n  HumanMesh    : {(humanMesh != null ? humanMesh.name : "NULL")}" +
-                $"\n  WolfMesh     : {(wolfMesh  != null ? wolfMesh.name  : "NULL")}" +
+                $"\n  Rôle           : {_role}" +
+                $"\n  Camera         : {(playerCamera  != null ? playerCamera.name  : "NULL")}" +
+                $"\n  HumanMesh      : {(humanMesh     != null ? humanMesh.name     : "NULL")}" +
+                $"\n  WolfMesh       : {(wolfMesh      != null ? wolfMesh.name      : "NULL")}" +
                 $"\n  Animator actif : {(_activeAnimator != null ? _activeAnimator.name : "NULL")}");
         }
 
@@ -218,37 +213,41 @@ namespace ProjectFPS.Player
         {
             _isWolfForm = !_isWolfForm;
 
-            // 1. Swap visibilité des meshes
+            // 1. Swap visibilité
             humanMesh?.SetActive(!_isWolfForm);
             wolfMesh?.SetActive(_isWolfForm);
 
-            // 2. Pointer vers l'Animator du mesh maintenant visible
-            //    Chaque mesh a DÉJÀ son propre controller assigné dans Unity.
-            //    On n'a pas besoin de swapper runtimeAnimatorController.
-            //    Il suffit de dire à PlayerController quel Animator utiliser.
+            // 2. Récupère l'Animator du mesh maintenant actif
+            //    Chaque mesh a DÉJÀ son controller assigné dans Unity → pas de swap nécessaire
             GameObject activeMesh = _isWolfForm ? wolfMesh : humanMesh;
-            if (activeMesh != null)
+            if (activeMesh == null)
             {
-                _activeAnimator = activeMesh.GetComponent<Animator>();
-                if (_activeAnimator != null)
-                {
-                    _activeAnimator.applyRootMotion = false;
-                    GetComponent<PlayerController>()?.SetAnimator(_activeAnimator);
-                    Debug.Log($"[RoleAbilityController] → {(_isWolfForm ? "LOUP" : "HUMAIN")}" +
-                        $" | Animator : {_activeAnimator.name}" +
-                        $" | Controller : {_activeAnimator.runtimeAnimatorController?.name}");
-                }
-                else
-                {
-                    Debug.LogWarning($"[RoleAbilityController] Pas d'Animator sur '{activeMesh.name}' !");
-                }
+                Debug.LogWarning($"[RoleAbilityController] {(_isWolfForm ? "WolfMesh" : "HumanMesh")} non assigné !");
+                return;
             }
+
+            _activeAnimator = activeMesh.GetComponent<Animator>();
+            if (_activeAnimator == null)
+            {
+                Debug.LogWarning($"[RoleAbilityController] Pas d'Animator sur '{activeMesh.name}' !");
+                return;
+            }
+
+            _activeAnimator.applyRootMotion = false;
+            GetComponent<PlayerController>()?.SetAnimator(_activeAnimator);
+
+            Debug.Log($"[RoleAbilityController] → {(_isWolfForm ? "LOUP" : "HUMAIN")}" +
+                $" | Animator : {_activeAnimator.name}" +
+                $" | Controller : {_activeAnimator.runtimeAnimatorController?.name}");
         }
 
         private void WolfAttack()
         {
             _attackCooldown = AttackCooldownTime;
+
+            // Envoie le trigger à l'Animator ACTIF (WolfMesh), pas à l'ancien HumanMesh
             _activeAnimator?.SetTrigger(WolfAttackParam);
+
             Debug.Log("[RoleAbilityController] Loup : attaque !");
 
             if (playerCamera == null) return;
