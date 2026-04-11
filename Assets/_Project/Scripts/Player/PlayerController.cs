@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using FishNet.Object;
 using ProjectFPS.Inventory;
 using ProjectFPS.UI;
 
@@ -41,7 +42,7 @@ namespace ProjectFPS.Player
     ///   Bloque les inputs de déplacement pendant la durée de la roulade.
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         // ─── Références ───────────────────────────────────────────────────────────
         [Header("Références")]
@@ -184,8 +185,12 @@ namespace ProjectFPS.Player
 
         private void Start()
         {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible   = false;
+            // Curseur verrouillé uniquement sur le client propriétaire
+            if (IsOwner)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible   = false;
+            }
 
             // Abonnement aux événements PlayerState
             if (_playerState != null)
@@ -275,6 +280,9 @@ namespace ProjectFPS.Player
 
         private void Update()
         {
+            // Seul le propriétaire de ce NetworkObject traite les inputs
+            if (!IsOwner) return;
+
             HandleCursorLock();
 
             if (_isDead) return;
@@ -583,8 +591,11 @@ namespace ProjectFPS.Player
             _isDead = true;
             SafeSetBool(IsDeadParam, true);
 
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible   = true;
+            if (IsOwner)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible   = true;
+            }
 
             Debug.Log("[PlayerController] Joueur mort — inputs bloqués.");
         }
