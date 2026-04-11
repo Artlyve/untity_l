@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 680536677779636570}
   - component: {fileID: 4392723801664316265}
   - component: {fileID: -7448645317947149640}
-  - component: {fileID: 5515175846362275862}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Untagged
@@ -83,14 +82,24 @@ MonoBehaviour:
   walkSpeed: 5
   sprintSpeed: 11
   crouchSpeed: 3
+  rollSpeed: 7
   mouseSensitivity: 2
-  standHeight: 2
-  crouchHeight: 1
-  crouchTransitionSpeed: 4
-  gravity: -9.81
   cameraEyeHeight: 0.1
   cameraEyeHeightCrouch: -0.5
   cameraForwardOffset: 0.12
+  standHeight: 2
+  crouchHeight: 1
+  crouchTransitionSpeed: 4
+  jumpHeight: 1.5
+  gravity: -9.81
+  coyoteTime: 0.15
+  landingAnticipationHeight: 0.6
+  jumpColliderHeight: 1.6
+  rollDuration: 0.55
+  rollKey: 308
+  animSmoothTime: 0.08
+  logAnimParams: 0
+  hitLayerDuration: 0.8
 --- !u!114 &7121233364642367829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,31 +176,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79cf93e68fc7124c9c69f83dd3d9df6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectFPS.Inventory.EffectSystem
---- !u!114 &5515175846362275862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4143206222715612612}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc24e51fba627c644bca5fb12e8dbb89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectFPS.Player.RoleAbilityController
-  playerCamera: {fileID: 6301402143288624203}
-  aimFOV: 40
-  normalFOV: 70
-  aimSpeedPenalty: 0.4
-  fovTransitionSpeed: 10
-  humanMesh: {fileID: 919132149155446097, guid: 0995887587903da48b3e58665f73d1a7, type: 3}
-  wolfMesh: {fileID: 919132149155446097, guid: 78a87050ed9bca6488c8a72761855465, type: 3}
-  wolfSpeedBonus: 1.5
-  wolfAttackDamage: 30
-  wolfAttackRange: 2
-  wolfAttackLayer:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  bodyRoot: {fileID: 0}
+  hearingRadius: 12
+  hearingPulseInterval: 3
 --- !u!1 &5612568062082058923
 GameObject:
   m_ObjectHideFlags: 0

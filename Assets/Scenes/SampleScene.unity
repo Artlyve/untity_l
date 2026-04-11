@@ -1360,9 +1360,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectFPS.Player.RoleAbilityController
   playerCamera: {fileID: 1012180285}
-  animator: {fileID: 137694188}
-  humanAnimController: {fileID: 9100000, guid: 4b81049eea774fd4fba2a2570aa37705, type: 2}
-  wolfAnimController: {fileID: 9100000, guid: 2f8c01e9e5579044e80302c669adcdd6, type: 2}
   aimFOV: 40
   normalFOV: 70
   aimSpeedPenalty: 0.4
@@ -1522,8 +1519,7 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 2f8c01e9e5579044e80302c669adcdd6, type: 2}
-    m_RemovedComponents:
-    - {fileID: 5866666021909216657, guid: 78a87050ed9bca6488c8a72761855465, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2217,6 +2213,10 @@ PrefabInstance:
       value: 99
       objectReference: {fileID: 0}
     - target: {fileID: 9128488661108823876, guid: 6f5a03e80994b5246ae54fdcacfa9c60, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 137694188}
+    - target: {fileID: 9128488661108823876, guid: 6f5a03e80994b5246ae54fdcacfa9c60, type: 3}
       propertyPath: standHeight
       value: 3.9
       objectReference: {fileID: 0}
@@ -2228,8 +2228,7 @@ PrefabInstance:
       propertyPath: landingAnticipationHeight
       value: 0.2
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5515175846362275862, guid: 6f5a03e80994b5246ae54fdcacfa9c60, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 993096042904965036, guid: 6f5a03e80994b5246ae54fdcacfa9c60, type: 3}
