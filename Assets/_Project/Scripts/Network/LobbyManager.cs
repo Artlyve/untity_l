@@ -1,3 +1,6 @@
+using System;
+using System.Net;
+using System.Net.Sockets;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,34 +14,19 @@ using FishNet.Managing.Scened;
 namespace ProjectFPS.Network
 {
     /// <summary>
-    /// Gère le lobby multijoueur : hébergement, connexion, liste joueurs, lancement de partie.
+    /// Gère le lobby multijoueur : hébergement, connexion (via code de partie), liste joueurs, lancement.
     ///
-    /// ═══ HIÉRARCHIE CANVAS RECOMMANDÉE ═══════════════════════════════════════
+    /// ═══ CODE DE PARTIE ══════════════════════════════════════════════════════════
+    ///  L'hôte voit son IP locale encodée sous forme de code 8 caractères (ex: C0A8-0164).
+    ///  Il partage ce code verbalement ou par chat.
+    ///  Le client l'entre dans le champ et rejoindre décode automatiquement en IP.
+    ///  Fonctionne sur réseau local (LAN). Pour Internet, un relay est nécessaire.
     ///
-    ///  Canvas (Screen Space – Overlay)
-    ///  └── LobbyManager (ce script sur ce GameObject)
-    ///
-    ///  ┌── ConnectPanel
-    ///  │   ├── Title         (TextMeshPro)   "ProjectFPS"
-    ///  │   ├── HostButton    (Button + TMP)  "Héberger"
-    ///  │   ├── Separator     (Image)
-    ///  │   ├── IpInputField  (TMP_InputField) placeholder = "Adresse IP"
-    ///  │   ├── JoinButton    (Button + TMP)  "Rejoindre"
-    ///  │   └── StatusText    (TextMeshPro)   feedback connexion
-    ///  │
-    ///  └── LobbyPanel
-    ///      ├── Title         (TextMeshPro)   "Lobby"
-    ///      ├── PlayerCountText (TextMeshPro) "Joueurs : 0"
-    ///      ├── PlayerListText  (TextMeshPro) liste des joueurs (multi-ligne)
-    ///      ├── StartGameButton (Button + TMP) "Lancer la partie" — host only
-    ///      └── LeaveButton     (Button + TMP) "Quitter"
-    ///
-    /// ═══ CONFIGURATION ════════════════════════════════════════════════════════
-    ///  1. Crée une scène "Lobby" (File → New Scene)
-    ///  2. Copie le NetworkManager + Tugboat depuis ta scène de jeu
-    ///  3. Crée le Canvas ci-dessus et assigne les champs dans l'Inspector
-    ///  4. Champ "Game Scene Name" → nom exact de ta scène de jeu (ex. "SampleScene")
-    ///  5. Dans Build Settings → ajoute Lobby (index 0) et SampleScene (index 1)
+    /// ═══ CONFIGURATION ════════════════════════════════════════════════════════════
+    ///  1. Scène "Lobby" avec NetworkManager + Tugboat
+    ///  2. Menu ProjectFPS → Setup Lobby Canvas
+    ///  3. Inspector LobbyManager : Game Scene Name + Port
+    ///  4. Build Settings : Lobby (index 0) + scène de jeu (index 1)
     /// </summary>
     public class LobbyManager : MonoBehaviour
     {
@@ -50,7 +38,7 @@ namespace ProjectFPS.Network
         // ─── Connect Panel ────────────────────────────────────────────────────────
         [Header("Connect Panel")]
         [SerializeField] private Button          hostButton;
-        [SerializeField] private TMP_InputField  ipInputField;
+        [SerializeField] private TMP_InputField  codeInputField;
         [SerializeField] private Button          joinButton;
         [SerializeField] private TextMeshProUGUI statusText;
 
@@ -58,6 +46,7 @@ namespace ProjectFPS.Network
         [Header("Lobby Panel")]
         [SerializeField] private TextMeshProUGUI playerCountText;
         [SerializeField] private TextMeshProUGUI playerListText;
+        [SerializeField] private TextMeshProUGUI partyCodeText;
         [SerializeField] private Button          startGameButton;
         [SerializeField] private Button          leaveButton;
 
@@ -73,21 +62,23 @@ namespace ProjectFPS.Network
 
         private void Start()
         {
-            // Valeur par défaut du champ IP
-            if (ipInputField != null)
-                ipInputField.text = "localhost";
-
-            // Listeners boutons
             hostButton?.onClick.AddListener(OnHostClicked);
             joinButton?.onClick.AddListener(OnJoinClicked);
             startGameButton?.onClick.AddListener(OnStartGameClicked);
             leaveButton?.onClick.AddListener(OnLeaveClicked);
 
-            // Événements réseau FishNet
+            // Guard : le NetworkManager doit être dans la scène Lobby
+            if (InstanceFinder.NetworkManager == null)
+            {
+                SetStatus("NetworkManager absent ! Voir Console.");
+                Debug.LogError("[LobbyManager] NetworkManager introuvable dans la scène.\n" +
+                               "→ Copie le GameObject NetworkManager (+ Tugboat) depuis ta scène de jeu dans la scène Lobby.");
+                return;
+            }
+
             InstanceFinder.ServerManager.OnRemoteConnectionState += OnRemoteConnectionState;
             InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
 
-            // Démarrage sur le panel de connexion
             ShowConnectPanel();
         }
 
@@ -109,17 +100,19 @@ namespace ProjectFPS.Network
             hostButton.interactable = false;
             joinButton.interactable = false;
 
-            // Démarre le serveur puis se connecte en tant que client local
             InstanceFinder.ServerManager.StartConnection(port);
             InstanceFinder.ClientManager.StartConnection("localhost", port);
         }
 
         private void OnJoinClicked()
         {
-            string ip = ipInputField != null ? ipInputField.text.Trim() : "localhost";
-            if (string.IsNullOrEmpty(ip)) ip = "localhost";
+            string input = codeInputField != null ? codeInputField.text.Trim() : "";
+            if (string.IsNullOrEmpty(input)) input = "localhost";
 
-            SetStatus($"Connexion à {ip}:{port}...");
+            // Décode le code de partie (ex. "C0A8-0164") → IP, ou utilise directement si c'est déjà une IP
+            string ip = CodeToIp(input);
+
+            SetStatus("Connexion...");
             hostButton.interactable = false;
             joinButton.interactable = false;
 
@@ -128,7 +121,6 @@ namespace ProjectFPS.Network
 
         private void OnStartGameClicked()
         {
-            // Seul l'hôte peut lancer la partie
             if (!InstanceFinder.IsServer)
             {
                 SetStatus("Seul l'hôte peut lancer la partie.");
@@ -136,8 +128,6 @@ namespace ProjectFPS.Network
             }
 
             Debug.Log($"[LobbyManager] Chargement de la scène '{gameSceneName}'...");
-
-            // FishNet SceneManager — synchronise la scène pour TOUS les clients
             SceneLoadData sld = new SceneLoadData(gameSceneName);
             InstanceFinder.NetworkManager.SceneManager.LoadGlobalScenes(sld);
         }
@@ -153,13 +143,11 @@ namespace ProjectFPS.Network
         // Événements FishNet
         // ═════════════════════════════════════════════════════════════════════════
 
-        // Appelé sur le serveur quand un client se connecte ou se déconnecte
         private void OnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
         {
             RefreshPlayerList();
         }
 
-        // Appelé sur le client local quand son état de connexion change
         private void OnClientConnectionState(ClientConnectionStateArgs args)
         {
             switch (args.ConnectionState)
@@ -195,6 +183,7 @@ namespace ProjectFPS.Network
 
             if (hostButton != null) hostButton.interactable = true;
             if (joinButton != null) joinButton.interactable = true;
+            if (codeInputField != null) codeInputField.text = "";
         }
 
         private void ShowLobbyPanel()
@@ -202,9 +191,22 @@ namespace ProjectFPS.Network
             connectPanel?.SetActive(false);
             lobbyPanel?.SetActive(true);
 
-            // Le bouton "Lancer" n'est visible que pour l'hôte
             if (startGameButton != null)
                 startGameButton.gameObject.SetActive(InstanceFinder.IsServer);
+
+            // L'hôte voit son code de partie pour le partager avec les autres joueurs
+            if (partyCodeText != null)
+            {
+                if (InstanceFinder.IsServer)
+                {
+                    string code = IpToCode(GetLocalIP());
+                    partyCodeText.text = $"Code de la partie\n<b><size=130%>{code}</size></b>";
+                }
+                else
+                {
+                    partyCodeText.text = "";
+                }
+            }
 
             RefreshPlayerList();
         }
@@ -213,10 +215,8 @@ namespace ProjectFPS.Network
         {
             if (!InstanceFinder.IsServer)
             {
-                if (playerListText != null)
-                    playerListText.text = "En attente du serveur...";
-                if (playerCountText != null)
-                    playerCountText.text = "";
+                if (playerListText != null)  playerListText.text  = "En attente du serveur...";
+                if (playerCountText != null) playerCountText.text = "";
                 return;
             }
 
@@ -234,8 +234,6 @@ namespace ProjectFPS.Network
                     sb.AppendLine($"  {i++}. Joueur #{kv.Key}");
                 playerListText.text = sb.ToString();
             }
-
-            Debug.Log($"[LobbyManager] Liste joueurs mise à jour : {count} joueur(s)");
         }
 
         private void SetStatus(string message)
@@ -243,6 +241,61 @@ namespace ProjectFPS.Network
             if (statusText != null)
                 statusText.text = message;
             Debug.Log($"[LobbyManager] {message}");
+        }
+
+        // ═════════════════════════════════════════════════════════════════════════
+        // Code de partie — encode/décode IPv4 ↔ code hexadécimal 8 caractères
+        // Exemple : 192.168.1.100  ↔  C0A8-0164
+        // Fonctionne sur LAN : l'hôte partage le code, le client le saisit.
+        // ═════════════════════════════════════════════════════════════════════════
+
+        public static string IpToCode(string ip)
+        {
+            try
+            {
+                byte[] b = IPAddress.Parse(ip).GetAddressBytes();
+                string h = BitConverter.ToString(b).Replace("-", "");
+                return h.Substring(0, 4) + "-" + h.Substring(4);
+            }
+            catch { return ip; }
+        }
+
+        public static string CodeToIp(string code)
+        {
+            try
+            {
+                string hex = code.Replace("-", "").Replace(" ", "").ToUpper();
+                if (hex.Length == 8 && IsHexString(hex))
+                {
+                    byte[] bytes = new byte[4];
+                    for (int i = 0; i < 4; i++)
+                        bytes[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+                    return new IPAddress(bytes).ToString();
+                }
+            }
+            catch { }
+            return code; // fallback : traité comme IP directe
+        }
+
+        private static bool IsHexString(string s)
+        {
+            foreach (char c in s)
+                if (!Uri.IsHexDigit(c)) return false;
+            return true;
+        }
+
+        private static string GetLocalIP()
+        {
+            try
+            {
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (var addr in host.AddressList)
+                    if (addr.AddressFamily == AddressFamily.InterNetwork
+                        && !addr.ToString().StartsWith("127."))
+                        return addr.ToString();
+            }
+            catch { }
+            return "127.0.0.1";
         }
     }
 }

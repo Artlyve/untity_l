@@ -1,7 +1,5 @@
 // LobbySetupEditor.cs
 // Menu : ProjectFPS → Setup Lobby Canvas
-// Crée la hiérarchie Canvas du Lobby en une seule commande,
-// câble automatiquement tous les champs du LobbyManager.
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,25 +13,21 @@ namespace ProjectFPS.Editor
 {
     public static class LobbySetupEditor
     {
-        // Couleurs identiques au reste du projet
-        private static readonly Color ColBg        = new Color(0.08f, 0.08f, 0.08f, 0.95f);
-        private static readonly Color ColPanel      = new Color(0.12f, 0.12f, 0.12f, 0.90f);
-        private static readonly Color ColButton     = new Color(0.20f, 0.20f, 0.20f, 0.95f);
-        private static readonly Color ColButtonHost = new Color(0.18f, 0.38f, 0.18f, 1.00f); // vert
-        private static readonly Color ColButtonJoin = new Color(0.18f, 0.28f, 0.45f, 1.00f); // bleu
-        private static readonly Color ColButtonStart= new Color(0.18f, 0.45f, 0.18f, 1.00f); // vert vif
-        private static readonly Color ColButtonLeave= new Color(0.45f, 0.12f, 0.12f, 1.00f); // rouge
-        private static readonly Color ColSeparator  = new Color(1.00f, 1.00f, 1.00f, 0.10f);
-        private static readonly Color ColSubtext    = new Color(0.65f, 0.65f, 0.65f, 1.00f);
-        private static readonly Color ColInput      = new Color(0.16f, 0.16f, 0.16f, 1.00f);
+        private static readonly Color ColBg         = new Color(0.08f, 0.08f, 0.08f, 0.95f);
+        private static readonly Color ColPanel       = new Color(0.12f, 0.12f, 0.12f, 0.90f);
+        private static readonly Color ColButtonHost  = new Color(0.18f, 0.38f, 0.18f, 1.00f);
+        private static readonly Color ColButtonJoin  = new Color(0.18f, 0.28f, 0.45f, 1.00f);
+        private static readonly Color ColButtonStart = new Color(0.18f, 0.45f, 0.18f, 1.00f);
+        private static readonly Color ColButtonLeave = new Color(0.45f, 0.12f, 0.12f, 1.00f);
+        private static readonly Color ColSeparator   = new Color(1.00f, 1.00f, 1.00f, 0.12f);
+        private static readonly Color ColSubtext     = new Color(0.65f, 0.65f, 0.65f, 1.00f);
+        private static readonly Color ColInput       = new Color(0.16f, 0.16f, 0.16f, 1.00f);
+        private static readonly Color ColCode        = new Color(0.25f, 0.70f, 0.40f, 1.00f);
 
-        // ─────────────────────────────────────────────────────────────────────────
         [MenuItem("ProjectFPS/Setup Lobby Canvas")]
         public static void SetupLobbyCanvas()
         {
-            // ── Canvas ────────────────────────────────────────────────────────────
-            // Always use a canvas named "LobbyCanvas" so we never contaminate
-            // the game HUD canvas (which may already exist in the scene).
+            // ── Canvas (toujours nommé "LobbyCanvas" pour éviter de polluer le HUD) ──
             const string canvasName = "LobbyCanvas";
             GameObject canvasGO = GameObject.Find(canvasName);
             Canvas canvas;
@@ -55,7 +49,6 @@ namespace ProjectFPS.Editor
             }
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
-            // ── EventSystem ───────────────────────────────────────────────────────
             if (Object.FindObjectOfType<EventSystem>() == null)
             {
                 var esGO = new GameObject("EventSystem");
@@ -64,161 +57,147 @@ namespace ProjectFPS.Editor
                 Undo.RegisterCreatedObjectUndo(esGO, "Create EventSystem");
             }
 
-            // ── LobbyManager sur le Canvas ────────────────────────────────────────
             var lobbyMgr = canvasGO.GetComponent<LobbyManager>();
-            if (lobbyMgr == null)
-                lobbyMgr = canvasGO.AddComponent<LobbyManager>();
+            if (lobbyMgr == null) lobbyMgr = canvasGO.AddComponent<LobbyManager>();
 
             // ── Fond global ───────────────────────────────────────────────────────
-            GameObject bgGO = FindOrCreateChild("Background", canvasGO.transform);
+            GameObject bgGO = Recreate("Background", canvasGO.transform);
             StretchRT(bgGO);
-            bgGO.GetComponent<Image>()?.Destroy();
             GetOrAdd<Image>(bgGO).color = ColBg;
 
             // ═════════════════════════════════════════════════════════════════════
             // CONNECT PANEL
             // ═════════════════════════════════════════════════════════════════════
-            GameObject connectPanel = FindOrCreateChild("ConnectPanel", canvasGO.transform);
+            GameObject connectPanel = Recreate("ConnectPanel", canvasGO.transform);
             StretchRT(connectPanel);
 
-            // Carte centrale
-            GameObject card = FindOrCreateChild("Card", connectPanel.transform);
+            // Carte centrale — 460×500, centrée
+            GameObject card = Recreate("Card", connectPanel.transform);
             SetRT(card,
-                anchorMin: new Vector2(0.5f, 0.5f), anchorMax: new Vector2(0.5f, 0.5f),
-                pos: Vector2.zero, size: new Vector2(480f, 520f));
+                new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                Vector2.zero, new Vector2(460f, 500f));
             GetOrAdd<Image>(card).color = ColPanel;
+            GetOrAdd<RectMask2D>(card); // clip les enfants qui dépassent
 
-            // Titre
-            GameObject titleGO = FindOrCreateChild("Title", card.transform);
-            SetRT(titleGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -60f), size: new Vector2(-40f, 70f));
-            var titleTMP = ConfigureTMP(titleGO, "ProjectFPS", 42f, Color.white);
-            titleTMP.fontStyle  = FontStyles.Bold;
-            titleTMP.alignment  = TextAlignmentOptions.Center;
+            // Positions mesurées depuis le haut de la carte (anchorMin/Max = 0,1 / 1,1)
+            // Layout :  top-padding=20  →  éléments  →  bottom-padding=20
 
-            // Sous-titre
-            GameObject subtitleGO = FindOrCreateChild("Subtitle", card.transform);
-            SetRT(subtitleGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -105f), size: new Vector2(-40f, 30f));
-            var subTMP = ConfigureTMP(subtitleGO, "Multijoueur", 18f, ColSubtext);
+            // Titre "ProjectFPS" — y=-20, h=44  → [20..64]
+            GameObject titleGO = MakeChild("Title", card.transform);
+            SetRT(titleGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-42f), new Vector2(-40f,44f));
+            var titleTMP = ConfigureTMP(titleGO, "ProjectFPS", 34f, Color.white);
+            titleTMP.fontStyle = FontStyles.Bold;
+            titleTMP.alignment = TextAlignmentOptions.Center;
+
+            // Sous-titre — y=-72, h=22  → [72..94]
+            GameObject subtitleGO = MakeChild("Subtitle", card.transform);
+            SetRT(subtitleGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-74f), new Vector2(-40f,22f));
+            var subTMP = ConfigureTMP(subtitleGO, "Multijoueur", 16f, ColSubtext);
             subTMP.alignment = TextAlignmentOptions.Center;
 
-            // Séparateur
-            GameObject sep1 = FindOrCreateChild("Separator1", card.transform);
-            SetRT(sep1,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -130f), size: new Vector2(-40f, 2f));
+            // Séparateur — y=-105, h=1  → [105]
+            GameObject sep1 = MakeChild("Separator1", card.transform);
+            SetRT(sep1, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-106f), new Vector2(-40f,1f));
             GetOrAdd<Image>(sep1).color = ColSeparator;
 
-            // Bouton Héberger
-            GameObject hostBtnGO = FindOrCreateChild("HostButton", card.transform);
-            SetRT(hostBtnGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -190f), size: new Vector2(-40f, 60f));
-            var hostBtn = BuildButton(hostBtnGO, "Héberger une partie", 20f, ColButtonHost);
+            // Bouton Héberger — y=-130, h=52  → [130..182]
+            GameObject hostBtnGO = MakeChild("HostButton", card.transform);
+            SetRT(hostBtnGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-156f), new Vector2(-40f,52f));
+            var hostBtn = BuildButton(hostBtnGO, "Héberger une partie", 19f, ColButtonHost);
 
-            // Séparateur
-            GameObject sep2 = FindOrCreateChild("Separator2", card.transform);
-            SetRT(sep2,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -250f), size: new Vector2(-40f, 2f));
+            // Séparateur — y=-200  → [200]
+            GameObject sep2 = MakeChild("Separator2", card.transform);
+            SetRT(sep2, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-210f), new Vector2(-40f,1f));
             GetOrAdd<Image>(sep2).color = ColSeparator;
 
-            // Champ IP
-            GameObject ipFieldGO = FindOrCreateChild("IpInputField", card.transform);
-            SetRT(ipFieldGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -315f), size: new Vector2(-40f, 55f));
-            var ipField = BuildInputField(ipFieldGO, "Adresse IP du serveur...");
+            // Label "Code de la partie :"  — y=-218, h=20  → [218..238]
+            GameObject codeLabelGO = MakeChild("CodeLabel", card.transform);
+            SetRT(codeLabelGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-228f), new Vector2(-40f,20f));
+            var codeLabelTMP = ConfigureTMP(codeLabelGO, "Code de la partie :", 14f, ColSubtext);
+            codeLabelTMP.alignment = TextAlignmentOptions.Left;
 
-            // Bouton Rejoindre
-            GameObject joinBtnGO = FindOrCreateChild("JoinButton", card.transform);
-            SetRT(joinBtnGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -390f), size: new Vector2(-40f, 60f));
-            var joinBtn = BuildButton(joinBtnGO, "Rejoindre", 20f, ColButtonJoin);
+            // Champ code — y=-246, h=44  → [246..290]
+            GameObject codeFieldGO = MakeChild("CodeInputField", card.transform);
+            SetRT(codeFieldGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-268f), new Vector2(-40f,44f));
+            var codeField = BuildInputField(codeFieldGO, "Ex : C0A8-0164  ou  192.168.x.x");
 
-            // Status text
-            GameObject statusGO = FindOrCreateChild("StatusText", card.transform);
-            SetRT(statusGO,
-                anchorMin: new Vector2(0f, 0f), anchorMax: new Vector2(1f, 0f),
-                pos: new Vector2(0f, 25f), size: new Vector2(-40f, 30f));
-            var statusTMP = ConfigureTMP(statusGO, "", 16f, ColSubtext);
+            // Bouton Rejoindre — y=-310, h=52  → [310..362]
+            GameObject joinBtnGO = MakeChild("JoinButton", card.transform);
+            SetRT(joinBtnGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-336f), new Vector2(-40f,52f));
+            var joinBtn = BuildButton(joinBtnGO, "Rejoindre", 19f, ColButtonJoin);
+
+            // Status text — ancré en bas, h=22, 20px du bord bas  → [20..42] depuis le bas
+            GameObject statusGO = MakeChild("StatusText", card.transform);
+            SetRT(statusGO, new Vector2(0f,0f), new Vector2(1f,0f), new Vector2(0,31f), new Vector2(-40f,22f));
+            var statusTMP = ConfigureTMP(statusGO, "", 14f, ColSubtext);
             statusTMP.alignment = TextAlignmentOptions.Center;
 
             // ═════════════════════════════════════════════════════════════════════
             // LOBBY PANEL (désactivé par défaut)
             // ═════════════════════════════════════════════════════════════════════
-            GameObject lobbyPanel = FindOrCreateChild("LobbyPanel", canvasGO.transform);
+            GameObject lobbyPanel = Recreate("LobbyPanel", canvasGO.transform);
             StretchRT(lobbyPanel);
 
-            // Carte centrale lobby
-            GameObject lobbyCard = FindOrCreateChild("LobbyCard", lobbyPanel.transform);
+            GameObject lobbyCard = Recreate("LobbyCard", lobbyPanel.transform);
             SetRT(lobbyCard,
-                anchorMin: new Vector2(0.5f, 0.5f), anchorMax: new Vector2(0.5f, 0.5f),
-                pos: Vector2.zero, size: new Vector2(500f, 560f));
+                new Vector2(0.5f,0.5f), new Vector2(0.5f,0.5f),
+                Vector2.zero, new Vector2(500f,580f));
             GetOrAdd<Image>(lobbyCard).color = ColPanel;
+            GetOrAdd<RectMask2D>(lobbyCard);
 
-            // Titre Lobby
-            GameObject lobbyTitleGO = FindOrCreateChild("LobbyTitle", lobbyCard.transform);
-            SetRT(lobbyTitleGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -55f), size: new Vector2(-40f, 60f));
-            var lobbyTitleTMP = ConfigureTMP(lobbyTitleGO, "Salon d'attente", 32f, Color.white);
+            // Titre
+            GameObject lobbyTitleGO = MakeChild("LobbyTitle", lobbyCard.transform);
+            SetRT(lobbyTitleGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-45f), new Vector2(-40f,50f));
+            var lobbyTitleTMP = ConfigureTMP(lobbyTitleGO, "Salon d'attente", 28f, Color.white);
             lobbyTitleTMP.fontStyle = FontStyles.Bold;
             lobbyTitleTMP.alignment = TextAlignmentOptions.Center;
 
-            // Compteur joueurs
-            GameObject countGO = FindOrCreateChild("PlayerCountText", lobbyCard.transform);
-            SetRT(countGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -100f), size: new Vector2(-40f, 30f));
-            var countTMP = ConfigureTMP(countGO, "Joueurs connectés : 0", 18f, ColSubtext);
-            countTMP.alignment = TextAlignmentOptions.Center;
+            // Code de partie (affiché pour l'hôte)
+            GameObject partyCodeGO = MakeChild("PartyCodeText", lobbyCard.transform);
+            SetRT(partyCodeGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-105f), new Vector2(-40f,52f));
+            var partyCodeTMP = ConfigureTMP(partyCodeGO, "", 16f, ColCode);
+            partyCodeTMP.alignment = TextAlignmentOptions.Center;
 
             // Séparateur
-            GameObject sep3 = FindOrCreateChild("Separator3", lobbyCard.transform);
-            SetRT(sep3,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -125f), size: new Vector2(-40f, 2f));
+            GameObject sep3 = MakeChild("Separator3", lobbyCard.transform);
+            SetRT(sep3, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-132f), new Vector2(-40f,1f));
             GetOrAdd<Image>(sep3).color = ColSeparator;
 
+            // Compteur joueurs
+            GameObject countGO = MakeChild("PlayerCountText", lobbyCard.transform);
+            SetRT(countGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-158f), new Vector2(-40f,26f));
+            var countTMP = ConfigureTMP(countGO, "Joueurs connectés : 0", 16f, ColSubtext);
+            countTMP.alignment = TextAlignmentOptions.Center;
+
             // Liste joueurs
-            GameObject listGO = FindOrCreateChild("PlayerListText", lobbyCard.transform);
-            SetRT(listGO,
-                anchorMin: new Vector2(0f, 1f), anchorMax: new Vector2(1f, 1f),
-                pos: new Vector2(0f, -285f), size: new Vector2(-40f, 300f));
-            var listTMP = ConfigureTMP(listGO, "", 18f, Color.white);
+            GameObject listGO = MakeChild("PlayerListText", lobbyCard.transform);
+            SetRT(listGO, new Vector2(0f,1f), new Vector2(1f,1f), new Vector2(0,-330f), new Vector2(-40f,320f));
+            var listTMP = ConfigureTMP(listGO, "", 16f, Color.white);
             listTMP.alignment = TextAlignmentOptions.Left;
 
-            // Bouton Lancer
-            GameObject startBtnGO = FindOrCreateChild("StartGameButton", lobbyCard.transform);
-            SetRT(startBtnGO,
-                anchorMin: new Vector2(0f, 0f), anchorMax: new Vector2(1f, 0f),
-                pos: new Vector2(0f, 130f), size: new Vector2(-40f, 55f));
-            var startBtn = BuildButton(startBtnGO, "Lancer la partie", 20f, ColButtonStart);
+            // Bouton Lancer (ancré en bas)
+            GameObject startBtnGO = MakeChild("StartGameButton", lobbyCard.transform);
+            SetRT(startBtnGO, new Vector2(0f,0f), new Vector2(1f,0f), new Vector2(0,130f), new Vector2(-40f,52f));
+            var startBtn = BuildButton(startBtnGO, "Lancer la partie", 19f, ColButtonStart);
 
-            // Bouton Quitter
-            GameObject leaveBtnGO = FindOrCreateChild("LeaveButton", lobbyCard.transform);
-            SetRT(leaveBtnGO,
-                anchorMin: new Vector2(0f, 0f), anchorMax: new Vector2(1f, 0f),
-                pos: new Vector2(0f, 65f), size: new Vector2(-40f, 50f));
-            var leaveBtn = BuildButton(leaveBtnGO, "Quitter", 18f, ColButtonLeave);
+            // Bouton Quitter (ancré en bas)
+            GameObject leaveBtnGO = MakeChild("LeaveButton", lobbyCard.transform);
+            SetRT(leaveBtnGO, new Vector2(0f,0f), new Vector2(1f,0f), new Vector2(0,68f), new Vector2(-40f,48f));
+            var leaveBtn = BuildButton(leaveBtnGO, "Quitter", 17f, ColButtonLeave);
 
             lobbyPanel.SetActive(false);
 
             // ── Câblage automatique du LobbyManager ──────────────────────────────
             var so = new SerializedObject(lobbyMgr);
-            so.FindProperty("connectPanel").objectReferenceValue   = connectPanel;
-            so.FindProperty("lobbyPanel").objectReferenceValue     = lobbyPanel;
-            so.FindProperty("hostButton").objectReferenceValue     = hostBtn;
-            so.FindProperty("ipInputField").objectReferenceValue   = ipField;
-            so.FindProperty("joinButton").objectReferenceValue     = joinBtn;
-            so.FindProperty("statusText").objectReferenceValue     = statusTMP;
+            so.FindProperty("connectPanel").objectReferenceValue    = connectPanel;
+            so.FindProperty("lobbyPanel").objectReferenceValue      = lobbyPanel;
+            so.FindProperty("hostButton").objectReferenceValue      = hostBtn;
+            so.FindProperty("codeInputField").objectReferenceValue  = codeField;
+            so.FindProperty("joinButton").objectReferenceValue      = joinBtn;
+            so.FindProperty("statusText").objectReferenceValue      = statusTMP;
             so.FindProperty("playerCountText").objectReferenceValue = countTMP;
             so.FindProperty("playerListText").objectReferenceValue  = listTMP;
+            so.FindProperty("partyCodeText").objectReferenceValue   = partyCodeTMP;
             so.FindProperty("startGameButton").objectReferenceValue = startBtn;
             so.FindProperty("leaveButton").objectReferenceValue     = leaveBtn;
             so.ApplyModifiedProperties();
@@ -227,33 +206,56 @@ namespace ProjectFPS.Editor
             Selection.activeGameObject = canvasGO;
 
             Debug.Log(
-                "[LobbySetup] Canvas Lobby créé avec succès !\n" +
-                "Il reste à configurer dans l'Inspecteur de LobbyManager :\n" +
-                "  • Game Scene Name → nom exact de ta scène de jeu (ex. 'SampleScene')\n" +
-                "  • Port → 7770 (doit correspondre au Tugboat du NetworkManager)\n\n" +
-                "N'oublie pas d'ajouter les deux scènes dans File → Build Settings :\n" +
+                "[LobbySetup] Canvas Lobby créé avec succès !\n\n" +
+                "À CONFIGURER dans l'Inspector de LobbyManager (sur LobbyCanvas) :\n" +
+                "  • Game Scene Name → nom exact de ta scène (ex. 'SampleScene')\n" +
+                "  • Port → 7770\n\n" +
+                "ERREURS À CORRIGER :\n" +
+                "  • 'AssetPathHash is not set' → NetworkManager Inspector → DefaultPrefabObjects → bouton Regenerate\n" +
+                "  • FishNet.PlayerSpawner NullRef → dans ta scène, supprime ou configure le composant PlayerSpawner FishNet built-in\n" +
+                "  • NetworkManager not found → copie le NetworkManager + Tugboat dans la scène Lobby\n\n" +
+                "Build Settings :\n" +
                 "  • Index 0 : Lobby\n" +
-                "  • Index 1 : SampleScene (ou ton nom de scène de jeu)");
+                "  • Index 1 : ta scène de jeu");
         }
 
         // ═════════════════════════════════════════════════════════════════════════
         // Utilitaires
         // ═════════════════════════════════════════════════════════════════════════
 
+        // Supprime et recrée l'enfant (évite les états corrompus des runs précédents)
+        static GameObject Recreate(string name, Transform parent)
+        {
+            Transform existing = parent.Find(name);
+            if (existing != null) Object.DestroyImmediate(existing.gameObject);
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.AddComponent<RectTransform>();
+            return go;
+        }
+
+        // Crée ou retrouve un enfant (utilisé pour les sous-éléments comme Label, Text Area…)
+        static GameObject MakeChild(string name, Transform parent)
+        {
+            Transform existing = parent.Find(name);
+            if (existing != null) return existing.gameObject;
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.AddComponent<RectTransform>();
+            return go;
+        }
+
         static Button BuildButton(GameObject go, string label, float fontSize, Color bgColor)
         {
             GetOrAdd<Image>(go).color = bgColor;
-            var btn = GetOrAdd<Button>(go);
-
-            // Effet hover : légèrement plus clair
-            var colors         = btn.colors;
+            var btn    = GetOrAdd<Button>(go);
+            var colors = btn.colors;
             colors.normalColor      = Color.white;
             colors.highlightedColor = new Color(1.2f, 1.2f, 1.2f, 1f);
             colors.pressedColor     = new Color(0.8f, 0.8f, 0.8f, 1f);
             btn.colors = colors;
 
-            // Label
-            GameObject labelGO = FindOrCreateChild("Label", go.transform);
+            GameObject labelGO = MakeChild("Label", go.transform);
             var rt = GetOrAdd<RectTransform>(labelGO);
             rt.anchorMin = Vector2.zero;
             rt.anchorMax = Vector2.one;
@@ -269,45 +271,33 @@ namespace ProjectFPS.Editor
             GetOrAdd<Image>(go).color = ColInput;
             var field = GetOrAdd<TMP_InputField>(go);
 
-            // Text area
-            GameObject textAreaGO = FindOrCreateChild("Text Area", go.transform);
-            GetOrAdd<RectTransform>(textAreaGO).anchorMin = Vector2.zero;
-            GetOrAdd<RectTransform>(textAreaGO).anchorMax = Vector2.one;
+            GameObject textAreaGO = MakeChild("Text Area", go.transform);
+            var taRT = GetOrAdd<RectTransform>(textAreaGO);
+            taRT.anchorMin = Vector2.zero;
+            taRT.anchorMax = Vector2.one;
+            taRT.offsetMin = new Vector2(8, 4);
+            taRT.offsetMax = new Vector2(-8, -4);
 
-            // Placeholder
-            GameObject phGO = FindOrCreateChild("Placeholder", textAreaGO.transform);
-            var phRT  = GetOrAdd<RectTransform>(phGO);
+            GameObject phGO  = MakeChild("Placeholder", textAreaGO.transform);
+            var phRT = GetOrAdd<RectTransform>(phGO);
             phRT.anchorMin = Vector2.zero;
             phRT.anchorMax = Vector2.one;
-            phRT.offsetMin = new Vector2(10, 0);
-            phRT.offsetMax = new Vector2(-10, 0);
-            var phTMP = ConfigureTMP(phGO, placeholder, 18f, new Color(0.5f, 0.5f, 0.5f));
+            phRT.offsetMin = phRT.offsetMax = Vector2.zero;
+            var phTMP = ConfigureTMP(phGO, placeholder, 15f, new Color(0.45f, 0.45f, 0.45f));
             phTMP.alignment = TextAlignmentOptions.MidlineLeft;
             field.placeholder = phTMP;
 
-            // Input text
-            GameObject inputTextGO = FindOrCreateChild("Text", textAreaGO.transform);
-            var itRT  = GetOrAdd<RectTransform>(inputTextGO);
+            GameObject inputTextGO = MakeChild("Text", textAreaGO.transform);
+            var itRT = GetOrAdd<RectTransform>(inputTextGO);
             itRT.anchorMin = Vector2.zero;
             itRT.anchorMax = Vector2.one;
-            itRT.offsetMin = new Vector2(10, 0);
-            itRT.offsetMax = new Vector2(-10, 0);
-            var itTMP = ConfigureTMP(inputTextGO, "", 18f, Color.white);
+            itRT.offsetMin = itRT.offsetMax = Vector2.zero;
+            var itTMP = ConfigureTMP(inputTextGO, "", 16f, Color.white);
             itTMP.alignment = TextAlignmentOptions.MidlineLeft;
             field.textComponent = itTMP;
-            field.text = "localhost";
+            field.text = "";
 
             return field;
-        }
-
-        static GameObject FindOrCreateChild(string name, Transform parent)
-        {
-            Transform existing = parent.Find(name);
-            if (existing != null) return existing.gameObject;
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            go.AddComponent<RectTransform>();
-            return go;
         }
 
         static void StretchRT(GameObject go)
@@ -318,8 +308,7 @@ namespace ProjectFPS.Editor
             rt.offsetMin = rt.offsetMax = Vector2.zero;
         }
 
-        static void SetRT(GameObject go, Vector2 anchorMin, Vector2 anchorMax,
-            Vector2 pos, Vector2 size)
+        static void SetRT(GameObject go, Vector2 anchorMin, Vector2 anchorMax, Vector2 pos, Vector2 size)
         {
             var rt              = GetOrAdd<RectTransform>(go);
             rt.anchorMin        = anchorMin;
@@ -331,23 +320,15 @@ namespace ProjectFPS.Editor
 
         static TextMeshProUGUI ConfigureTMP(GameObject go, string text, float fontSize, Color color)
         {
-            var tmp      = GetOrAdd<TextMeshProUGUI>(go);
-            tmp.text     = text;
-            tmp.fontSize = fontSize;
-            tmp.color    = color;
+            var tmp       = GetOrAdd<TextMeshProUGUI>(go);
+            tmp.text      = text;
+            tmp.fontSize  = fontSize;
+            tmp.color     = color;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
             return tmp;
         }
 
         static T GetOrAdd<T>(GameObject go) where T : Component
             => go.TryGetComponent(out T c) ? c : go.AddComponent<T>();
-    }
-
-    // Extension helper (évite conflict avec Unity built-in)
-    internal static class ComponentExtensions
-    {
-        internal static void Destroy(this Component c)
-        {
-            if (c != null) Object.DestroyImmediate(c);
-        }
     }
 }
