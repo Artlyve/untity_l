@@ -1,9 +1,5 @@
-// UISetupEditor.cs
+// UISetupEditor.cs — Refonte complète HUD Lycans
 // Menu : ProjectFPS → Setup UI Canvas
-// Crée (ou complète) toute la hiérarchie Canvas/HUD en une seule commande.
-// Les références des scripts sont câblées automatiquement ; seules les refs
-// PlayerState / InventorySystem / PlayerInteraction / CharacterController
-// devront être assignées manuellement depuis l'Inspecteur.
 
 using System.IO;
 using UnityEngine;
@@ -20,390 +16,536 @@ namespace ProjectFPS.Editor
     {
         private const string PrefabsFolder = "Assets/_Project/Prefabs/UI";
 
-        // ─────────────────────────────────────────────────────────────────────────
+        // ── Couleurs ──────────────────────────────────────────────────────────────
+        private static readonly Color ColDark    = new Color(0.06f, 0.06f, 0.06f, 0.88f);
+        private static readonly Color ColDarker  = new Color(0.10f, 0.10f, 0.10f, 0.92f);
+        private static readonly Color ColBar     = new Color(0.15f, 0.15f, 0.15f, 0.90f);
+        private static readonly Color ColSubtext = new Color(0.65f, 0.65f, 0.65f, 1.00f);
+        private static readonly Color ColGreen   = new Color(0.15f, 0.75f, 0.25f, 1.00f);
+        private static readonly Color ColPurple  = new Color(0.55f, 0.15f, 0.85f, 1.00f);
+        private static readonly Color ColHarvest = new Color(0.55f, 0.75f, 0.25f, 1.00f);
+        private static readonly Color ColAccent  = new Color(1.00f, 0.85f, 0.30f, 1.00f);
+
         [MenuItem("ProjectFPS/Setup UI Canvas")]
         public static void SetupUICanvas()
         {
             EnsureFolder("Assets/_Project/Prefabs");
             EnsureFolder(PrefabsFolder);
 
-            // ── Canvas ────────────────────────────────────────────────────────────
-            Canvas canvas = Object.FindObjectOfType<Canvas>();
-            GameObject canvasGO;
-            if (canvas == null)
+            // ── Canvas "GameHUD" ──────────────────────────────────────────────────
+            const string canvasName = "GameHUD";
+            GameObject canvasGO = GameObject.Find(canvasName);
+            Canvas canvas;
+            if (canvasGO == null)
             {
-                canvasGO = new GameObject("Canvas");
+                canvasGO = new GameObject(canvasName);
                 canvas   = canvasGO.AddComponent<Canvas>();
-                var scaler = canvasGO.AddComponent<CanvasScaler>();
+                var scaler             = canvasGO.AddComponent<CanvasScaler>();
                 scaler.uiScaleMode         = CanvasScaler.ScaleMode.ScaleWithScreenSize;
                 scaler.referenceResolution = new Vector2(1920, 1080);
                 scaler.matchWidthOrHeight  = 0.5f;
                 canvasGO.AddComponent<GraphicRaycaster>();
-                Undo.RegisterCreatedObjectUndo(canvasGO, "Create Canvas");
+                Undo.RegisterCreatedObjectUndo(canvasGO, "Create GameHUD");
             }
             else
             {
-                canvasGO = canvas.gameObject;
+                canvas = canvasGO.GetComponent<Canvas>() ?? canvasGO.AddComponent<Canvas>();
             }
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 10;
 
-            // ── EventSystem ───────────────────────────────────────────────────────
-            // Le projet utilise le nouveau Input System → on ne crée pas de
-            // StandaloneInputModule si un EventSystem existe déjà.
             if (Object.FindObjectOfType<EventSystem>() == null)
             {
-                var esGO = new GameObject("EventSystem");
-                esGO.AddComponent<EventSystem>();
-                esGO.AddComponent<StandaloneInputModule>();
-                Undo.RegisterCreatedObjectUndo(esGO, "Create EventSystem");
+                var es = new GameObject("EventSystem");
+                es.AddComponent<EventSystem>();
+                es.AddComponent<StandaloneInputModule>();
+                Undo.RegisterCreatedObjectUndo(es, "Create EventSystem");
             }
 
-            // ── HUDPanel ──────────────────────────────────────────────────────────
-            GameObject hudPanel = FindOrCreateChild("HUDPanel", canvasGO.transform);
-            StretchRT(hudPanel);
-            AddIfMissing<HUD>(hudPanel);
+            var hudMgr = canvasGO.GetComponent<HUDManager>() ?? canvasGO.AddComponent<HUDManager>();
 
-            // Reparent HealthBar / RoleNameText s'ils sont encore enfants directs du Canvas
-            ReparentChild(canvasGO.transform, hudPanel.transform, "HealthBar");
-            ReparentChild(canvasGO.transform, hudPanel.transform, "RoleNameText");
+            // ═══════════════════════════════════════════════════════════════════════
+            // VIGNETTE + DAMAGE FLASH (plein écran, tout en bas de la hiérarchie)
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject vignetteGO = Recreate("Vignette", canvasGO.transform);
+            StretchRT(vignetteGO);
+            var vigImg = GetOrAdd<Image>(vignetteGO);
+            vigImg.color         = new Color(0, 0, 0, 0.30f);
+            vigImg.raycastTarget = false;
 
-            // ── HealthBar (Slider) ────────────────────────────────────────────────
-            GameObject healthBarGO = BuildSlider("HealthBar", hudPanel.transform);
-            SetRT(healthBarGO,
-                anchorMin: new Vector2(0f, 0f),
-                anchorMax: new Vector2(0f, 0f),
-                pos:       new Vector2(20f, 20f),
-                size:      new Vector2(300f, 40f));
+            GameObject flashGO = Recreate("DamageFlash", canvasGO.transform);
+            StretchRT(flashGO);
+            var flashImg = GetOrAdd<Image>(flashGO);
+            flashImg.color         = new Color(1, 0, 0, 0);
+            flashImg.raycastTarget = false;
+            flashGO.SetActive(false);
 
-            // ── RoleNameText (TextMeshProUGUI) ────────────────────────────────────
-            GameObject roleNameGO = FindOrCreateChild("RoleNameText", hudPanel.transform);
-            TextMeshProUGUI roleTMP = ConfigureTMP(roleNameGO, "Villageois", 24f, Color.white);
-            SetRT(roleNameGO,
-                anchorMin: new Vector2(0f, 1f),
-                anchorMax: new Vector2(0f, 1f),
-                pos:       new Vector2(20f, -20f),
-                size:      new Vector2(250f, 40f));
+            // ═══════════════════════════════════════════════════════════════════════
+            // CROSSHAIR (centre exact)
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject crosshairGO = Recreate("Crosshair", canvasGO.transform);
+            SetRT(crosshairGO, V(.5f,.5f), V(.5f,.5f), Vector2.zero, new Vector2(24, 24));
 
-            // ── InventorySlots (Horizontal Layout Group) ──────────────────────────
-            GameObject slotsGO = FindOrCreateChild("InventorySlots", hudPanel.transform);
-            var hlg = GetOrAdd<HorizontalLayoutGroup>(slotsGO);
+            GameObject chH = Child("H", crosshairGO.transform);
+            var chHRT = GetOrAdd<RectTransform>(chH);
+            chHRT.anchorMin = V(.1f,.5f); chHRT.anchorMax = V(.9f,.5f);
+            chHRT.pivot = V(.5f,.5f); chHRT.anchoredPosition = Vector2.zero; chHRT.sizeDelta = new Vector2(0,2);
+            GetOrAdd<Image>(chH).color = new Color(1,1,1,0.80f);
+
+            GameObject chV = Child("V", crosshairGO.transform);
+            var chVRT = GetOrAdd<RectTransform>(chV);
+            chVRT.anchorMin = V(.5f,.1f); chVRT.anchorMax = V(.5f,.9f);
+            chVRT.pivot = V(.5f,.5f); chVRT.anchoredPosition = Vector2.zero; chVRT.sizeDelta = new Vector2(2,0);
+            GetOrAdd<Image>(chV).color = new Color(1,1,1,0.80f);
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // INDICATEUR JOUR / NUIT (haut centre)
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject dayNightGO = Recreate("DayNightIndicator", canvasGO.transform);
+            GetOrAdd<CanvasGroup>(dayNightGO);
+            SetRT(dayNightGO, V(.5f,1), V(.5f,1), new Vector2(0,-18), new Vector2(150, 38));
+            GetOrAdd<Image>(dayNightGO).color = ColDark;
+
+            GameObject dnIconGO = Child("Icon", dayNightGO.transform);
+            SetRT(dnIconGO, V(0,0), V(0,1), new Vector2(20,0), new Vector2(30,0));
+            var dnIcon = TMP(dnIconGO, "✦", 20f, ColAccent);
+            dnIcon.alignment = TextAlignmentOptions.Center;
+
+            GameObject dnLabelGO = Child("Label", dayNightGO.transform);
+            StretchRT(dnLabelGO);
+            var dnLabelRT = GetOrAdd<RectTransform>(dnLabelGO);
+            dnLabelRT.offsetMin = new Vector2(52, 3);
+            dnLabelRT.offsetMax = new Vector2(-8, -3);
+            var dnLabel = TMP(dnLabelGO, "JOUR", 14f, Color.white);
+            dnLabel.fontStyle = FontStyles.Bold;
+            dnLabel.alignment = TextAlignmentOptions.MidlineLeft;
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // PROMPT D'INTERACTION (centre, légèrement au-dessus du slot)
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject interPromptGO = Recreate("InteractionPrompt", canvasGO.transform);
+            SetRT(interPromptGO, V(.5f,.5f), V(.5f,.5f), new Vector2(0, 72), new Vector2(340, 48));
+            GetOrAdd<Image>(interPromptGO).color = ColDark;
+            interPromptGO.SetActive(false);
+
+            GameObject interKeyGO = Child("Key", interPromptGO.transform);
+            SetRT(interKeyGO, V(0,0), V(0,1), new Vector2(18,0), new Vector2(38,0));
+            var interKey = TMP(interKeyGO, "[E]", 15f, ColAccent);
+            interKey.fontStyle = FontStyles.Bold;
+            interKey.alignment = TextAlignmentOptions.Center;
+
+            GameObject interActionGO = Child("Action", interPromptGO.transform);
+            StretchRT(interActionGO);
+            var interActionRT = GetOrAdd<RectTransform>(interActionGO);
+            interActionRT.offsetMin = new Vector2(62, 4);
+            interActionRT.offsetMax = new Vector2(-10, -4);
+            var interAction = TMP(interActionGO, "Ramasser — Lanterne", 14f, Color.white);
+            interAction.alignment = TextAlignmentOptions.MidlineLeft;
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // BAS GAUCHE — Badge de rôle + Barre de vie
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject bottomLeft = Recreate("BottomLeft", canvasGO.transform);
+            GetOrAdd<CanvasGroup>(bottomLeft);
+            SetRT(bottomLeft, V(0,0), V(0,0), new Vector2(20, 20), new Vector2(280, 130));
+
+            // Role Badge
+            GameObject roleBadgeGO = Child("RoleBadge", bottomLeft.transform);
+            SetRT(roleBadgeGO, V(0,1), V(1,1), new Vector2(0,-44), new Vector2(0, 44));
+            var roleBadgeImg = GetOrAdd<Image>(roleBadgeGO);
+            roleBadgeImg.color = new Color(0.6f, 0.1f, 0.2f, 0.80f);
+
+            GameObject roleIconGO = Child("RoleIcon", roleBadgeGO.transform);
+            SetRT(roleIconGO, V(0,0), V(0,1), new Vector2(0,0), new Vector2(44,0));
+            var roleIconTMP = TMP(roleIconGO, "◈", 20f, Color.white);
+            roleIconTMP.alignment = TextAlignmentOptions.Center;
+
+            GameObject roleNameGO = Child("RoleName", roleBadgeGO.transform);
+            StretchRT(roleNameGO);
+            var rnRT = GetOrAdd<RectTransform>(roleNameGO);
+            rnRT.offsetMin = new Vector2(48, 2);
+            rnRT.offsetMax = new Vector2(-8, -2);
+            var roleNameTMP = TMP(roleNameGO, "VILLAGEOIS", 14f, Color.white);
+            roleNameTMP.fontStyle = FontStyles.Bold;
+            roleNameTMP.alignment = TextAlignmentOptions.MidlineLeft;
+
+            // HP Section
+            GameObject hpSection = Child("HPSection", bottomLeft.transform);
+            SetRT(hpSection, V(0,0), V(1,0), new Vector2(0,4), new Vector2(0, 72));
+
+            GameObject hpLabelGO = Child("HPLabel", hpSection.transform);
+            SetRT(hpLabelGO, V(0,1), V(1,1), new Vector2(0,-22), new Vector2(0, 22));
+            var hpLabelTMP = TMP(hpLabelGO, "❤  SANTÉ", 12f, ColSubtext);
+            hpLabelTMP.alignment = TextAlignmentOptions.Left;
+
+            GameObject hpBarBgGO = Child("HPBarBg", hpSection.transform);
+            SetRT(hpBarBgGO, V(0,1), V(1,1), new Vector2(0,-38), new Vector2(0, 14));
+            GetOrAdd<Image>(hpBarBgGO).color = ColBar;
+
+            GameObject hpBarFillGO = Child("HPBarFill", hpBarBgGO.transform);
+            StretchRT(hpBarFillGO);
+            var hpFillImg = GetOrAdd<Image>(hpBarFillGO);
+            hpFillImg.color      = ColGreen;
+            hpFillImg.type       = Image.Type.Filled;
+            hpFillImg.fillMethod = Image.FillMethod.Horizontal;
+            hpFillImg.fillAmount = 1f;
+
+            GameObject hpTextGO = Child("HPText", hpSection.transform);
+            SetRT(hpTextGO, V(0,0), V(1,0), new Vector2(0,2), new Vector2(0, 18));
+            var hpTMP = TMP(hpTextGO, "100 / 100", 12f, ColSubtext);
+            hpTMP.alignment = TextAlignmentOptions.Right;
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // HAUT GAUCHE — Effets actifs (potions)
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject topLeft = Recreate("TopLeft", canvasGO.transform);
+            GetOrAdd<CanvasGroup>(topLeft);
+            SetRT(topLeft, V(0,1), V(0,1), new Vector2(20,-20), new Vector2(210, 300));
+
+            GameObject effectsContainerGO = Child("EffectsContainer", topLeft.transform);
+            StretchRT(effectsContainerGO);
+            var vlgEff = GetOrAdd<VerticalLayoutGroup>(effectsContainerGO);
+            vlgEff.spacing              = 6f;
+            vlgEff.childAlignment       = TextAnchor.UpperLeft;
+            vlgEff.childControlWidth    = true;
+            vlgEff.childControlHeight   = false;
+            vlgEff.childForceExpandWidth  = true;
+            vlgEff.childForceExpandHeight = false;
+            var csfEff = GetOrAdd<ContentSizeFitter>(effectsContainerGO);
+            csfEff.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // HAUT DROIT — Récolte + Rituel
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject topRight = Recreate("TopRight", canvasGO.transform);
+            GetOrAdd<CanvasGroup>(topRight);
+            SetRT(topRight, V(1,1), V(1,1), new Vector2(-20,-20), new Vector2(260, 200));
+
+            // Récolte
+            GameObject harvestGroup = Child("HarvestGroup", topRight.transform);
+            SetRT(harvestGroup, V(0,1), V(1,1), new Vector2(0,-50), new Vector2(0, 50));
+
+            GameObject harvestLabelGO = Child("HarvestLabel", harvestGroup.transform);
+            SetRT(harvestLabelGO, V(0,1), V(1,1), new Vector2(0,-22), new Vector2(0, 22));
+            var harvestLabelTMP = TMP(harvestLabelGO, "RÉCOLTE", 12f, ColSubtext);
+            harvestLabelTMP.fontStyle = FontStyles.Bold;
+            harvestLabelTMP.alignment = TextAlignmentOptions.Right;
+
+            GameObject harvestBarBgGO = Child("HarvestBarBg", harvestGroup.transform);
+            SetRT(harvestBarBgGO, V(0,1), V(1,1), new Vector2(0,-38), new Vector2(0, 12));
+            GetOrAdd<Image>(harvestBarBgGO).color = ColBar;
+
+            GameObject harvestFillGO = Child("HarvestBarFill", harvestBarBgGO.transform);
+            StretchRT(harvestFillGO);
+            var harvestFillImg = GetOrAdd<Image>(harvestFillGO);
+            harvestFillImg.color      = ColHarvest;
+            harvestFillImg.type       = Image.Type.Filled;
+            harvestFillImg.fillMethod = Image.FillMethod.Horizontal;
+            harvestFillImg.fillAmount = 0f;
+
+            GameObject harvestTextGO = Child("HarvestText", harvestGroup.transform);
+            SetRT(harvestTextGO, V(0,0), V(1,0), new Vector2(0,2), new Vector2(0, 15));
+            var harvestTMP = TMP(harvestTextGO, "0 / 150", 11f, ColSubtext);
+            harvestTMP.alignment = TextAlignmentOptions.Right;
+
+            // Séparateur
+            GameObject sepGO = Child("Separator", topRight.transform);
+            SetRT(sepGO, V(0,1), V(1,1), new Vector2(0,-62), new Vector2(0, 1));
+            GetOrAdd<Image>(sepGO).color = new Color(1,1,1,0.10f);
+
+            // Rituel
+            GameObject ritualGroup = Child("RitualGroup", topRight.transform);
+            SetRT(ritualGroup, V(0,1), V(1,1), new Vector2(0,-124), new Vector2(0, 55));
+
+            GameObject ritualLabelGO = Child("RitualLabel", ritualGroup.transform);
+            SetRT(ritualLabelGO, V(0,1), V(1,1), new Vector2(0,-22), new Vector2(0, 22));
+            var ritualLabelTMP = TMP(ritualLabelGO, "RITUEL", 12f, ColSubtext);
+            ritualLabelTMP.fontStyle = FontStyles.Bold;
+            ritualLabelTMP.alignment = TextAlignmentOptions.Right;
+
+            GameObject ritualBarBgGO = Child("RitualBarBg", ritualGroup.transform);
+            SetRT(ritualBarBgGO, V(0,1), V(1,1), new Vector2(0,-38), new Vector2(0, 12));
+            GetOrAdd<Image>(ritualBarBgGO).color = ColBar;
+
+            GameObject ritualFillGO = Child("RitualBarFill", ritualBarBgGO.transform);
+            StretchRT(ritualFillGO);
+            var ritualFillImg = GetOrAdd<Image>(ritualFillGO);
+            ritualFillImg.color      = ColPurple;
+            ritualFillImg.type       = Image.Type.Filled;
+            ritualFillImg.fillMethod = Image.FillMethod.Horizontal;
+            ritualFillImg.fillAmount = 0f;
+
+            GameObject ritualTextGO = Child("RitualText", ritualGroup.transform);
+            SetRT(ritualTextGO, V(0,0), V(1,0), new Vector2(0,2), new Vector2(0, 15));
+            var ritualTMP = TMP(ritualTextGO, "0 / 2000", 11f, ColSubtext);
+            ritualTMP.alignment = TextAlignmentOptions.Right;
+
+            // Prompt rituel disponible (désactivé)
+            GameObject ritualPromptGO = Child("RitualPrompt", topRight.transform);
+            SetRT(ritualPromptGO, V(0,1), V(1,1), new Vector2(0,-172), new Vector2(0, 32));
+            GetOrAdd<Image>(ritualPromptGO).color = new Color(0.35f, 0.08f, 0.55f, 0.90f);
+            GameObject rpTextGO = Child("PromptText", ritualPromptGO.transform);
+            StretchRT(rpTextGO);
+            var rpTMP = TMP(rpTextGO, "RITUEL DISPONIBLE  [E]", 13f, Color.white);
+            rpTMP.fontStyle = FontStyles.Bold;
+            rpTMP.alignment = TextAlignmentOptions.Center;
+            ritualPromptGO.SetActive(false);
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // BAS CENTRE — Slot d'inventaire
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject bottomCenter = Recreate("BottomCenter", canvasGO.transform);
+            GetOrAdd<CanvasGroup>(bottomCenter);
+            SetRT(bottomCenter, V(.5f,0), V(.5f,0), new Vector2(0, 20), new Vector2(90, 90));
+            GetOrAdd<Image>(bottomCenter).color = ColDarker;
+
+            // Slot vide
+            GameObject slotEmptyGO = Child("SlotEmpty", bottomCenter.transform);
+            StretchRT(slotEmptyGO);
+            GetOrAdd<Image>(slotEmptyGO).color = new Color(1,1,1,0.08f);
+            GameObject slotEmptyLabelGO = Child("EmptyLabel", slotEmptyGO.transform);
+            StretchRT(slotEmptyLabelGO);
+            var emptyLabelTMP = TMP(slotEmptyLabelGO, "+", 26f, new Color(1,1,1,0.18f));
+            emptyLabelTMP.alignment = TextAlignmentOptions.Center;
+
+            // Slot plein (désactivé)
+            GameObject slotFullGO = Child("SlotFull", bottomCenter.transform);
+            StretchRT(slotFullGO);
+            GetOrAdd<Image>(slotFullGO).color = ColDarker;
+            slotFullGO.SetActive(false);
+
+            GameObject slotIconGO = Child("SlotIcon", slotFullGO.transform);
+            SetRT(slotIconGO, V(.1f,.25f), V(.9f,.95f), Vector2.zero, Vector2.zero);
+            var slotIconImg = GetOrAdd<Image>(slotIconGO);
+            slotIconImg.color = Color.white;
+
+            GameObject slotNameGO = Child("SlotName", slotFullGO.transform);
+            SetRT(slotNameGO, V(0,0), V(1,0), new Vector2(0,2), new Vector2(0, 17));
+            var slotNameTMP = TMP(slotNameGO, "Potion", 11f, ColSubtext);
+            slotNameTMP.alignment = TextAlignmentOptions.Center;
+
+            // ═══════════════════════════════════════════════════════════════════════
+            // DEBUG PANEL (haut centre, F1 pour afficher, désactivé par défaut)
+            // ═══════════════════════════════════════════════════════════════════════
+            GameObject debugPanelGO = Recreate("DebugPanel", canvasGO.transform);
+            SetRT(debugPanelGO, V(.5f,1), V(.5f,1), new Vector2(0,-62), new Vector2(760, 50));
+            GetOrAdd<Image>(debugPanelGO).color = new Color(0.05f, 0.05f, 0.05f, 0.92f);
+            GetOrAdd<DebugPanelHUD>(debugPanelGO);
+            debugPanelGO.SetActive(false);
+
+            GameObject dbTitleGO = Child("Title", debugPanelGO.transform);
+            SetRT(dbTitleGO, V(0,0), V(0,1), new Vector2(0,0), new Vector2(130,0));
+            var dbTitleTMP = TMP(dbTitleGO, "◈ DEBUG\n[F1]", 11f, new Color(0.4f, 0.9f, 0.5f));
+            dbTitleTMP.fontStyle = FontStyles.Bold;
+            dbTitleTMP.alignment = TextAlignmentOptions.Center;
+
+            GameObject dbButtonsGO = Child("Buttons", debugPanelGO.transform);
+            StretchRT(dbButtonsGO);
+            var dbBtnRT = GetOrAdd<RectTransform>(dbButtonsGO);
+            dbBtnRT.offsetMin = new Vector2(134, 4);
+            dbBtnRT.offsetMax = new Vector2(-4, -4);
+            var hlg = GetOrAdd<HorizontalLayoutGroup>(dbButtonsGO);
             hlg.spacing              = 5f;
-            hlg.childAlignment       = TextAnchor.LowerCenter;
+            hlg.childAlignment       = TextAnchor.MiddleLeft;
             hlg.childControlWidth    = false;
-            hlg.childControlHeight   = false;
+            hlg.childControlHeight   = true;
             hlg.childForceExpandWidth  = false;
-            hlg.childForceExpandHeight = false;
-            SetRT(slotsGO,
-                anchorMin: new Vector2(0.5f, 0f),
-                anchorMax: new Vector2(0.5f, 0f),
-                pos:       new Vector2(0f, 35f),
-                size:      new Vector2(260f, 60f));
+            hlg.childForceExpandHeight = true;
 
-            // ── InteractionText (TMP, désactivé par défaut) ───────────────────────
-            GameObject interTextGO = FindOrCreateChild("InteractionText", hudPanel.transform);
-            TextMeshProUGUI interTMP = ConfigureTMP(interTextGO, "[E] Ramasser", 20f, Color.white);
-            interTMP.alignment = TextAlignmentOptions.Center;
-            SetRT(interTextGO,
-                anchorMin: new Vector2(0.5f, 0.5f),
-                anchorMax: new Vector2(0.5f, 0.5f),
-                pos:       new Vector2(0f, -80f),
-                size:      new Vector2(400f, 50f));
-            interTextGO.SetActive(false);
+            DebugBtn("DamageBtn",    "-15 HP",     new Color(0.60f,0.12f,0.12f), dbButtonsGO.transform);
+            DebugBtn("HealBtn",      "+20 HP",     new Color(0.12f,0.50f,0.18f), dbButtonsGO.transform);
+            DebugBtn("HarvestBtn",   "+5 Récolte", new Color(0.20f,0.35f,0.15f), dbButtonsGO.transform);
+            DebugBtn("RitualBtn",    "+80 Rituel", new Color(0.30f,0.10f,0.50f), dbButtonsGO.transform);
+            DebugBtn("ToggleSlotBtn","Slot ↕",     new Color(0.20f,0.25f,0.40f), dbButtonsGO.transform);
+            DebugBtn("DayNightBtn",  "Jour/Nuit",  new Color(0.35f,0.30f,0.10f), dbButtonsGO.transform);
+            DebugBtn("RoleBtn",      "Rôle →",    new Color(0.15f,0.30f,0.45f), dbButtonsGO.transform);
 
-            // ── RoleSelectionPanel (Panel, désactivé par défaut) ──────────────────
-            // IMPORTANT : RoleSelectionUI est sur le Canvas (toujours actif), PAS sur le panel.
-            // Un script sur un panel désactivé ne s'exécute jamais (Start/Update bloqués).
+            // ═══════════════════════════════════════════════════════════════════════
+            // ROLE SELECTION PANEL (conservé pour compatibilité)
+            // ═══════════════════════════════════════════════════════════════════════
             AddIfMissing<RoleSelectionUI>(canvasGO);
-
-            GameObject rolePanel = FindOrCreateChild("RoleSelectionPanel", canvasGO.transform);
+            GameObject rolePanel = FindOrCreate("RoleSelectionPanel", canvasGO.transform);
             StretchRT(rolePanel);
-            GetOrAdd<Image>(rolePanel).color = new Color(0f, 0f, 0f, 0.85f);
+            GetOrAdd<Image>(rolePanel).color = new Color(0, 0, 0, 0.85f);
 
-            //    ButtonContainer (Vertical Layout Group)
-            GameObject btnContainer = FindOrCreateChild("ButtonContainer", rolePanel.transform);
-            var vlg = GetOrAdd<VerticalLayoutGroup>(btnContainer);
-            vlg.spacing              = 10f;
-            vlg.childAlignment       = TextAnchor.UpperCenter;
-            vlg.childControlWidth    = true;
-            vlg.childControlHeight   = false;
-            vlg.childForceExpandWidth  = true;
-            vlg.childForceExpandHeight = false;
-            vlg.padding = new RectOffset(20, 20, 20, 20);
-            var csf = GetOrAdd<ContentSizeFitter>(btnContainer);
-            csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-            SetRT(btnContainer,
-                anchorMin: new Vector2(0.5f, 0.5f),
-                anchorMax: new Vector2(0.5f, 0.5f),
-                pos:       Vector2.zero,
-                size:      new Vector2(450f, 600f));
-
+            GameObject btnContainer = FindOrCreate("ButtonContainer", rolePanel.transform);
+            var vlgRole = GetOrAdd<VerticalLayoutGroup>(btnContainer);
+            vlgRole.spacing = 10f;
+            vlgRole.childAlignment = TextAnchor.UpperCenter;
+            vlgRole.childControlWidth = true;
+            vlgRole.childControlHeight = false;
+            vlgRole.childForceExpandWidth = true;
+            vlgRole.childForceExpandHeight = false;
+            vlgRole.padding = new RectOffset(20, 20, 20, 20);
+            GetOrAdd<ContentSizeFitter>(btnContainer).verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            SetRT(btnContainer, V(.5f,.5f), V(.5f,.5f), Vector2.zero, new Vector2(450f, 600f));
             rolePanel.SetActive(false);
 
-            // ── DebugPanel (Panel, désactivé par défaut) ──────────────────────────
-            GameObject debugPanel = FindOrCreateChild("DebugPanel", canvasGO.transform);
-            StretchRT(debugPanel);
-            AddIfMissing<DebugPanel>(debugPanel);
+            var roleButtonPrefab = BuildOrLoadRoleButtonPrefab();
 
-            //    DebugText
-            GameObject debugTextGO = FindOrCreateChild("DebugText", debugPanel.transform);
-            ConfigureTMP(debugTextGO, "<b>DEBUG</b>\n...", 16f, Color.green);
-            SetRT(debugTextGO,
-                anchorMin: new Vector2(0f, 1f),
-                anchorMax: new Vector2(0f, 1f),
-                pos:       new Vector2(10f, -10f),
-                size:      new Vector2(350f, 200f));
+            // ── Câblage automatique HUDManager ────────────────────────────────────
+            var so = new SerializedObject(hudMgr);
+            so.FindProperty("damageFlashImage").objectReferenceValue    = flashImg;
+            so.FindProperty("vignetteImage").objectReferenceValue       = vigImg;
+            so.FindProperty("dayNightIcon").objectReferenceValue        = dnIcon;
+            so.FindProperty("dayNightLabel").objectReferenceValue       = dnLabel;
+            so.FindProperty("interactionPromptGO").objectReferenceValue = interPromptGO;
+            so.FindProperty("interactionKey").objectReferenceValue      = interKey;
+            so.FindProperty("interactionAction").objectReferenceValue   = interAction;
+            so.FindProperty("roleBadgeBg").objectReferenceValue         = roleBadgeImg;
+            so.FindProperty("roleIconText").objectReferenceValue        = roleIconTMP;
+            so.FindProperty("roleNameText").objectReferenceValue        = roleNameTMP;
+            so.FindProperty("hpBarFill").objectReferenceValue           = hpFillImg;
+            so.FindProperty("hpText").objectReferenceValue              = hpTMP;
+            so.FindProperty("effectsContainer").objectReferenceValue    = effectsContainerGO.transform;
+            so.FindProperty("harvestBarFill").objectReferenceValue      = harvestFillImg;
+            so.FindProperty("harvestText").objectReferenceValue         = harvestTMP;
+            so.FindProperty("ritualBarFill").objectReferenceValue       = ritualFillImg;
+            so.FindProperty("ritualText").objectReferenceValue          = ritualTMP;
+            so.FindProperty("ritualPromptGO").objectReferenceValue      = ritualPromptGO;
+            so.FindProperty("slotFullGO").objectReferenceValue          = slotFullGO;
+            so.FindProperty("slotEmptyGO").objectReferenceValue         = slotEmptyGO;
+            so.FindProperty("slotIconImage").objectReferenceValue       = slotIconImg;
+            so.FindProperty("slotNameText").objectReferenceValue        = slotNameTMP;
+            so.FindProperty("debugPanelGO").objectReferenceValue        = debugPanelGO;
+            so.ApplyModifiedProperties();
 
-            debugPanel.SetActive(false);
+            // Câblage RoleSelectionUI
+            var soRole = new SerializedObject(canvasGO.GetComponent<RoleSelectionUI>());
+            soRole.FindProperty("panelRoot").objectReferenceValue        = rolePanel;
+            soRole.FindProperty("buttonContainer").objectReferenceValue  = btnContainer.transform;
+            soRole.FindProperty("roleButtonPrefab").objectReferenceValue = roleButtonPrefab;
+            soRole.ApplyModifiedProperties();
 
-            // ── Prefabs ───────────────────────────────────────────────────────────
-            GameObject slotPrefab       = BuildOrLoadSlotPrefab();
-            GameObject roleButtonPrefab = BuildOrLoadRoleButtonPrefab();
-
-            // ── Câblage automatique des champs sérialisés ─────────────────────────
-            WireHUD(hudPanel, healthBarGO, roleTMP, slotsGO, slotPrefab, interTMP);
-            WireRoleSelectionUI(canvasGO, rolePanel, btnContainer, roleButtonPrefab);
-            WireDebugPanel(debugPanel, debugTextGO);
-
-            // ── Marquer la scène comme modifiée ───────────────────────────────────
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Selection.activeGameObject = canvasGO;
 
-            Selection.activeGameObject = hudPanel;
             Debug.Log(
-                "[UISetup] Hiérarchie Canvas créée avec succès !\n" +
-                "Il reste à assigner manuellement depuis l'Inspecteur :\n" +
-                "  • HUD          → PlayerState, InventorySystem, PlayerInteraction\n" +
-                "  • DebugPanel   → PlayerTransform, CharacterController, InventorySystem\n" +
-                "  • RoleManager  → AvailableRoles (assets RoleData) + DefaultRole");
+                "[UISetup] HUD Lycans créé ✓\n\n" +
+                "Structure :\n" +
+                "  BottomLeft   — Badge de rôle + Barre de vie\n" +
+                "  TopLeft      — Effets actifs (potions)\n" +
+                "  TopRight     — Récolte + Rituel\n" +
+                "  BottomCenter — Slot d'inventaire\n" +
+                "  Centre       — Réticule + Prompt interaction\n" +
+                "  TopCentre    — Indicateur Jour/Nuit\n" +
+                "  DebugPanel   — [F1] pour afficher/masquer\n\n" +
+                "Debug : touche F1 en Play mode pour ouvrir le panneau.");
         }
 
-        // ═════════════════════════════════════════════════════════════════════════
-        // Câblage des scripts
-        // ═════════════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════════
+        // Helpers
+        // ═══════════════════════════════════════════════════════════════════════════
 
-        static void WireHUD(GameObject hudGO, GameObject healthBarGO, TextMeshProUGUI roleTMP,
-            GameObject slotsGO, GameObject slotPrefab, TextMeshProUGUI interTMP)
+        static void DebugBtn(string name, string label, Color bgColor, Transform parent)
         {
-            var so = new SerializedObject(hudGO.GetComponent<HUD>());
-            so.FindProperty("healthBar").objectReferenceValue         = healthBarGO.GetComponent<Slider>();
-            so.FindProperty("roleNameText").objectReferenceValue      = roleTMP;
-            so.FindProperty("slotsContainer").objectReferenceValue    = slotsGO.transform;
-            so.FindProperty("slotPrefab").objectReferenceValue        = slotPrefab;
-            so.FindProperty("interactionPrompt").objectReferenceValue = interTMP;
-            so.ApplyModifiedProperties();
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var rt = go.AddComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(88, 0);
+            GetOrAdd<Image>(go).color = bgColor;
+            var btn    = GetOrAdd<Button>(go);
+            var colors = btn.colors;
+            colors.highlightedColor = new Color(1.3f, 1.3f, 1.3f, 1f);
+            colors.pressedColor     = new Color(0.7f, 0.7f, 0.7f, 1f);
+            btn.colors = colors;
+
+            var lGO = new GameObject("Label");
+            lGO.transform.SetParent(go.transform, false);
+            var lRT = lGO.AddComponent<RectTransform>();
+            lRT.anchorMin = Vector2.zero; lRT.anchorMax = Vector2.one;
+            lRT.offsetMin = lRT.offsetMax = Vector2.zero;
+            var tmp = lGO.AddComponent<TextMeshProUGUI>();
+            tmp.text = label; tmp.fontSize = 11f; tmp.fontStyle = FontStyles.Bold;
+            tmp.color = Color.white; tmp.alignment = TextAlignmentOptions.Center;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
         }
 
-        // canvasGO = objet qui porte le composant RoleSelectionUI (toujours actif)
-        // panelGO  = RoleSelectionPanel (peut être désactivé, contrôlé par le script)
-        static void WireRoleSelectionUI(GameObject canvasGO, GameObject panelGO,
-            GameObject containerGO, GameObject prefab)
-        {
-            var so = new SerializedObject(canvasGO.GetComponent<RoleSelectionUI>());
-            so.FindProperty("panelRoot").objectReferenceValue        = panelGO;
-            so.FindProperty("buttonContainer").objectReferenceValue  = containerGO.transform;
-            so.FindProperty("roleButtonPrefab").objectReferenceValue = prefab;
-            so.ApplyModifiedProperties();
-        }
-
-        static void WireDebugPanel(GameObject panelGO, GameObject textGO)
-        {
-            var so = new SerializedObject(panelGO.GetComponent<DebugPanel>());
-            so.FindProperty("panel").objectReferenceValue     = panelGO;
-            so.FindProperty("debugText").objectReferenceValue = textGO.GetComponent<TextMeshProUGUI>();
-            so.ApplyModifiedProperties();
-        }
-
-        // ═════════════════════════════════════════════════════════════════════════
-        // Création des prefabs
-        // ═════════════════════════════════════════════════════════════════════════
-
-        /// <summary>
-        /// SlotPrefab : Image (fond) + enfant "ItemIcon" (Image)
-        /// Utilisé par HUD.cs pour instancier les slots d'inventaire.
-        /// </summary>
-        static GameObject BuildOrLoadSlotPrefab()
-        {
-            const string path = PrefabsFolder + "/SlotPrefab.prefab";
-            var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-            if (existing != null) return existing;
-
-            var root   = new GameObject("SlotPrefab");
-            var rootRT = root.AddComponent<RectTransform>();
-            rootRT.sizeDelta = new Vector2(55f, 55f);
-            root.AddComponent<Image>().color = new Color(0.15f, 0.15f, 0.15f, 0.9f);
-
-            var icon   = new GameObject("ItemIcon");
-            icon.transform.SetParent(root.transform, false);
-            var iconRT = icon.AddComponent<RectTransform>();
-            iconRT.anchorMin = new Vector2(0.1f, 0.1f);
-            iconRT.anchorMax = new Vector2(0.9f, 0.9f);
-            iconRT.offsetMin = iconRT.offsetMax = Vector2.zero;
-            icon.AddComponent<Image>().enabled = false;   // invisible tant que vide
-
-            var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
-            Object.DestroyImmediate(root);
-            return prefab;
-        }
-
-        /// <summary>
-        /// RoleButtonPrefab : Button + Image de fond
-        ///   ├── "Icon"        (Image)
-        ///   ├── "RoleName"    (TextMeshProUGUI, bold)
-        ///   └── "Description" (TextMeshProUGUI, gris)
-        /// Utilisé par RoleSelectionUI.cs.
-        /// </summary>
         static GameObject BuildOrLoadRoleButtonPrefab()
         {
             const string path = PrefabsFolder + "/RoleButtonPrefab.prefab";
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             if (existing != null) return existing;
 
-            var root   = new GameObject("RoleButtonPrefab");
-            var rootRT = root.AddComponent<RectTransform>();
-            rootRT.sizeDelta = new Vector2(400f, 80f);
+            var root = new GameObject("RoleButtonPrefab");
+            root.AddComponent<RectTransform>().sizeDelta = new Vector2(400f, 80f);
             root.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
             root.AddComponent<Button>();
 
-            // Icon
-            var icon   = new GameObject("Icon");
-            icon.transform.SetParent(root.transform, false);
-            var iconRT = icon.AddComponent<RectTransform>();
-            iconRT.anchorMin        = new Vector2(0f, 0f);
-            iconRT.anchorMax        = new Vector2(0f, 1f);
-            iconRT.pivot            = new Vector2(0f, 0.5f);
-            iconRT.anchoredPosition = new Vector2(10f, 0f);
-            iconRT.sizeDelta        = new Vector2(60f, -10f);
-            icon.AddComponent<Image>();
-
-            // RoleName
             var nameGO = new GameObject("RoleName");
             nameGO.transform.SetParent(root.transform, false);
-            var nameRT = nameGO.AddComponent<RectTransform>();
-            nameRT.anchorMin = new Vector2(0f, 0.5f);
-            nameRT.anchorMax = new Vector2(1f, 1f);
-            nameRT.offsetMin = new Vector2(80f, 0f);
-            nameRT.offsetMax = new Vector2(-10f, 0f);
-            var nameTMP = nameGO.AddComponent<TextMeshProUGUI>();
-            nameTMP.text      = "Nom du rôle";
-            nameTMP.fontSize  = 20f;
-            nameTMP.fontStyle = FontStyles.Bold;
-            nameTMP.color     = Color.white;
+            var nRT = nameGO.AddComponent<RectTransform>();
+            nRT.anchorMin = V(.0f,.5f); nRT.anchorMax = Vector2.one;
+            nRT.offsetMin = new Vector2(16,0); nRT.offsetMax = new Vector2(-10,0);
+            var nTMP = nameGO.AddComponent<TextMeshProUGUI>();
+            nTMP.text = "Rôle"; nTMP.fontSize = 20f; nTMP.fontStyle = FontStyles.Bold; nTMP.color = Color.white;
 
-            // Description
             var descGO = new GameObject("Description");
             descGO.transform.SetParent(root.transform, false);
-            var descRT = descGO.AddComponent<RectTransform>();
-            descRT.anchorMin = new Vector2(0f, 0f);
-            descRT.anchorMax = new Vector2(1f, 0.5f);
-            descRT.offsetMin = new Vector2(80f, 0f);
-            descRT.offsetMax = new Vector2(-10f, 0f);
-            var descTMP = descGO.AddComponent<TextMeshProUGUI>();
-            descTMP.text     = "Description du rôle";
-            descTMP.fontSize = 14f;
-            descTMP.color    = new Color(0.8f, 0.8f, 0.8f);
+            var dRT = descGO.AddComponent<RectTransform>();
+            dRT.anchorMin = Vector2.zero; dRT.anchorMax = V(1f,.5f);
+            dRT.offsetMin = new Vector2(16,0); dRT.offsetMax = new Vector2(-10,0);
+            var dTMP = descGO.AddComponent<TextMeshProUGUI>();
+            dTMP.text = "Description"; dTMP.fontSize = 14f; dTMP.color = new Color(0.8f,0.8f,0.8f);
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
             return prefab;
         }
 
-        // ═════════════════════════════════════════════════════════════════════════
-        // Utilitaires
-        // ═════════════════════════════════════════════════════════════════════════
-
-        /// <summary>Trouve l'enfant direct nommé <paramref name="name"/> ou en crée un.</summary>
-        static GameObject FindOrCreateChild(string name, Transform parent)
+        // Recréation propre (supprime l'ancien pour éviter les états corrompus)
+        static GameObject Recreate(string name, Transform parent)
         {
-            Transform existing = parent.Find(name);
-            if (existing != null) return existing.gameObject;
-
+            Transform ex = parent.Find(name);
+            if (ex != null) Object.DestroyImmediate(ex.gameObject);
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
             go.AddComponent<RectTransform>();
             return go;
         }
 
-        /// <summary>Déplace un enfant direct de <paramref name="from"/> vers <paramref name="to"/>.</summary>
-        static void ReparentChild(Transform from, Transform to, string childName)
+        // Trouve ou crée un enfant (pour les éléments qui peuvent exister)
+        static GameObject FindOrCreate(string name, Transform parent)
         {
-            Transform child = from.Find(childName);
-            if (child != null && child.parent != to)
-                child.SetParent(to, false);
+            Transform ex = parent.Find(name);
+            if (ex != null) return ex.gameObject;
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.AddComponent<RectTransform>();
+            return go;
         }
 
-        /// <summary>Étire le RectTransform pour remplir son parent.</summary>
+        // Crée ou retrouve un sous-enfant
+        static GameObject Child(string name, Transform parent)
+        {
+            Transform ex = parent.Find(name);
+            if (ex != null) return ex.gameObject;
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            go.AddComponent<RectTransform>();
+            return go;
+        }
+
         static void StretchRT(GameObject go)
         {
-            var rt    = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
-            rt.anchorMin = Vector2.zero;
-            rt.anchorMax = Vector2.one;
+            var rt = GetOrAdd<RectTransform>(go);
+            rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
             rt.offsetMin = rt.offsetMax = Vector2.zero;
         }
 
-        /// <summary>Positionne le RectTransform avec ancre + position + taille.</summary>
-        static void SetRT(GameObject go, Vector2 anchorMin, Vector2 anchorMax,
-            Vector2 pos, Vector2 size)
+        static void SetRT(GameObject go, Vector2 anchorMin, Vector2 anchorMax, Vector2 pos, Vector2 size)
         {
-            var rt    = go.GetComponent<RectTransform>() ?? go.AddComponent<RectTransform>();
-            rt.anchorMin       = anchorMin;
-            rt.anchorMax       = anchorMax;
-            rt.pivot           = (anchorMin + anchorMax) * 0.5f;
-            rt.anchoredPosition = pos;
-            rt.sizeDelta       = size;
+            var rt = GetOrAdd<RectTransform>(go);
+            rt.anchorMin = anchorMin; rt.anchorMax = anchorMax;
+            rt.pivot = (anchorMin + anchorMax) * 0.5f;
+            rt.anchoredPosition = pos; rt.sizeDelta = size;
         }
 
-        /// <summary>
-        /// Construit la hiérarchie complète d'un Slider (Background / Fill Area / Fill).
-        /// Si le Slider existe déjà, retourne l'objet sans le recréer.
-        /// </summary>
-        static GameObject BuildSlider(string name, Transform parent)
+        static TextMeshProUGUI TMP(GameObject go, string text, float fontSize, Color color)
         {
-            GameObject root = FindOrCreateChild(name, parent);
-            if (root.GetComponent<Slider>() != null) return root;  // déjà configuré
-
-            var slider       = root.AddComponent<Slider>();
-            slider.minValue  = 0f;
-            slider.maxValue  = 1f;
-            slider.value     = 1f;
-            slider.direction = Slider.Direction.LeftToRight;
-
-            // Background
-            var bg   = new GameObject("Background");
-            bg.transform.SetParent(root.transform, false);
-            bg.AddComponent<Image>().color = new Color(0.2f, 0.2f, 0.2f, 0.8f);
-            var bgRT = bg.GetComponent<RectTransform>();
-            bgRT.anchorMin = Vector2.zero;
-            bgRT.anchorMax = Vector2.one;
-            bgRT.offsetMin = bgRT.offsetMax = Vector2.zero;
-
-            // Fill Area
-            var fillArea   = new GameObject("Fill Area");
-            fillArea.transform.SetParent(root.transform, false);
-            var fillAreaRT = fillArea.AddComponent<RectTransform>();
-            fillAreaRT.anchorMin = new Vector2(0f, 0.25f);
-            fillAreaRT.anchorMax = new Vector2(1f, 0.75f);
-            fillAreaRT.offsetMin = new Vector2(5f, 0f);
-            fillAreaRT.offsetMax = new Vector2(-5f, 0f);
-
-            // Fill
-            var fill   = new GameObject("Fill");
-            fill.transform.SetParent(fillArea.transform, false);
-            var fillRT = fill.AddComponent<RectTransform>();
-            fillRT.anchorMin = Vector2.zero;
-            fillRT.anchorMax = Vector2.one;
-            fillRT.offsetMin = fillRT.offsetMax = Vector2.zero;
-            fill.AddComponent<Image>().color = new Color(0.8f, 0.2f, 0.2f, 1f);  // rouge santé
-
-            slider.fillRect = fillRT;
-            return root;
-        }
-
-        /// <summary>Ajoute ou configure un TextMeshProUGUI sur <paramref name="go"/>.</summary>
-        static TextMeshProUGUI ConfigureTMP(GameObject go, string text, float fontSize, Color color)
-        {
-            var tmp      = go.GetComponent<TextMeshProUGUI>() ?? go.AddComponent<TextMeshProUGUI>();
-            tmp.text     = text;
-            tmp.fontSize = fontSize;
-            tmp.color    = color;
+            var tmp = GetOrAdd<TextMeshProUGUI>(go);
+            tmp.text = text; tmp.fontSize = fontSize; tmp.color = color;
+            tmp.overflowMode = TextOverflowModes.Ellipsis;
             return tmp;
         }
 
@@ -411,12 +553,10 @@ namespace ProjectFPS.Editor
             => go.TryGetComponent(out T c) ? c : go.AddComponent<T>();
 
         static void AddIfMissing<T>(GameObject go) where T : Component
-        {
-            if (!go.TryGetComponent<T>(out _))
-                go.AddComponent<T>();
-        }
+        { if (!go.TryGetComponent<T>(out _)) go.AddComponent<T>(); }
 
-        /// <summary>Crée récursivement les dossiers Asset manquants.</summary>
+        static Vector2 V(float x, float y) => new Vector2(x, y);
+
         static void EnsureFolder(string path)
         {
             if (string.IsNullOrEmpty(path) || AssetDatabase.IsValidFolder(path)) return;
