@@ -73,6 +73,8 @@ namespace ProjectFPS.Network
                 SetStatus("NetworkManager absent ! Voir Console.");
                 Debug.LogError("[LobbyManager] NetworkManager introuvable dans la scène.\n" +
                                "→ Copie le GameObject NetworkManager (+ Tugboat) depuis ta scène de jeu dans la scène Lobby.");
+                if (hostButton != null) hostButton.interactable = false;
+                if (joinButton != null) joinButton.interactable = false;
                 return;
             }
 
@@ -96,6 +98,8 @@ namespace ProjectFPS.Network
 
         private void OnHostClicked()
         {
+            if (InstanceFinder.NetworkManager == null) { SetStatus("NetworkManager absent !"); return; }
+
             SetStatus("Démarrage du serveur...");
             hostButton.interactable = false;
             joinButton.interactable = false;
@@ -106,6 +110,8 @@ namespace ProjectFPS.Network
 
         private void OnJoinClicked()
         {
+            if (InstanceFinder.NetworkManager == null) { SetStatus("NetworkManager absent !"); return; }
+
             string input = codeInputField != null ? codeInputField.text.Trim() : "";
             if (string.IsNullOrEmpty(input)) input = "localhost";
 
@@ -121,6 +127,8 @@ namespace ProjectFPS.Network
 
         private void OnStartGameClicked()
         {
+            if (InstanceFinder.NetworkManager == null) { SetStatus("NetworkManager absent !"); return; }
+
             if (!InstanceFinder.IsServer)
             {
                 SetStatus("Seul l'hôte peut lancer la partie.");
@@ -134,6 +142,8 @@ namespace ProjectFPS.Network
 
         private void OnLeaveClicked()
         {
+            if (InstanceFinder.NetworkManager == null) { SetStatus("NetworkManager absent !"); return; }
+
             InstanceFinder.ClientManager.StopConnection();
             if (InstanceFinder.IsServer)
                 InstanceFinder.ServerManager.StopConnection(true);
