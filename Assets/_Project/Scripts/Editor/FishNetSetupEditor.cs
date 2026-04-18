@@ -7,11 +7,13 @@
 //   2. Régénérer les prefabs réseau  (AssetPathHash + duplicate key)
 //   3. Ajouter NetworkManager à la scène active (ouvre Lobby d'abord)
 //   4. Supprimer le PlayerSpawner FishNet intégré (NullReferenceException)
+//   5. Créer le PlayerSpawner + RoleManager dans SampleScene
 
 using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace ProjectFPS.Editor
 {
@@ -131,9 +133,20 @@ namespace ProjectFPS.Editor
 
             // Architecture correcte
             sb.AppendLine("\n─── Architecture attendue ──────────────────────────────────────");
-            sb.AppendLine("Build Settings index 0 : scène LOBBY  ← NetworkManager ICI uniquement");
-            sb.AppendLine("Build Settings index 1 : SampleScene  ← pas de NetworkManager");
+            sb.AppendLine("Build Settings index 0 : scène LOBBY      ← NetworkManager + LobbyManager");
+            sb.AppendLine("Build Settings index 1 : SampleScene      ← PlayerSpawner + RoleManager");
             sb.AppendLine("Le NM persiste via DontDestroyOnLoad quand FishNet charge SampleScene.");
+            sb.AppendLine("");
+            sb.AppendLine("⚠ PlayerSpawner doit être dans SampleScene (PAS dans Lobby) !");
+            sb.AppendLine("  → Dans Lobby : spawn avant chargement → joueurs en mauvaise scène");
+            sb.AppendLine("  → Dans SampleScene : Start() spawn TOUS les clients déjà connectés");
+            sb.AppendLine("");
+            sb.AppendLine("⚠ RoleManager doit être dans SampleScene !");
+            sb.AppendLine("  → Sans lui : RoleManager.Instance == null → erreurs InventorySystem/RoleAbilityController");
+            sb.AppendLine("");
+            sb.AppendLine("⚠ Multiple AudioListeners = 1 par joueur spawné + caméra Lobby");
+            sb.AppendLine("  → Cause : joueurs spawnés dans Lobby à cause d'un PlayerSpawner mal placé");
+            sb.AppendLine("  → Fix : PlayerSpawner dans SampleScene (action 5)");
 
             // Vérifier Build Settings
             var scenes = EditorBuildSettings.scenes;
@@ -204,6 +217,105 @@ namespace ProjectFPS.Editor
                 "[FishNetSetup] NetworkManager ajouté à la scène.\n" +
                 "→ Sauvegarde la scène (Ctrl+S)\n" +
                 "→ Lance ensuite : ProjectFPS > Outils FishNet > 2. Régénérer les prefabs réseau");
+        }
+
+        // ─── 5. Créer PlayerSpawner + RoleManager dans SampleScene ──────────────
+        [MenuItem("ProjectFPS/Outils FishNet/5. Setup scène de jeu (PlayerSpawner + RoleManager)")]
+        static void SetupGameScene()
+        {
+            const string gameScenePath = "Assets/Scenes/SampleScene.unity";
+            const string gameSceneName = "SampleScene";
+
+            // Vérifie que SampleScene est dans Build Settings
+            var buildScenes = EditorBuildSettings.scenes;
+            bool inBuild = buildScenes.Any(s =>
+                System.IO.Path.GetFileNameWithoutExtension(s.path) == gameSceneName);
+
+            if (!inBuild)
+            {
+                if (System.IO.File.Exists(gameScenePath))
+                    EnsureInBuildSettings(gameScenePath, 1);
+                else
+                {
+                    EditorUtility.DisplayDialog("FishNet Setup",
+                        $"Scène '{gameSceneName}' introuvable à '{gameScenePath}'.\n" +
+                        "Vérifie que ta scène de jeu existe et ajuste le chemin.", "OK");
+                    return;
+                }
+            }
+
+            // Ouvre SampleScene en mode Single
+            if (EditorSceneManager.GetActiveScene().name != gameSceneName)
+            {
+                bool open = EditorUtility.DisplayDialog("FishNet Setup",
+                    $"Cette action va ouvrir la scène '{gameSceneName}'.\nContinuer ?",
+                    "Oui", "Non");
+                if (!open) return;
+                EditorSceneManager.OpenScene(gameScenePath, OpenSceneMode.Single);
+            }
+
+            var activeScene = EditorSceneManager.GetActiveScene();
+
+            // ── PlayerSpawner ────────────────────────────────────────────────────
+            var existingSpawner = Object.FindObjectOfType<ProjectFPS.Network.PlayerSpawner>();
+            if (existingSpawner == null)
+            {
+                var spawnerGO = new GameObject("PlayerSpawner");
+                spawnerGO.AddComponent<ProjectFPS.Network.PlayerSpawner>();
+                Undo.RegisterCreatedObjectUndo(spawnerGO, "Add PlayerSpawner");
+                Debug.Log("[FishNetSetup] PlayerSpawner créé dans SampleScene.\n" +
+                          "→ Assigne le Player Prefab + les SpawnPoints dans l'Inspector.");
+            }
+            else
+            {
+                Debug.Log("[FishNetSetup] PlayerSpawner déjà présent dans SampleScene.");
+            }
+
+            // ── RoleManager ──────────────────────────────────────────────────────
+            var roleManagerType = System.AppDomain.CurrentDomain
+                .GetAssemblies()
+                .SelectMany(a => { try { return a.GetTypes(); } catch { return System.Array.Empty<System.Type>(); } })
+                .FirstOrDefault(t => t.FullName == "ProjectFPS.Roles.RoleManager");
+
+            if (roleManagerType != null)
+            {
+                var existingRM = Object.FindObjectOfType(roleManagerType);
+                if (existingRM == null)
+                {
+                    var rmGO = new GameObject("RoleManager");
+                    rmGO.AddComponent(roleManagerType);
+                    Undo.RegisterCreatedObjectUndo(rmGO, "Add RoleManager");
+                    Debug.Log("[FishNetSetup] RoleManager créé dans SampleScene.\n" +
+                              "→ Assigne les RoleData ScriptableObjects dans Available Roles.\n" +
+                              "→ Assigne un rôle par défaut dans Default Role.");
+                }
+                else
+                {
+                    Debug.Log("[FishNetSetup] RoleManager déjà présent dans SampleScene.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[FishNetSetup] Type 'ProjectFPS.Roles.RoleManager' introuvable. " +
+                                 "Crée le GameObject RoleManager manuellement.");
+            }
+
+            EditorSceneManager.MarkSceneDirty(activeScene);
+
+            EditorUtility.DisplayDialog(
+                "Setup scène de jeu",
+                "Étapes restantes dans l'Inspector :\n\n" +
+                "① PlayerSpawner\n" +
+                "  • Player Prefab → ton prefab NetworkPlayer\n" +
+                "  • Spawn Points  → GameObjects vides positionnés dans SampleScene\n\n" +
+                "② RoleManager\n" +
+                "  • Available Roles → glisse tes RoleData ScriptableObjects\n" +
+                "  • Default Role    → glisse le rôle appliqué au démarrage\n\n" +
+                "③ Sauvegarde la scène (Ctrl+S)\n\n" +
+                "④ Build Settings : Lobby = index 0, SampleScene = index 1\n\n" +
+                "⑤ Dans Lobby : retire tout PlayerSpawner si présent\n" +
+                "   (Menu : ProjectFPS → Outils FishNet → 4)",
+                "OK");
         }
 
         // ─── 4. Supprimer le PlayerSpawner FishNet intégré ───────────────────────
