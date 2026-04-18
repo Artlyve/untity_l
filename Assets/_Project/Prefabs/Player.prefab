@@ -3378,6 +3378,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 078e378b3d5b2784da43cf8223a3e757, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectFPS.Player.PlayerController
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   cameraHolder: {fileID: 5165080571625652030}
   animator: {fileID: 6493592058891515271}
   walkSpeed: 5
