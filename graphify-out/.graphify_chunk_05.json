@@ -1,0 +1,331 @@
+{
+  "nodes": [
+    {
+      "id": "remy_body_specular_texture",
+      "label": "Remy Body Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_gloss_texture",
+      "label": "Remy Body Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_diffuse_texture",
+      "label": "Remy Body Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_opacity_texture",
+      "label": "Remy Body Opacity Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Opacity.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_top_normal_texture",
+      "label": "Remy Top Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_character",
+      "label": "Remy 3D Game Character",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_mesh",
+      "label": "Remy Body Mesh (head, torso, arms, hands, feet, teeth, eyes)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_top_clothing",
+      "label": "Remy Top Clothing Item (sleeveless shirt/vest)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "pbr_specular_workflow",
+      "label": "PBR Specular Workflow",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "unity_game_engine",
+      "label": "Unity Game Engine",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "remy_body_specular_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_gloss_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_diffuse_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_opacity_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_normal_texture",
+      "target": "remy_top_clothing",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_mesh",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_clothing",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_character",
+      "target": "unity_game_engine",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 0.95
+    },
+    {
+      "source": "remy_body_specular_texture",
+      "target": "pbr_specular_workflow",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_body_gloss_texture",
+      "target": "pbr_specular_workflow",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Gloss.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_body_specular_texture",
+      "target": "remy_body_gloss_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "remy_body_diffuse_texture",
+      "target": "remy_body_specular_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "remy_body_opacity_texture",
+      "target": "remy_body_diffuse_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Opacity.png",
+      "source_location": null,
+      "weight": 0.8
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "remy_body_texture_set",
+      "label": "Remy Body Full PBR Texture Set",
+      "nodes": [
+        "remy_body_diffuse_texture",
+        "remy_body_specular_texture",
+        "remy_body_gloss_texture",
+        "remy_body_opacity_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.97,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png"
+    },
+    {
+      "id": "remy_top_texture_set",
+      "label": "Remy Top Clothing Texture Set",
+      "nodes": [
+        "remy_top_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png"
+    },
+    {
+      "id": "remy_full_texture_set",
+      "label": "Remy Character Complete Texture Set (Chunk 5)",
+      "nodes": [
+        "remy_body_diffuse_texture",
+        "remy_body_specular_texture",
+        "remy_body_gloss_texture",
+        "remy_body_opacity_texture",
+        "remy_top_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "_meta": {
+    "chunk": 5,
+    "character": "Remy",
+    "texture_analysis": {
+      "Remy_Body_Specular": {
+        "type": "specular_map",
+        "body_part": "full_body_uv_layout",
+        "palette": "near_black_with_white_and_grey_highlights",
+        "style": "PBR specular map; mostly dark/black base with bright white patches on teeth/eyes indicating high specularity, and subtle grey mid-tones on skin and hair regions",
+        "uv_islands": ["head_face", "torso_chest", "ears", "hair_accessories", "feet_toes"]
+      },
+      "Remy_Body_Gloss": {
+        "type": "gloss_map",
+        "body_part": "full_body_uv_layout",
+        "palette": "dark_grey_dominant_with_lighter_grey_accents",
+        "style": "PBR gloss/roughness map; uniform mid-dark grey overall indicating moderate-low glossiness; slightly lighter on arms and hands; bright white patch on teeth area indicates high gloss; very similar UV layout to specular map",
+        "uv_islands": ["head_face", "torso", "arms_hands", "ears", "hair", "feet"]
+      },
+      "Remy_Body_Diffuse": {
+        "type": "diffuse_albedo_map",
+        "body_part": "full_body_uv_layout_including_face_torso_arms_hands_feet_mouth_teeth_eyes",
+        "palette": "warm_peach_skin_tones_with_brown_hair_blue_eyes_pink_gums_white_teeth_black_underwear",
+        "style": "realistic human skin texture; detailed hand-painted or photographic diffuse; shows male character with fair/medium skin, body hair, facial features, blue eyes, brown hair; includes all body UV islands in standard UV atlas layout",
+        "uv_islands": ["head_face", "torso_front", "arms", "hands", "ears", "feet", "teeth_mouth_interior", "eyes_irises", "hair"]
+      },
+      "Remy_Body_Opacity": {
+        "type": "opacity_alpha_mask",
+        "body_part": "hair_strands_or_eyelashes_small_region",
+        "palette": "white_on_black",
+        "style": "black-and-white alpha mask; nearly entirely white (fully opaque) with a single small dark rectangular region containing three white curved strand shapes; likely controls transparency for hair strands, eyelashes, or grass-like geometry attached to body mesh",
+        "uv_islands": ["hair_alpha_strand_group"]
+      },
+      "Remy_Top_Normal": {
+        "type": "normal_map",
+        "body_part": "upper_body_clothing_top_vest_sleeveless_shirt",
+        "palette": "periwinkle_blue_purple_base_with_cyan_pink_highlight_vectors",
+        "style": "tangent-space normal map (standard blue-purple tint); shows fabric wrinkle detail for a sleeveless shirt or vest garment; visible fold lines, collar area, and shoulder seams; two small circular accessories (buttons or pins) visible in upper-left corner",
+        "uv_islands": ["front_panel", "back_panel", "collar", "accessories"]
+      }
+    }
+  }
+}

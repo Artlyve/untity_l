@@ -1,0 +1,499 @@
+{
+  "nodes": [
+    {
+      "id": "remy_hair_gloss_texture",
+      "label": "Remy Hair Gloss Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_specular_texture",
+      "label": "Remy Hair Specular Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_diffuse_texture",
+      "label": "Remy Hair Diffuse Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_opacity_texture",
+      "label": "Remy Hair Opacity Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_normal_texture",
+      "label": "Remy Body Normal Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_character",
+      "label": "Remy Character",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_material",
+      "label": "Remy Hair Material",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_material",
+      "label": "Remy Body Material",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "gloss_map_type",
+      "label": "Gloss Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specular_map_type",
+      "label": "Specular Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "diffuse_map_type",
+      "label": "Diffuse Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "opacity_map_type",
+      "label": "Opacity Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "normal_map_type",
+      "label": "Normal Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "grayscale_palette",
+      "label": "Grayscale Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "warm_brown_palette",
+      "label": "Warm Brown / Sandy Blonde Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "black_white_palette",
+      "label": "Black and White Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "blue_purple_palette",
+      "label": "Blue/Purple Tangent-Space Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "hair_strand_pattern",
+      "label": "Hair Strand / Vertical Streak Pattern",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "uv_atlas_layout",
+      "label": "UV Atlas Layout",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "face_surface_detail",
+      "label": "Face Surface Detail (eyes, nose, mouth, ears)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "remy_body_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_material",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_material",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "gloss_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "specular_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "diffuse_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "opacity_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "normal_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "grayscale_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "grayscale_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "warm_brown_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "black_white_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "blue_purple_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "uv_atlas_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "face_surface_detail",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "remy_hair_specular_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 0.95
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "remy_hair_texture_set",
+      "label": "Remy Hair Texture Set (Gloss, Specular, Diffuse, Opacity)",
+      "nodes": [
+        "remy_hair_gloss_texture",
+        "remy_hair_specular_texture",
+        "remy_hair_diffuse_texture",
+        "remy_hair_opacity_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png"
+    },
+    {
+      "id": "remy_full_texture_set_chunk04",
+      "label": "Remy Full Texture Set - Chunk 04 (Hair + Body Normal)",
+      "nodes": [
+        "remy_hair_gloss_texture",
+        "remy_hair_specular_texture",
+        "remy_hair_diffuse_texture",
+        "remy_hair_opacity_texture",
+        "remy_body_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

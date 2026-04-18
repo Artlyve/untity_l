@@ -1,0 +1,3133 @@
+{
+  "nodes": [
+    {
+      "id": "lobbymanager_lobbymanager",
+      "label": "LobbyManager",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Network/LobbyManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerspawner_playerspawner",
+      "label": "PlayerSpawner",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Network/PlayerSpawner.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "hudmanager_hudmanager",
+      "label": "HUDManager",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "hudmanager_roletype",
+      "label": "RoleType (HUDManager enum)",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "debugpanelhud_debugpanelhud",
+      "label": "DebugPanelHUD",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanelHUD.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "roleselectionui_roleselectionui",
+      "label": "RoleSelectionUI",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "debugpanel_debugpanel",
+      "label": "DebugPanel",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanel.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "hud_hud",
+      "label": "HUD",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "roledata_roledata",
+      "label": "RoleData",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Roles/RoleData.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerrole_playerrole",
+      "label": "PlayerRole",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Roles/PlayerRole.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rolemanager_rolemanager",
+      "label": "RoleManager",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerinteraction_playerinteraction",
+      "label": "PlayerInteraction",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerInteraction.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerstate_playerstate",
+      "label": "PlayerState",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rigidbodywatcher_rigidbodywatcher",
+      "label": "RigidbodyWatcher",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/RigidbodyWatcher.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "roleabilitycontroller_roleabilitycontroller",
+      "label": "RoleAbilityController",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "animatordebugger_animatordebugger",
+      "label": "AnimatorDebugger",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/AnimatorDebugger.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rolemanager_onrolechanged",
+      "label": "RoleManager.OnRoleChanged (event)",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerstate_onhealthchanged",
+      "label": "PlayerState.OnHealthChanged (event)",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerinteraction_oninteractionprompt",
+      "label": "PlayerInteraction.OnInteractionPrompt (event)",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerInteraction.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playercontroller_playercontroller",
+      "label": "PlayerController",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "fpsbodyhider_fpsbodyhider",
+      "label": "FPSBodyHider",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/FPSBodyHider.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "uisetupedit_uisetupeditor",
+      "label": "UISetupEditor",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lobbysetupedit_lobbysetupeditor",
+      "label": "LobbySetupEditor",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Editor/LobbySetupEditor.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemdata_itemdata",
+      "label": "ItemData",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemData.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "effectsystem_effectsystem",
+      "label": "EffectSystem",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "potiontype_potiontype",
+      "label": "PotionType",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/PotionType.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "inventorysystem_inventorysystem",
+      "label": "InventorySystem",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemdebugger_itemdebugger",
+      "label": "ItemDebugger",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemDebugger.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "resourcesystem_resourcesystem",
+      "label": "ResourceSystem",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ResourceSystem.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ritualzone_ritualzone",
+      "label": "RitualZone",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "activeeffect_activeeffect",
+      "label": "ActiveEffect",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ActiveEffect.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemtype_itemtype",
+      "label": "ItemType",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemType.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itempickup_itempickup",
+      "label": "ItemPickup",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemPickup.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemworldobject_itemworldobject",
+      "label": "ItemWorldObject",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_normal_texture",
+      "label": "Remy Shoes Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_diffuse_texture",
+      "label": "Remy Shoes Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_specular_texture",
+      "label": "Remy Shoes Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_gloss_texture",
+      "label": "Remy Shoes Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_normal_texture",
+      "label": "Remy Hair Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_character",
+      "label": "Remy (Unity Game Character)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_body_part",
+      "label": "Remy Shoes (Body Part)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_body_part",
+      "label": "Remy Hair (Body Part)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_normal",
+      "label": "Normal Map Texture Type (Tangent-Space)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_diffuse",
+      "label": "Diffuse Map Texture Type (Base Color)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_specular",
+      "label": "Specular Map Texture Type (Shininess/Reflectivity)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_gloss",
+      "label": "Gloss Map Texture Type (Glossiness/Roughness)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_gloss_texture",
+      "label": "Remy Hair Gloss Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_specular_texture",
+      "label": "Remy Hair Specular Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_diffuse_texture",
+      "label": "Remy Hair Diffuse Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_opacity_texture",
+      "label": "Remy Hair Opacity Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_normal_texture",
+      "label": "Remy Body Normal Texture",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_material",
+      "label": "Remy Hair Material",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_material",
+      "label": "Remy Body Material",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "gloss_map_type",
+      "label": "Gloss Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "specular_map_type",
+      "label": "Specular Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "diffuse_map_type",
+      "label": "Diffuse Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "opacity_map_type",
+      "label": "Opacity Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "normal_map_type",
+      "label": "Normal Map Type",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "grayscale_palette",
+      "label": "Grayscale Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "warm_brown_palette",
+      "label": "Warm Brown / Sandy Blonde Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "black_white_palette",
+      "label": "Black and White Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "blue_purple_palette",
+      "label": "Blue/Purple Tangent-Space Color Palette",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "hair_strand_pattern",
+      "label": "Hair Strand / Vertical Streak Pattern",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "uv_atlas_layout",
+      "label": "UV Atlas Layout",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "face_surface_detail",
+      "label": "Face Surface Detail (eyes, nose, mouth, ears)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_specular_texture",
+      "label": "Remy Body Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_gloss_texture",
+      "label": "Remy Body Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_diffuse_texture",
+      "label": "Remy Body Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_opacity_texture",
+      "label": "Remy Body Opacity Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Opacity.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_top_normal_texture",
+      "label": "Remy Top Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_body_mesh",
+      "label": "Remy Body Mesh (head, torso, arms, hands, feet, teeth, eyes)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_top_clothing",
+      "label": "Remy Top Clothing Item (sleeveless shirt/vest)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "pbr_specular_workflow",
+      "label": "PBR Specular Workflow",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "unity_game_engine",
+      "label": "Unity Game Engine",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_top_gloss_texture",
+      "label": "Remy Top Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "gloss_map",
+      "color_palette": [
+        "#000000"
+      ],
+      "description": "Near-black gloss/shininess mask for Remy's top garment; silhouette of sleeveless vest UV layout (front and back panels) with black fill indicating near-zero gloss \u2014 matte fabric surface with no sheen.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_top_diffuse_texture",
+      "label": "Remy Top Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "diffuse_map",
+      "color_palette": [
+        "#3a3a3a",
+        "#2d2d2d",
+        "#4a4a4a",
+        "#1a1a1a"
+      ],
+      "description": "Dark charcoal-grey diffuse/albedo texture for Remy's sleeveless top; UV layout shows front and back torso panels plus narrow sleeve-edge strips; subtle woven fabric grain visible across surface; V-neck collar cutout on front panel; thin black horizontal stripe band at lower hem.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_top_specular_texture",
+      "label": "Remy Top Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular_map",
+      "color_palette": [
+        "#000000",
+        "#111111"
+      ],
+      "description": "High-contrast black specular map for Remy's top; solid dark silhouette of the UV-unwrapped sleeveless vest (front and back panels visible); extremely low specular intensity indicating matte, non-reflective fabric material with no highlight.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_bottom_diffuse_texture",
+      "label": "Remy Bottom Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "diffuse_map",
+      "color_palette": [
+        "#7a7d6a",
+        "#5e6150",
+        "#3d4030",
+        "#8a8d78"
+      ],
+      "description": "Olive/khaki-grey diffuse texture for Remy's pants; large lower section shows wide-leg trouser panels with a vertical centerline seam and subtle fabric grain; upper row of UV islands contains belt/waistband accessory pieces, pocket hardware, and small detail elements in darker olive-brown and forest-green tones; overall cargo-style or utility trouser silhouette.",
+      "clothing_region": "bottom",
+      "clothing_style": "cargo_pants_utility_trousers",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_bottom_normal_texture",
+      "label": "Remy Bottom Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "normal_map",
+      "color_palette": [
+        "#8080ff",
+        "#6060d0",
+        "#c0a0e0",
+        "#40c0ff"
+      ],
+      "description": "Tangent-space normal map (blue-purple dominant) for Remy's cargo pants; encodes micro-surface detail including fabric wrinkles across legs, raised waistband, belt loop geometry, front patch pockets, side seam creases, and accessory hardware topology; cyan highlights indicate outward-facing edges of pockets and loops; standard Unity-compatible tangent-space encoding.",
+      "clothing_region": "bottom",
+      "clothing_style": "cargo_pants_utility_trousers",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_top_garment",
+      "label": "Remy Top Garment (Sleeveless Vest)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "description": "Logical clothing asset representing Remy's sleeveless vest/tank-top: dark charcoal-grey woven fabric, V-neck collar, matte non-reflective surface, suitable for casual athletic or streetwear styling.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "primary_color": "charcoal_grey",
+      "confidence_score": 0.95
+    },
+    {
+      "id": "remy_bottom_garment",
+      "label": "Remy Bottom Garment (Cargo Pants)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "description": "Logical clothing asset representing Remy's pants: olive/khaki-grey cargo-style trousers with front patch pockets, belt loops, waistband, utility hardware details, and fabric wrinkle micro-surface baked into normal map.",
+      "clothing_region": "bottom",
+      "clothing_style": "cargo_pants_utility_trousers",
+      "primary_color": "olive_khaki_grey",
+      "confidence_score": 0.95
+    },
+    {
+      "id": "remy_bottom_gloss_texture",
+      "label": "Remy Bottom Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "gloss_map",
+      "color_palette": [
+        "black",
+        "near-black"
+      ],
+      "style": "UV-unwrapped grayscale gloss map; overwhelmingly black indicating near-zero surface glossiness/roughness across all cloth panels; small white/grey highlight islands on accessory UV islands (buttons, loops, zipper pull) suggesting slightly higher gloss on hard-surface details; layout shows shorts bottom garment with belt-loop strips, waistband, fly panel, pocket shapes arranged around central leg panel",
+      "character": "Remy",
+      "material_slot": "bottom_clothing",
+      "pbr_channel": "gloss",
+      "dominant_value": "very low gloss (near 0.0) \u2014 matte fabric surface"
+    },
+    {
+      "id": "remy_bottom_specular_texture",
+      "label": "Remy Bottom Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular_map",
+      "color_palette": [
+        "black",
+        "near-black"
+      ],
+      "style": "UV-unwrapped specular map; essentially identical layout and near-total black values to the gloss map \u2014 confirming very low specular reflectance across all cloth surfaces; same UV island arrangement (shorts, belt loops, waistband, pockets); uniform dark tone indicates a non-reflective, matte fabric material with minimal specular highlight contribution",
+      "character": "Remy",
+      "material_slot": "bottom_clothing",
+      "pbr_channel": "specular",
+      "dominant_value": "very low specular intensity \u2014 non-reflective fabric"
+    },
+    {
+      "id": "ch10_1001_normal_texture",
+      "label": "Ch10 Material 1001 Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "normal_map",
+      "color_palette": [
+        "blue",
+        "periwinkle",
+        "violet",
+        "purple",
+        "pink",
+        "cyan"
+      ],
+      "style": "Tangent-space normal map in standard blue-dominant encoding (RGB = XYZ surface normals); highly complex surface detail \u2014 shows a figure torso/upper body with elaborate decorative or ornamental surface features including raised emblem/crest shapes at top (crown-like or mandala-like symmetrical motifs), wrinkled/folded cloth across chest and lower body, anatomical body creases, and what appears to be a jacket or uniform with ornate embossed detailing; strong color variation from deep violet to light cyan indicates significant surface relief; UV layout appears continuous/UDIM-style for this material tile",
+      "character": "Ch10",
+      "material_slot": "1001",
+      "pbr_channel": "normal",
+      "dominant_value": "high-detail tangent-space normals \u2014 complex cloth and ornamental surface"
+    },
+    {
+      "id": "ch10_1001_glossiness_texture",
+      "label": "Ch10 Material 1001 Glossiness Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Glossiness.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "glossiness_map",
+      "color_palette": [
+        "dark grey",
+        "mid grey",
+        "light grey",
+        "white",
+        "black"
+      ],
+      "style": "Greyscale glossiness map matching the Ch10 1001 UV layout; predominantly dark-to-mid grey values across cloth body areas indicating low-to-moderate gloss; bright white specular highlight spots scattered across the surface represent highly polished or metallic detail elements (buttons, pins, medals, or decorative metal hardware); black regions correspond to matte fabric zones; the contrast between near-white highlights and dark background confirms a mixed-material surface (fabric + metal trim)",
+      "character": "Ch10",
+      "material_slot": "1001",
+      "pbr_channel": "glossiness",
+      "dominant_value": "mixed \u2014 dark grey (matte fabric) with bright white accents (metallic/polished details)"
+    },
+    {
+      "id": "ch10_1001_specular_texture",
+      "label": "Ch10 Material 1001 Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular_map",
+      "color_palette": [
+        "dark charcoal",
+        "near-black"
+      ],
+      "style": "Greyscale specular map; uniformly very dark charcoal (approximately 15-20% luminance) with essentially no bright highlights \u2014 indicating an overall low specular reflectance material; in combination with the glossiness map's bright white metallic spots, this specular map suppresses the colour/intensity of specular contribution, likely controlling specular colour or intensity cap; the flatness suggests a Specular workflow where colour tint rather than intensity is primary purpose, and this map is near-black meaning achromatic/desaturated specular response",
+      "character": "Ch10",
+      "material_slot": "1001",
+      "pbr_channel": "specular",
+      "dominant_value": "uniformly very dark \u2014 minimal specular intensity, achromatic"
+    },
+    {
+      "id": "ch10_character",
+      "label": "Ch10 Character",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "character",
+      "description": "Unity game character model Ch10 with ornate uniform/jacket featuring decorative embossed surface details and metallic trim hardware"
+    },
+    {
+      "id": "remy_bottom_material",
+      "label": "Remy Bottom Material Set",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "material_set",
+      "description": "PBR material for Remy bottom clothing \u2014 matte non-reflective fabric with very low gloss and specular values"
+    },
+    {
+      "id": "ch10_1001_material",
+      "label": "Ch10 Material 1001 Set",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "material_set",
+      "description": "PBR material 1001 for Ch10 \u2014 complex surface with ornate cloth, embossed decorative elements, and metallic hardware details; uses normal + glossiness + specular workflow"
+    },
+    {
+      "id": "ch10_1001_diffuse",
+      "label": "Ch10 Material 1001 Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "diffuse",
+      "material_slot": "1001",
+      "character": "Ch10",
+      "color_palette": [
+        "pale_beige",
+        "tan",
+        "dark_red",
+        "crimson",
+        "off_white",
+        "dark_brown"
+      ],
+      "style": "realistic_pbr_horror",
+      "character_part": "body_skin_upper_torso_face",
+      "description": "UV-unfolded diffuse albedo map showing decomposed zombie flesh with heavy blood splatter, open wounds, decay markings; radially-symmetric UV layout; pale necrotic flesh tones with dark red blood; includes facial region and torso skin"
+    },
+    {
+      "id": "ch10_1002_diffuse",
+      "label": "Ch10 Material 1002 Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "diffuse",
+      "material_slot": "1002",
+      "character": "Ch10",
+      "color_palette": [
+        "dark_gray",
+        "brownish_gray",
+        "dark_red",
+        "crimson",
+        "near_black"
+      ],
+      "style": "realistic_pbr_horror",
+      "character_part": "clothing_outfit_vest_jacket_shoes",
+      "description": "Diffuse albedo map for clothing/outfit; dark brownish-gray tactical vest or jacket with visible chest pockets; heavy blood staining in crimson; dark armor straps at upper portion; shoe soles visible bottom-right corner; UV-unfolded layout"
+    },
+    {
+      "id": "ch10_1002_normal",
+      "label": "Ch10 Material 1002 Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "normal",
+      "normal_space": "tangent_space",
+      "material_slot": "1002",
+      "character": "Ch10",
+      "color_palette": [
+        "blue_purple",
+        "cyan",
+        "magenta",
+        "green",
+        "periwinkle"
+      ],
+      "style": "realistic_pbr_horror",
+      "character_part": "clothing_outfit_vest_jacket_shoes",
+      "description": "Tangent-space normal map encoding surface micro-geometry for clothing slot; dominant blue-purple hue with RGB directional color coding; reveals fabric wrinkle patterns, jacket/vest shape with chest pockets, clothing fold detail, stitch lines, shoe sole geometry baked in"
+    },
+    {
+      "id": "ch10_1002_specular",
+      "label": "Ch10 Material 1002 Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular",
+      "material_slot": "1002",
+      "character": "Ch10",
+      "color_palette": [
+        "near_black",
+        "dark_gray",
+        "medium_gray"
+      ],
+      "style": "realistic_pbr_horror",
+      "character_part": "clothing_outfit_vest_jacket_shoes",
+      "description": "Specular reflectivity map; predominantly near-black indicating matte non-reflective clothing fabric; small colored patch top-left corner and lighter gray region bottom-left suggest minor specularity on accessories or shoe material; overall very low specular intensity consistent with worn fabric"
+    },
+    {
+      "id": "ch10_1002_glossiness",
+      "label": "Ch10 Material 1002 Glossiness Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Glossiness.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "glossiness",
+      "material_slot": "1002",
+      "character": "Ch10",
+      "color_palette": [
+        "near_black",
+        "dark_gray",
+        "medium_gray"
+      ],
+      "style": "realistic_pbr_horror",
+      "character_part": "clothing_outfit_vest_jacket_shoes",
+      "description": "Grayscale glossiness/roughness map for clothing slot; predominantly very dark values indicating high surface roughness and matte finish; UV shapes reveal vest/jacket with chest pockets and shoe outlines; subtle mid-gray variations for slight sheen variation across fabric surfaces"
+    },
+    {
+      "id": "ch10_material_1001",
+      "label": "Ch10 Material Slot 1001 (Body Skin)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": null,
+      "character": "Ch10",
+      "character_part": "body_skin",
+      "description": "Unity material slot 1001 for character Ch10 covering body skin geometry \u2014 zombie/undead creature flesh, upper torso, face"
+    },
+    {
+      "id": "ch10_material_1002",
+      "label": "Ch10 Material Slot 1002 (Clothing/Outfit)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": null,
+      "character": "Ch10",
+      "character_part": "clothing_outfit_shoes",
+      "description": "Unity material slot 1002 for character Ch10 covering clothing geometry \u2014 tactical vest/jacket with chest pockets, armor straps, footwear"
+    }
+  ],
+  "edges": [
+    {
+      "source": "debugpanelhud_debugpanelhud",
+      "target": "hudmanager_hudmanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanelHUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "debugpanelhud_debugpanelhud",
+      "target": "hudmanager_hudmanager",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanelHUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleselectionui_roleselectionui",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleselectionui_roleselectionui",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleselectionui_roleselectionui",
+      "target": "playerrole_playerrole",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleselectionui_roleselectionui",
+      "target": "rolemanager_onrolechanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "debugpanel_debugpanel",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanel.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "playerstate_playerstate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "playerinteraction_playerinteraction",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "playerstate_onhealthchanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "playerinteraction_oninteractionprompt",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "rolemanager_onrolechanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roledata_roledata",
+      "target": "playerrole_playerrole",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Roles/RoleData.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rolemanager_rolemanager",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "rolemanager_rolemanager",
+      "target": "rolemanager_onrolechanged",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playerstate_playerstate",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playerstate_playerstate",
+      "target": "playerstate_onhealthchanged",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "playerrole_playerrole",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "playerstate_playerstate",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "rolemanager_onrolechanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lobbymanager_lobbymanager",
+      "target": "playerspawner_playerspawner",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "Assets/_Project/Scripts/Network/LobbyManager.cs",
+      "source_location": null,
+      "weight": 0.65
+    },
+    {
+      "source": "hudmanager_hudmanager",
+      "target": "hud_hud",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "hudmanager_roletype",
+      "target": "playerrole_playerrole",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "debugpanelhud_debugpanelhud",
+      "target": "debugpanel_debugpanel",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanelHUD.cs",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "rigidbodywatcher_rigidbodywatcher",
+      "target": "animatordebugger_animatordebugger",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/Player/RigidbodyWatcher.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "playerinteraction_playerinteraction",
+      "target": "playerinteraction_oninteractionprompt",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerInteraction.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "playerstate_playerstate",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "hud_hud",
+      "target": "playerinteraction_playerinteraction",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "playerstate_playerstate",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "debugpanel_debugpanel",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanel.cs",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "effectsystem_effectsystem",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleabilitycontroller_roleabilitycontroller",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "playerstate_playerstate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleselectionui_roleselectionui",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "playerstate_playerstate",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "effectsystem_effectsystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleabilitycontroller_roleabilitycontroller",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "playerstate_playerstate",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "potiontype_potiontype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "activeeffect_activeeffect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "itemworldobject_itemworldobject",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "activeeffect_activeeffect",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "activeeffect_activeeffect",
+      "target": "potiontype_potiontype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ActiveEffect.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdata_itemdata",
+      "target": "itemtype_itemtype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemData.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdata_itemdata",
+      "target": "potiontype_potiontype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemData.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ritualzone_ritualzone",
+      "target": "inventorysystem_inventorysystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ritualzone_ritualzone",
+      "target": "resourcesystem_resourcesystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemworldobject_itemworldobject",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemworldobject_itemworldobject",
+      "target": "itemtype_itemtype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemworldobject_itemworldobject",
+      "target": "effectsystem_effectsystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdebugger_itemdebugger",
+      "target": "itemworldobject_itemworldobject",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemDebugger.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdebugger_itemdebugger",
+      "target": "itempickup_itempickup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemDebugger.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itempickup_itempickup",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemPickup.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "hudmanager_hudmanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "roleselectionui_roleselectionui",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "debugpanelhud_debugpanelhud",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lobbysetupedit_lobbysetupeditor",
+      "target": "lobbymanager_lobbymanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/LobbySetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itempickup_itempickup",
+      "target": "itemworldobject_itemworldobject",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemPickup.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "fpsbodyhider_fpsbodyhider",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "inventorysystem_inventorysystem",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "resourcesystem_resourcesystem",
+      "target": "ritualzone_ritualzone",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "lobbysetupedit_lobbysetupeditor",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "resourcesystem_resourcesystem",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleabilitycontroller_roleabilitycontroller",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_normal_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_diffuse_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_specular_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_gloss_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_normal_texture",
+      "target": "remy_hair_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_body_part",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_body_part",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_normal_texture",
+      "target": "texture_type_normal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_diffuse_texture",
+      "target": "texture_type_diffuse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_specular_texture",
+      "target": "texture_type_specular",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_gloss_texture",
+      "target": "texture_type_gloss",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_normal_texture",
+      "target": "texture_type_normal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_normal_texture",
+      "target": "remy_hair_normal_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "remy_shoes_specular_texture",
+      "target": "remy_shoes_gloss_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "remy_hair_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "remy_body_material",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_material",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_material",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "gloss_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "specular_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "diffuse_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "opacity_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "normal_map_type",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "grayscale_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "grayscale_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "warm_brown_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "black_white_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "blue_purple_palette",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_specular_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_diffuse_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_opacity_texture",
+      "target": "hair_strand_pattern",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "uv_atlas_layout",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_normal_texture",
+      "target": "face_surface_detail",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_gloss_texture",
+      "target": "remy_hair_specular_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Gloss.png",
+      "source_location": null,
+      "weight": 0.95
+    },
+    {
+      "source": "remy_body_specular_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_gloss_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_diffuse_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_opacity_texture",
+      "target": "remy_body_mesh",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Opacity.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_normal_texture",
+      "target": "remy_top_clothing",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_body_mesh",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_clothing",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_character",
+      "target": "unity_game_engine",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 0.95
+    },
+    {
+      "source": "remy_body_specular_texture",
+      "target": "pbr_specular_workflow",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_body_gloss_texture",
+      "target": "pbr_specular_workflow",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Gloss.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_body_specular_texture",
+      "target": "remy_body_gloss_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Specular.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "remy_body_diffuse_texture",
+      "target": "remy_body_specular_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "remy_body_opacity_texture",
+      "target": "remy_body_diffuse_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Opacity.png",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "remy_top_diffuse_texture",
+      "target": "remy_top_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_gloss_texture",
+      "target": "remy_top_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_specular_texture",
+      "target": "remy_top_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_diffuse_texture",
+      "target": "remy_bottom_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_normal_texture",
+      "target": "remy_bottom_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_garment",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_garment",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_gloss_texture",
+      "target": "remy_top_diffuse_texture",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Gloss.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_top_specular_texture",
+      "target": "remy_top_diffuse_texture",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Specular.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_bottom_normal_texture",
+      "target": "remy_bottom_diffuse_texture",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Normal.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_top_garment",
+      "target": "remy_bottom_garment",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "remy_bottom_gloss_texture",
+      "target": "remy_bottom_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_specular_texture",
+      "target": "remy_bottom_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_material",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_normal_texture",
+      "target": "ch10_1001_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_glossiness_texture",
+      "target": "ch10_1001_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Glossiness.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_specular_texture",
+      "target": "ch10_1001_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_material",
+      "target": "ch10_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_gloss_texture",
+      "target": "remy_bottom_specular_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.97,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 0.97
+    },
+    {
+      "source": "ch10_1001_glossiness_texture",
+      "target": "ch10_1001_normal_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Glossiness.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "ch10_1001_specular_texture",
+      "target": "ch10_1001_glossiness_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Specular.png",
+      "source_location": null,
+      "weight": 0.82
+    },
+    {
+      "source": "remy_bottom_material",
+      "target": "ch10_1001_material",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 0.65
+    },
+    {
+      "source": "ch10_1001_diffuse",
+      "target": "ch10_material_1001",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1002_diffuse",
+      "target": "ch10_material_1002",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1002_normal",
+      "target": "ch10_material_1002",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1002_specular",
+      "target": "ch10_material_1002",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1002_glossiness",
+      "target": "ch10_material_1002",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Glossiness.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_material_1001",
+      "target": "ch10_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_material_1002",
+      "target": "ch10_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1002_diffuse",
+      "target": "ch10_1002_normal",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Diffuse.png",
+      "source_location": null,
+      "weight": 0.95
+    },
+    {
+      "source": "ch10_1002_specular",
+      "target": "ch10_1002_glossiness",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Specular.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "ch10_1001_diffuse",
+      "target": "ch10_1002_diffuse",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png",
+      "source_location": null,
+      "weight": 0.85
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_role_system",
+      "label": "Role System: RoleManager broadcasts RoleData changes to RoleAbilityController, HUD, and RoleSelectionUI",
+      "nodes": [
+        "rolemanager_rolemanager",
+        "roleabilitycontroller_roleabilitycontroller",
+        "hud_hud",
+        "roleselectionui_roleselectionui",
+        "roledata_roledata"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs"
+    },
+    {
+      "id": "hyperedge_player_health_pipeline",
+      "label": "Player Health Pipeline: PlayerState fires OnHealthChanged consumed by HUD and EffectSystem revival",
+      "nodes": [
+        "playerstate_playerstate",
+        "playerstate_onhealthchanged",
+        "hud_hud"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs"
+    },
+    {
+      "id": "hyperedge_debug_tools",
+      "label": "Debug Toolset: RigidbodyWatcher, AnimatorDebugger, DebugPanel, and DebugPanelHUD form a suite of runtime diagnostics",
+      "nodes": [
+        "rigidbodywatcher_rigidbodywatcher",
+        "animatordebugger_animatordebugger",
+        "debugpanel_debugpanel",
+        "debugpanelhud_debugpanelhud"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/Player/RigidbodyWatcher.cs"
+    },
+    {
+      "id": "hyperedge_potion_effect_pipeline",
+      "label": "Potion Effect Application Pipeline",
+      "nodes": [
+        "itemdata_itemdata",
+        "itemworldobject_itemworldobject",
+        "effectsystem_effectsystem",
+        "activeeffect_activeeffect",
+        "potiontype_potiontype"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs"
+    },
+    {
+      "id": "hyperedge_resource_ritual_victory",
+      "label": "Resource Harvest and Ritual Victory Flow",
+      "nodes": [
+        "inventorysystem_inventorysystem",
+        "ritualzone_ritualzone",
+        "resourcesystem_resourcesystem"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs"
+    },
+    {
+      "id": "hyperedge_player_movement_state",
+      "label": "Player Movement and State Integration",
+      "nodes": [
+        "playercontroller_playercontroller",
+        "effectsystem_effectsystem",
+        "roleabilitycontroller_roleabilitycontroller",
+        "playerstate_playerstate"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs"
+    },
+    {
+      "id": "remy_shoes_texture_set",
+      "label": "Remy Shoes Complete Texture Set (Normal, Diffuse, Specular, Gloss)",
+      "nodes": [
+        "remy_shoes_normal_texture",
+        "remy_shoes_diffuse_texture",
+        "remy_shoes_specular_texture",
+        "remy_shoes_gloss_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png"
+    },
+    {
+      "id": "remy_hair_texture_set",
+      "label": "Remy Hair Texture Set (Normal)",
+      "nodes": [
+        "remy_hair_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png"
+    },
+    {
+      "id": "remy_character_texture_collection",
+      "label": "Remy Character Texture Collection (Chunk 3)",
+      "nodes": [
+        "remy_shoes_normal_texture",
+        "remy_shoes_diffuse_texture",
+        "remy_shoes_specular_texture",
+        "remy_shoes_gloss_texture",
+        "remy_hair_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/"
+    },
+    {
+      "id": "remy_hair_texture_set",
+      "label": "Remy Hair Texture Set (Gloss, Specular, Diffuse, Opacity)",
+      "nodes": [
+        "remy_hair_gloss_texture",
+        "remy_hair_specular_texture",
+        "remy_hair_diffuse_texture",
+        "remy_hair_opacity_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Diffuse.png"
+    },
+    {
+      "id": "remy_full_texture_set_chunk04",
+      "label": "Remy Full Texture Set - Chunk 04 (Hair + Body Normal)",
+      "nodes": [
+        "remy_hair_gloss_texture",
+        "remy_hair_specular_texture",
+        "remy_hair_diffuse_texture",
+        "remy_hair_opacity_texture",
+        "remy_body_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Normal.png"
+    },
+    {
+      "id": "remy_body_texture_set",
+      "label": "Remy Body Full PBR Texture Set",
+      "nodes": [
+        "remy_body_diffuse_texture",
+        "remy_body_specular_texture",
+        "remy_body_gloss_texture",
+        "remy_body_opacity_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.97,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png"
+    },
+    {
+      "id": "remy_top_texture_set",
+      "label": "Remy Top Clothing Texture Set",
+      "nodes": [
+        "remy_top_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Normal.png"
+    },
+    {
+      "id": "remy_full_texture_set",
+      "label": "Remy Character Complete Texture Set (Chunk 5)",
+      "nodes": [
+        "remy_body_diffuse_texture",
+        "remy_body_specular_texture",
+        "remy_body_gloss_texture",
+        "remy_body_opacity_texture",
+        "remy_top_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Body_Diffuse.png"
+    },
+    {
+      "id": "remy_top_texture_set",
+      "label": "Remy Top Texture Set (Diffuse + Gloss + Specular)",
+      "nodes": [
+        "remy_top_diffuse_texture",
+        "remy_top_gloss_texture",
+        "remy_top_specular_texture",
+        "remy_top_garment"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png"
+    },
+    {
+      "id": "remy_bottom_texture_set",
+      "label": "Remy Bottom Texture Set (Diffuse + Normal)",
+      "nodes": [
+        "remy_bottom_diffuse_texture",
+        "remy_bottom_normal_texture",
+        "remy_bottom_garment"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png"
+    },
+    {
+      "id": "remy_full_outfit_texture_set",
+      "label": "Remy Complete Outfit Texture Set",
+      "nodes": [
+        "remy_top_diffuse_texture",
+        "remy_top_gloss_texture",
+        "remy_top_specular_texture",
+        "remy_bottom_diffuse_texture",
+        "remy_bottom_normal_texture",
+        "remy_top_garment",
+        "remy_bottom_garment",
+        "remy_character"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png"
+    },
+    {
+      "id": "remy_bottom_pbr_set",
+      "label": "Remy Bottom PBR Texture Set",
+      "nodes": [
+        "remy_bottom_gloss_texture",
+        "remy_bottom_specular_texture",
+        "remy_bottom_material"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png"
+    },
+    {
+      "id": "ch10_1001_pbr_set",
+      "label": "Ch10 Material 1001 PBR Texture Set",
+      "nodes": [
+        "ch10_1001_normal_texture",
+        "ch10_1001_glossiness_texture",
+        "ch10_1001_specular_texture",
+        "ch10_1001_material"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png"
+    },
+    {
+      "id": "chunk07_all_textures",
+      "label": "Chunk 07 All Texture Maps",
+      "nodes": [
+        "remy_bottom_gloss_texture",
+        "remy_bottom_specular_texture",
+        "ch10_1001_normal_texture",
+        "ch10_1001_glossiness_texture",
+        "ch10_1001_specular_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/"
+    },
+    {
+      "id": "ch10_1001_texture_set",
+      "label": "Ch10 Material 1001 Texture Set (Body Skin)",
+      "nodes": [
+        "ch10_1001_diffuse",
+        "ch10_material_1001"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png"
+    },
+    {
+      "id": "ch10_1002_texture_set",
+      "label": "Ch10 Material 1002 Texture Set (Clothing/Outfit)",
+      "nodes": [
+        "ch10_1002_diffuse",
+        "ch10_1002_normal",
+        "ch10_1002_specular",
+        "ch10_1002_glossiness",
+        "ch10_material_1002"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1002_Diffuse.png"
+    },
+    {
+      "id": "ch10_full_pbr_set",
+      "label": "Ch10 Complete PBR Texture Set",
+      "nodes": [
+        "ch10_1001_diffuse",
+        "ch10_1002_diffuse",
+        "ch10_1002_normal",
+        "ch10_1002_specular",
+        "ch10_1002_glossiness",
+        "ch10_material_1001",
+        "ch10_material_1002",
+        "ch10_character"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Diffuse.png"
+    }
+  ]
+}
