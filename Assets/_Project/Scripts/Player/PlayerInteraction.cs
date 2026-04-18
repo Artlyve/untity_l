@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using FishNet.Object;
 using ProjectFPS.Inventory;
 
 namespace ProjectFPS.Player
@@ -41,6 +42,12 @@ namespace ProjectFPS.Player
         private float _lastMissLogTime = -999f;
         private const float MissLogInterval = 2f;
 
+        // Vérifie le propriétaire via NetworkObject (true si pas en réseau = tests locaux)
+        private bool IsNetworkOwner
+        {
+            get { var no = GetComponent<NetworkObject>(); return no == null || no.IsOwner; }
+        }
+
         // ── Événements ────────────────────────────────────────────────────────────
         public event Action<string> OnInteractionPrompt;
 
@@ -61,6 +68,9 @@ namespace ProjectFPS.Player
 
         private void Update()
         {
+            // Seul le propriétaire du NetworkObject traite les inputs et le raycast
+            if (!IsNetworkOwner) return;
+
             HandleRaycast();
             HandleInputActions();
         }

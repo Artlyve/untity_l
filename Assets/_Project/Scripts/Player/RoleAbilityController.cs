@@ -1,4 +1,5 @@
 using UnityEngine;
+using FishNet.Object;
 using ProjectFPS.Roles;
 using ProjectFPS.Inventory;
 
@@ -42,6 +43,12 @@ namespace ProjectFPS.Player
         // ─── Hash paramètres Animator ─────────────────────────────────────────────
         private static readonly int IsAimingParam   = Animator.StringToHash("IsAiming");
         private static readonly int WolfAttackParam = Animator.StringToHash("WolfAttack");
+
+        // Vérifie le propriétaire via NetworkObject (true si pas en réseau = tests locaux)
+        private bool IsNetworkOwner
+        {
+            get { var no = GetComponent<NetworkObject>(); return no == null || no.IsOwner; }
+        }
 
         // ─── Propriétés publiques ─────────────────────────────────────────────────
         public float RoleSpeedMultiplier
@@ -120,6 +127,9 @@ namespace ProjectFPS.Player
 
         private void Update()
         {
+            // Seul le propriétaire traite les inputs
+            if (!IsNetworkOwner) return;
+
             if (_attackCooldown > 0f)
                 _attackCooldown -= Time.deltaTime;
 

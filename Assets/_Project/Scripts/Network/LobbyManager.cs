@@ -135,9 +135,32 @@ namespace ProjectFPS.Network
                 return;
             }
 
+            // Vérifie que la scène est dans Build Settings avant de la charger.
+            // Sinon FishNet crash côté serveur.
+            if (!IsSceneInBuildSettings(gameSceneName))
+            {
+                string msg = $"Scène '{gameSceneName}' absente des Build Settings !";
+                SetStatus(msg);
+                Debug.LogError($"[LobbyManager] {msg}\n" +
+                               "→ File > Build Settings → ajoute la scène et relance.");
+                return;
+            }
+
             Debug.Log($"[LobbyManager] Chargement de la scène '{gameSceneName}'...");
             SceneLoadData sld = new SceneLoadData(gameSceneName);
             InstanceFinder.NetworkManager.SceneManager.LoadGlobalScenes(sld);
+        }
+
+        private static bool IsSceneInBuildSettings(string sceneName)
+        {
+            int count = UnityEngine.SceneManagement.SceneManager.sceneCountInBuildSettings;
+            for (int i = 0; i < count; i++)
+            {
+                string path = UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(i);
+                if (System.IO.Path.GetFileNameWithoutExtension(path) == sceneName)
+                    return true;
+            }
+            return false;
         }
 
         private void OnLeaveClicked()

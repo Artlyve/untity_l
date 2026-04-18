@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using FishNet.Object;
+using FishNet.Component.Animating;
 using ProjectFPS.Inventory;
 using ProjectFPS.UI;
 
@@ -106,6 +107,7 @@ namespace ProjectFPS.Player
         private EffectSystem          _effectSystem;
         private RoleAbilityController _roleAbility;
         private PlayerState           _playerState;
+        private NetworkAnimator       _networkAnimator;
 
         // ─── État ─────────────────────────────────────────────────────────────────
         private float _verticalVelocity;
@@ -160,10 +162,11 @@ namespace ProjectFPS.Player
 
         private void Awake()
         {
-            _cc           = GetComponent<CharacterController>();
-            _effectSystem = GetComponent<EffectSystem>();
-            _roleAbility  = GetComponent<RoleAbilityController>();
-            _playerState  = GetComponent<PlayerState>();
+            _cc              = GetComponent<CharacterController>();
+            _effectSystem    = GetComponent<EffectSystem>();
+            _roleAbility     = GetComponent<RoleAbilityController>();
+            _playerState     = GetComponent<PlayerState>();
+            _networkAnimator = GetComponent<NetworkAnimator>();
 
             // Root motion désactivé pour éviter le glissement du modèle
             if (animator != null)
@@ -187,7 +190,23 @@ namespace ProjectFPS.Player
         public override void OnStartClient()
         {
             base.OnStartClient();
-            if (!IsOwner) return;
+            if (!IsOwner)
+            {
+                // Désactive caméra FPS et AudioListener pour les autres joueurs.
+                // Chaque client ne doit voir QUE sa propre caméra.
+                if (cameraHolder != null)
+                {
+                    foreach (var cam in cameraHolder.GetComponentsInChildren<Camera>(true))
+                        cam.enabled = false;
+                    foreach (var al in cameraHolder.GetComponentsInChildren<AudioListener>(true))
+                        al.enabled = false;
+                }
+                // FPSBodyHider n'a pas de sens pour un joueur non-propriétaire
+                var bodyHider = GetComponent<FPSBodyHider>();
+                if (bodyHider != null) bodyHider.enabled = false;
+                return;
+            }
+
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible   = false;
         }
@@ -234,6 +253,10 @@ namespace ProjectFPS.Player
             animator = newAnimator;
             animator.applyRootMotion = false;   // évite que le mesh dérive
             RefreshAnimatorSetup();
+            // Met à jour la référence dans NetworkAnimator pour que FishNet continue
+            // de synchroniser les paramètres après le swap Human ↔ Wolf.
+            if (_networkAnimator != null)
+                _networkAnimator.SetAnimator(newAnimator);
             Debug.Log($"[PlayerController] Animator mis à jour → '{animator.name}' " +
                 $"(controller : {animator.runtimeAnimatorController?.name})");
         }
@@ -612,8 +635,11 @@ namespace ProjectFPS.Player
             RefreshAnimatorSetup();
             SafeSetBool(IsDeadParam, false);
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible   = false;
+            if (IsOwner)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible   = false;
+            }
 
             Debug.Log("[PlayerController] Respawn — état réinitialisé.");
         }

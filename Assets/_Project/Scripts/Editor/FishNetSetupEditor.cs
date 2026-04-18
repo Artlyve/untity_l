@@ -2,6 +2,7 @@
 // Menu : ProjectFPS → Outils FishNet
 //
 // Outils pour configurer FishNet correctement :
+//   0. Créer la scène Lobby + l'ajouter aux Build Settings
 //   1. Diagnostic — explique l'état actuel de la scène
 //   2. Régénérer les prefabs réseau  (AssetPathHash + duplicate key)
 //   3. Ajouter NetworkManager à la scène active (ouvre Lobby d'abord)
@@ -16,6 +17,72 @@ namespace ProjectFPS.Editor
 {
     public static class FishNetSetupEditor
     {
+        // ─── 0. Créer la scène Lobby ─────────────────────────────────────────────
+        [MenuItem("ProjectFPS/Outils FishNet/0. Créer la scène Lobby (si elle n'existe pas)")]
+        static void CreateLobbyScene()
+        {
+            const string lobbyScenePath = "Assets/Scenes/Lobby.unity";
+
+            // Vérifie si la scène existe déjà
+            if (System.IO.File.Exists(lobbyScenePath))
+            {
+                bool addToBuild = EditorUtility.DisplayDialog(
+                    "Scène Lobby",
+                    "Lobby.unity existe déjà.\nVoulez-vous l'ajouter aux Build Settings si elle n'y est pas ?",
+                    "Oui", "Non");
+                if (addToBuild) EnsureInBuildSettings(lobbyScenePath, 0);
+                return;
+            }
+
+            // S'assure que le dossier Scenes existe
+            if (!System.IO.Directory.Exists("Assets/Scenes"))
+                System.IO.Directory.CreateDirectory("Assets/Scenes");
+
+            // Crée la scène, sauvegarde
+            var lobbyScene = EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Additive);
+            lobbyScene.name = "Lobby";
+            EditorSceneManager.SaveScene(lobbyScene, lobbyScenePath);
+            AssetDatabase.Refresh();
+
+            // Ajoute aux Build Settings : Lobby = index 0, SampleScene = index 1
+            EnsureInBuildSettings(lobbyScenePath, 0);
+
+            // Ouvre la scène Lobby seule pour configuration
+            EditorSceneManager.OpenScene(lobbyScenePath, OpenSceneMode.Single);
+
+            EditorUtility.DisplayDialog(
+                "Scène Lobby créée",
+                "Assets/Scenes/Lobby.unity créée et ajoutée aux Build Settings (index 0).\n\n" +
+                "Étapes suivantes :\n" +
+                "1. ProjectFPS > Outils FishNet > 3. Ajouter NetworkManager\n" +
+                "2. ProjectFPS > Setup Lobby Canvas\n" +
+                "3. ProjectFPS > Outils FishNet > 4. Supprimer PlayerSpawner FishNet intégré\n" +
+                "4. ProjectFPS > Outils FishNet > 2. Régénérer les prefabs réseau\n" +
+                "5. File > Build Settings : vérifie SampleScene en index 1",
+                "OK");
+        }
+
+        static void EnsureInBuildSettings(string scenePath, int preferredIndex)
+        {
+            var scenes = EditorBuildSettings.scenes.ToList();
+            bool alreadyIn = scenes.Any(s => s.path == scenePath);
+
+            if (!alreadyIn)
+            {
+                var entry = new EditorBuildSettingsScene(scenePath, true);
+                if (preferredIndex >= 0 && preferredIndex <= scenes.Count)
+                    scenes.Insert(preferredIndex, entry);
+                else
+                    scenes.Add(entry);
+                EditorBuildSettings.scenes = scenes.ToArray();
+                Debug.Log($"[FishNetSetup] '{System.IO.Path.GetFileNameWithoutExtension(scenePath)}' ajoutée aux Build Settings (index {preferredIndex}).");
+            }
+            else
+            {
+                Debug.Log($"[FishNetSetup] '{System.IO.Path.GetFileNameWithoutExtension(scenePath)}' déjà dans Build Settings.");
+            }
+        }
+
         // ─── 1. Diagnostic ───────────────────────────────────────────────────────
         [MenuItem("ProjectFPS/Outils FishNet/1. Diagnostic (lire avant tout)")]
         static void Diagnostic()
