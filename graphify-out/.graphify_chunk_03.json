@@ -1,0 +1,322 @@
+{
+  "nodes": [
+    {
+      "id": "remy_shoes_normal_texture",
+      "label": "Remy Shoes Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_diffuse_texture",
+      "label": "Remy Shoes Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_specular_texture",
+      "label": "Remy Shoes Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_gloss_texture",
+      "label": "Remy Shoes Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_normal_texture",
+      "label": "Remy Hair Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_character",
+      "label": "Remy (Unity Game Character)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_shoes_body_part",
+      "label": "Remy Shoes (Body Part)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "remy_hair_body_part",
+      "label": "Remy Hair (Body Part)",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_normal",
+      "label": "Normal Map Texture Type (Tangent-Space)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_diffuse",
+      "label": "Diffuse Map Texture Type (Base Color)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_specular",
+      "label": "Specular Map Texture Type (Shininess/Reflectivity)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "texture_type_gloss",
+      "label": "Gloss Map Texture Type (Glossiness/Roughness)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "remy_shoes_normal_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_diffuse_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_specular_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_gloss_texture",
+      "target": "remy_shoes_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_normal_texture",
+      "target": "remy_hair_body_part",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_body_part",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_body_part",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_normal_texture",
+      "target": "texture_type_normal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_diffuse_texture",
+      "target": "texture_type_diffuse",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_specular_texture",
+      "target": "texture_type_specular",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_gloss_texture",
+      "target": "texture_type_gloss",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_hair_normal_texture",
+      "target": "texture_type_normal",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_shoes_normal_texture",
+      "target": "remy_hair_normal_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "remy_shoes_specular_texture",
+      "target": "remy_shoes_gloss_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Specular.png",
+      "source_location": null,
+      "weight": 0.8
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "remy_shoes_texture_set",
+      "label": "Remy Shoes Complete Texture Set (Normal, Diffuse, Specular, Gloss)",
+      "nodes": [
+        "remy_shoes_normal_texture",
+        "remy_shoes_diffuse_texture",
+        "remy_shoes_specular_texture",
+        "remy_shoes_gloss_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Shoes_Normal.png"
+    },
+    {
+      "id": "remy_hair_texture_set",
+      "label": "Remy Hair Texture Set (Normal)",
+      "nodes": [
+        "remy_hair_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Hair_Normal.png"
+    },
+    {
+      "id": "remy_character_texture_collection",
+      "label": "Remy Character Texture Collection (Chunk 3)",
+      "nodes": [
+        "remy_shoes_normal_texture",
+        "remy_shoes_diffuse_texture",
+        "remy_shoes_specular_texture",
+        "remy_shoes_gloss_texture",
+        "remy_hair_normal_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

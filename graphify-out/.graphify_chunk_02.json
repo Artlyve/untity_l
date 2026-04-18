@@ -1,0 +1,685 @@
+{
+  "nodes": [
+    {
+      "id": "playercontroller_playercontroller",
+      "label": "PlayerController",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "fpsbodyhider_fpsbodyhider",
+      "label": "FPSBodyHider",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/FPSBodyHider.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "uisetupedit_uisetupeditor",
+      "label": "UISetupEditor",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lobbysetupedit_lobbysetupeditor",
+      "label": "LobbySetupEditor",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Editor/LobbySetupEditor.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemdata_itemdata",
+      "label": "ItemData",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemData.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "effectsystem_effectsystem",
+      "label": "EffectSystem",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "potiontype_potiontype",
+      "label": "PotionType",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/PotionType.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "inventorysystem_inventorysystem",
+      "label": "InventorySystem",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemdebugger_itemdebugger",
+      "label": "ItemDebugger",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemDebugger.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "resourcesystem_resourcesystem",
+      "label": "ResourceSystem",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ResourceSystem.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ritualzone_ritualzone",
+      "label": "RitualZone",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "activeeffect_activeeffect",
+      "label": "ActiveEffect",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ActiveEffect.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemtype_itemtype",
+      "label": "ItemType",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemType.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itempickup_itempickup",
+      "label": "ItemPickup",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemPickup.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "itemworldobject_itemworldobject",
+      "label": "ItemWorldObject",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playerstate_playerstate",
+      "label": "PlayerState",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "roleabilitycontroller_roleabilitycontroller",
+      "label": "RoleAbilityController",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "roleselectionui_roleselectionui",
+      "label": "RoleSelectionUI",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "hudmanager_hudmanager",
+      "label": "HUDManager",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "lobbymanager_lobbymanager",
+      "label": "LobbyManager",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Network/LobbyManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "debugpanelhud_debugpanelhud",
+      "label": "DebugPanelHUD",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/UI/DebugPanelHUD.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "rolemanager_rolemanager",
+      "label": "RoleManager",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "roledata_roledata",
+      "label": "RoleData",
+      "file_type": "code",
+      "source_file": "Assets/_Project/Scripts/Roles/RoleData.cs",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "effectsystem_effectsystem",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleabilitycontroller_roleabilitycontroller",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "playerstate_playerstate",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleselectionui_roleselectionui",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "playerstate_playerstate",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "effectsystem_effectsystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleabilitycontroller_roleabilitycontroller",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "playerstate_playerstate",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "potiontype_potiontype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "activeeffect_activeeffect",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "itemworldobject_itemworldobject",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "activeeffect_activeeffect",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "activeeffect_activeeffect",
+      "target": "potiontype_potiontype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ActiveEffect.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdata_itemdata",
+      "target": "itemtype_itemtype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemData.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdata_itemdata",
+      "target": "potiontype_potiontype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemData.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ritualzone_ritualzone",
+      "target": "inventorysystem_inventorysystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ritualzone_ritualzone",
+      "target": "resourcesystem_resourcesystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemworldobject_itemworldobject",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemworldobject_itemworldobject",
+      "target": "itemtype_itemtype",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemworldobject_itemworldobject",
+      "target": "effectsystem_effectsystem",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemWorldObject.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdebugger_itemdebugger",
+      "target": "itemworldobject_itemworldobject",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemDebugger.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itemdebugger_itemdebugger",
+      "target": "itempickup_itempickup",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemDebugger.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itempickup_itempickup",
+      "target": "itemdata_itemdata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemPickup.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "hudmanager_hudmanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "roleselectionui_roleselectionui",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "debugpanelhud_debugpanelhud",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "lobbysetupedit_lobbysetupeditor",
+      "target": "lobbymanager_lobbymanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Editor/LobbySetupEditor.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "itempickup_itempickup",
+      "target": "itemworldobject_itemworldobject",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/Inventory/ItemPickup.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "fpsbodyhider_fpsbodyhider",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 0.75
+    },
+    {
+      "source": "effectsystem_effectsystem",
+      "target": "inventorysystem_inventorysystem",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "resourcesystem_resourcesystem",
+      "target": "ritualzone_ritualzone",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "uisetupedit_uisetupeditor",
+      "target": "lobbysetupedit_lobbysetupeditor",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Scripts/Editor/UISetupEditor.cs",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "inventorysystem_inventorysystem",
+      "target": "resourcesystem_resourcesystem",
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/Inventory/InventorySystem.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "playercontroller_playercontroller",
+      "target": "roleabilitycontroller_roleabilitycontroller",
+      "relation": "shares_data_with",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs",
+      "source_location": null,
+      "weight": 1.0
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge_potion_effect_pipeline",
+      "label": "Potion Effect Application Pipeline",
+      "nodes": [
+        "itemdata_itemdata",
+        "itemworldobject_itemworldobject",
+        "effectsystem_effectsystem",
+        "activeeffect_activeeffect",
+        "potiontype_potiontype"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Scripts/Inventory/EffectSystem.cs"
+    },
+    {
+      "id": "hyperedge_resource_ritual_victory",
+      "label": "Resource Harvest and Ritual Victory Flow",
+      "nodes": [
+        "inventorysystem_inventorysystem",
+        "ritualzone_ritualzone",
+        "resourcesystem_resourcesystem"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Scripts/Inventory/RitualZone.cs"
+    },
+    {
+      "id": "hyperedge_player_movement_state",
+      "label": "Player Movement and State Integration",
+      "nodes": [
+        "playercontroller_playercontroller",
+        "effectsystem_effectsystem",
+        "roleabilitycontroller_roleabilitycontroller",
+        "playerstate_playerstate"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerController.cs"
+    }
+  ],
+  "input_tokens": 12800,
+  "output_tokens": 1800
+}

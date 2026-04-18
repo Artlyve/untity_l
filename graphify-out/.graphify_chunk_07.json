@@ -1,0 +1,304 @@
+{
+  "nodes": [
+    {
+      "id": "remy_bottom_gloss_texture",
+      "label": "Remy Bottom Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "gloss_map",
+      "color_palette": ["black", "near-black"],
+      "style": "UV-unwrapped grayscale gloss map; overwhelmingly black indicating near-zero surface glossiness/roughness across all cloth panels; small white/grey highlight islands on accessory UV islands (buttons, loops, zipper pull) suggesting slightly higher gloss on hard-surface details; layout shows shorts bottom garment with belt-loop strips, waistband, fly panel, pocket shapes arranged around central leg panel",
+      "character": "Remy",
+      "material_slot": "bottom_clothing",
+      "pbr_channel": "gloss",
+      "dominant_value": "very low gloss (near 0.0) — matte fabric surface"
+    },
+    {
+      "id": "remy_bottom_specular_texture",
+      "label": "Remy Bottom Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular_map",
+      "color_palette": ["black", "near-black"],
+      "style": "UV-unwrapped specular map; essentially identical layout and near-total black values to the gloss map — confirming very low specular reflectance across all cloth surfaces; same UV island arrangement (shorts, belt loops, waistband, pockets); uniform dark tone indicates a non-reflective, matte fabric material with minimal specular highlight contribution",
+      "character": "Remy",
+      "material_slot": "bottom_clothing",
+      "pbr_channel": "specular",
+      "dominant_value": "very low specular intensity — non-reflective fabric"
+    },
+    {
+      "id": "ch10_1001_normal_texture",
+      "label": "Ch10 Material 1001 Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "normal_map",
+      "color_palette": ["blue", "periwinkle", "violet", "purple", "pink", "cyan"],
+      "style": "Tangent-space normal map in standard blue-dominant encoding (RGB = XYZ surface normals); highly complex surface detail — shows a figure torso/upper body with elaborate decorative or ornamental surface features including raised emblem/crest shapes at top (crown-like or mandala-like symmetrical motifs), wrinkled/folded cloth across chest and lower body, anatomical body creases, and what appears to be a jacket or uniform with ornate embossed detailing; strong color variation from deep violet to light cyan indicates significant surface relief; UV layout appears continuous/UDIM-style for this material tile",
+      "character": "Ch10",
+      "material_slot": "1001",
+      "pbr_channel": "normal",
+      "dominant_value": "high-detail tangent-space normals — complex cloth and ornamental surface"
+    },
+    {
+      "id": "ch10_1001_glossiness_texture",
+      "label": "Ch10 Material 1001 Glossiness Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Glossiness.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "glossiness_map",
+      "color_palette": ["dark grey", "mid grey", "light grey", "white", "black"],
+      "style": "Greyscale glossiness map matching the Ch10 1001 UV layout; predominantly dark-to-mid grey values across cloth body areas indicating low-to-moderate gloss; bright white specular highlight spots scattered across the surface represent highly polished or metallic detail elements (buttons, pins, medals, or decorative metal hardware); black regions correspond to matte fabric zones; the contrast between near-white highlights and dark background confirms a mixed-material surface (fabric + metal trim)",
+      "character": "Ch10",
+      "material_slot": "1001",
+      "pbr_channel": "glossiness",
+      "dominant_value": "mixed — dark grey (matte fabric) with bright white accents (metallic/polished details)"
+    },
+    {
+      "id": "ch10_1001_specular_texture",
+      "label": "Ch10 Material 1001 Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular_map",
+      "color_palette": ["dark charcoal", "near-black"],
+      "style": "Greyscale specular map; uniformly very dark charcoal (approximately 15-20% luminance) with essentially no bright highlights — indicating an overall low specular reflectance material; in combination with the glossiness map's bright white metallic spots, this specular map suppresses the colour/intensity of specular contribution, likely controlling specular colour or intensity cap; the flatness suggests a Specular workflow where colour tint rather than intensity is primary purpose, and this map is near-black meaning achromatic/desaturated specular response",
+      "character": "Ch10",
+      "material_slot": "1001",
+      "pbr_channel": "specular",
+      "dominant_value": "uniformly very dark — minimal specular intensity, achromatic"
+    },
+    {
+      "id": "remy_character",
+      "label": "Remy Character",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "character",
+      "description": "Unity game character named Remy with bottom clothing material"
+    },
+    {
+      "id": "ch10_character",
+      "label": "Ch10 Character",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "character",
+      "description": "Unity game character model Ch10 with ornate uniform/jacket featuring decorative embossed surface details and metallic trim hardware"
+    },
+    {
+      "id": "remy_bottom_material",
+      "label": "Remy Bottom Material Set",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "material_set",
+      "description": "PBR material for Remy bottom clothing — matte non-reflective fabric with very low gloss and specular values"
+    },
+    {
+      "id": "ch10_1001_material",
+      "label": "Ch10 Material 1001 Set",
+      "file_type": null,
+      "source_file": "Assets/_Project/Models/model_texture/",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "entity_type": "material_set",
+      "description": "PBR material 1001 for Ch10 — complex surface with ornate cloth, embossed decorative elements, and metallic hardware details; uses normal + glossiness + specular workflow"
+    }
+  ],
+  "edges": [
+    {
+      "source": "remy_bottom_gloss_texture",
+      "target": "remy_bottom_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_specular_texture",
+      "target": "remy_bottom_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_material",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_normal_texture",
+      "target": "ch10_1001_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_glossiness_texture",
+      "target": "ch10_1001_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Glossiness.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_specular_texture",
+      "target": "ch10_1001_material",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "ch10_1001_material",
+      "target": "ch10_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_gloss_texture",
+      "target": "remy_bottom_specular_texture",
+      "relation": "semantically_similar_to",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.97,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 0.97
+    },
+    {
+      "source": "ch10_1001_glossiness_texture",
+      "target": "ch10_1001_normal_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Glossiness.png",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
+      "source": "ch10_1001_specular_texture",
+      "target": "ch10_1001_glossiness_texture",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.82,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Specular.png",
+      "source_location": null,
+      "weight": 0.82
+    },
+    {
+      "source": "remy_bottom_material",
+      "target": "ch10_1001_material",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png",
+      "source_location": null,
+      "weight": 0.65
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "remy_bottom_pbr_set",
+      "label": "Remy Bottom PBR Texture Set",
+      "nodes": [
+        "remy_bottom_gloss_texture",
+        "remy_bottom_specular_texture",
+        "remy_bottom_material"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Gloss.png"
+    },
+    {
+      "id": "ch10_1001_pbr_set",
+      "label": "Ch10 Material 1001 PBR Texture Set",
+      "nodes": [
+        "ch10_1001_normal_texture",
+        "ch10_1001_glossiness_texture",
+        "ch10_1001_specular_texture",
+        "ch10_1001_material"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Ch10_1001_Normal.png"
+    },
+    {
+      "id": "chunk07_all_textures",
+      "label": "Chunk 07 All Texture Maps",
+      "nodes": [
+        "remy_bottom_gloss_texture",
+        "remy_bottom_specular_texture",
+        "ch10_1001_normal_texture",
+        "ch10_1001_glossiness_texture",
+        "ch10_1001_specular_texture"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.9,
+      "source_file": "Assets/_Project/Models/model_texture/"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

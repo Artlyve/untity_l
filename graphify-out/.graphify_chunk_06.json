@@ -1,0 +1,295 @@
+{
+  "nodes": [
+    {
+      "id": "remy_top_gloss_texture",
+      "label": "Remy Top Gloss Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Gloss.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "gloss_map",
+      "color_palette": ["#000000"],
+      "description": "Near-black gloss/shininess mask for Remy's top garment; silhouette of sleeveless vest UV layout (front and back panels) with black fill indicating near-zero gloss — matte fabric surface with no sheen.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_top_diffuse_texture",
+      "label": "Remy Top Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "diffuse_map",
+      "color_palette": ["#3a3a3a", "#2d2d2d", "#4a4a4a", "#1a1a1a"],
+      "description": "Dark charcoal-grey diffuse/albedo texture for Remy's sleeveless top; UV layout shows front and back torso panels plus narrow sleeve-edge strips; subtle woven fabric grain visible across surface; V-neck collar cutout on front panel; thin black horizontal stripe band at lower hem.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_top_specular_texture",
+      "label": "Remy Top Specular Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Specular.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "specular_map",
+      "color_palette": ["#000000", "#111111"],
+      "description": "High-contrast black specular map for Remy's top; solid dark silhouette of the UV-unwrapped sleeveless vest (front and back panels visible); extremely low specular intensity indicating matte, non-reflective fabric material with no highlight.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_bottom_diffuse_texture",
+      "label": "Remy Bottom Diffuse Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "diffuse_map",
+      "color_palette": ["#7a7d6a", "#5e6150", "#3d4030", "#8a8d78"],
+      "description": "Olive/khaki-grey diffuse texture for Remy's pants; large lower section shows wide-leg trouser panels with a vertical centerline seam and subtle fabric grain; upper row of UV islands contains belt/waistband accessory pieces, pocket hardware, and small detail elements in darker olive-brown and forest-green tones; overall cargo-style or utility trouser silhouette.",
+      "clothing_region": "bottom",
+      "clothing_style": "cargo_pants_utility_trousers",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_bottom_normal_texture",
+      "label": "Remy Bottom Normal Map",
+      "file_type": "image",
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Normal.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "texture_type": "normal_map",
+      "color_palette": ["#8080ff", "#6060d0", "#c0a0e0", "#40c0ff"],
+      "description": "Tangent-space normal map (blue-purple dominant) for Remy's cargo pants; encodes micro-surface detail including fabric wrinkles across legs, raised waistband, belt loop geometry, front patch pockets, side seam creases, and accessory hardware topology; cyan highlights indicate outward-facing edges of pockets and loops; standard Unity-compatible tangent-space encoding.",
+      "clothing_region": "bottom",
+      "clothing_style": "cargo_pants_utility_trousers",
+      "confidence_score": 1.0
+    },
+    {
+      "id": "remy_top_garment",
+      "label": "Remy Top Garment (Sleeveless Vest)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "description": "Logical clothing asset representing Remy's sleeveless vest/tank-top: dark charcoal-grey woven fabric, V-neck collar, matte non-reflective surface, suitable for casual athletic or streetwear styling.",
+      "clothing_region": "top",
+      "clothing_style": "sleeveless_vest_tank_top",
+      "primary_color": "charcoal_grey",
+      "confidence_score": 0.95
+    },
+    {
+      "id": "remy_bottom_garment",
+      "label": "Remy Bottom Garment (Cargo Pants)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "description": "Logical clothing asset representing Remy's pants: olive/khaki-grey cargo-style trousers with front patch pockets, belt loops, waistband, utility hardware details, and fabric wrinkle micro-surface baked into normal map.",
+      "clothing_region": "bottom",
+      "clothing_style": "cargo_pants_utility_trousers",
+      "primary_color": "olive_khaki_grey",
+      "confidence_score": 0.95
+    },
+    {
+      "id": "remy_character",
+      "label": "Remy (Unity Game Character)",
+      "file_type": null,
+      "source_file": null,
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null,
+      "description": "3D character named Remy in a Unity game project; wears charcoal-grey sleeveless vest top and olive-khaki cargo pants; textures follow a PBR-adjacent workflow (diffuse, specular, gloss, normal maps).",
+      "confidence_score": 0.9
+    }
+  ],
+  "edges": [
+    {
+      "source": "remy_top_diffuse_texture",
+      "target": "remy_top_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_gloss_texture",
+      "target": "remy_top_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Gloss.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_specular_texture",
+      "target": "remy_top_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Specular.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_diffuse_texture",
+      "target": "remy_bottom_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_normal_texture",
+      "target": "remy_bottom_garment",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Normal.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_garment",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_bottom_garment",
+      "target": "remy_character",
+      "relation": "part_of",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "remy_top_gloss_texture",
+      "target": "remy_top_diffuse_texture",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Gloss.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_top_specular_texture",
+      "target": "remy_top_diffuse_texture",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Specular.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_bottom_normal_texture",
+      "target": "remy_bottom_diffuse_texture",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Normal.png",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "remy_top_garment",
+      "target": "remy_bottom_garment",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png",
+      "source_location": null,
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "remy_top_texture_set",
+      "label": "Remy Top Texture Set (Diffuse + Gloss + Specular)",
+      "nodes": [
+        "remy_top_diffuse_texture",
+        "remy_top_gloss_texture",
+        "remy_top_specular_texture",
+        "remy_top_garment"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png"
+    },
+    {
+      "id": "remy_bottom_texture_set",
+      "label": "Remy Bottom Texture Set (Diffuse + Normal)",
+      "nodes": [
+        "remy_bottom_diffuse_texture",
+        "remy_bottom_normal_texture",
+        "remy_bottom_garment"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Bottom_Diffuse.png"
+    },
+    {
+      "id": "remy_full_outfit_texture_set",
+      "label": "Remy Complete Outfit Texture Set",
+      "nodes": [
+        "remy_top_diffuse_texture",
+        "remy_top_gloss_texture",
+        "remy_top_specular_texture",
+        "remy_bottom_diffuse_texture",
+        "remy_bottom_normal_texture",
+        "remy_top_garment",
+        "remy_bottom_garment",
+        "remy_character"
+      ],
+      "relation": "form",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "Assets/_Project/Models/model_texture/Remy_Top_Diffuse.png"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
