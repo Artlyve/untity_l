@@ -35,7 +35,7 @@
     },
     {
       "id": "hudmanager_roletype",
-      "label": "RoleType (HUDManager enum)",
+      "label": "RoleType (HUDManager local enum)",
       "file_type": "code",
       "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
       "source_location": null,
@@ -243,6 +243,16 @@
     },
     {
       "source": "roleselectionui_roleselectionui",
+      "target": "rolemanager_onrolechanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleselectionui_roleselectionui",
       "target": "roledata_roledata",
       "relation": "references",
       "confidence": "EXTRACTED",
@@ -254,16 +264,6 @@
     {
       "source": "roleselectionui_roleselectionui",
       "target": "playerrole_playerrole",
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/UI/RoleSelectionUI.cs",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "roleselectionui_roleselectionui",
-      "target": "rolemanager_onrolechanged",
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -293,37 +293,17 @@
     },
     {
       "source": "hud_hud",
-      "target": "playerinteraction_playerinteraction",
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "hud_hud",
-      "target": "rolemanager_rolemanager",
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "hud_hud",
-      "target": "roledata_roledata",
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "hud_hud",
       "target": "playerstate_onhealthchanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "playerinteraction_playerinteraction",
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -343,7 +323,27 @@
     },
     {
       "source": "hud_hud",
+      "target": "rolemanager_rolemanager",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
       "target": "rolemanager_onrolechanged",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "hud_hud",
+      "target": "roledata_roledata",
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -413,7 +413,7 @@
     },
     {
       "source": "roleabilitycontroller_roleabilitycontroller",
-      "target": "roledata_roledata",
+      "target": "rolemanager_onrolechanged",
       "relation": "references",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
@@ -433,6 +433,16 @@
     },
     {
       "source": "roleabilitycontroller_roleabilitycontroller",
+      "target": "roledata_roledata",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_location": null,
+      "weight": 1.0
+    },
+    {
+      "source": "roleabilitycontroller_roleabilitycontroller",
       "target": "playerstate_playerstate",
       "relation": "calls",
       "confidence": "EXTRACTED",
@@ -442,12 +452,12 @@
       "weight": 1.0
     },
     {
-      "source": "roleabilitycontroller_roleabilitycontroller",
-      "target": "rolemanager_onrolechanged",
-      "relation": "references",
+      "source": "playerinteraction_playerinteraction",
+      "target": "playerinteraction_oninteractionprompt",
+      "relation": "calls",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
+      "source_file": "Assets/_Project/Scripts/Player/PlayerInteraction.cs",
       "source_location": null,
       "weight": 1.0
     },
@@ -462,6 +472,16 @@
       "weight": 0.65
     },
     {
+      "source": "hudmanager_roletype",
+      "target": "playerrole_playerrole",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
+      "source_location": null,
+      "weight": 0.85
+    },
+    {
       "source": "hudmanager_hudmanager",
       "target": "hud_hud",
       "relation": "semantically_similar_to",
@@ -472,96 +492,46 @@
       "weight": 0.85
     },
     {
-      "source": "hudmanager_roletype",
-      "target": "playerrole_playerrole",
-      "relation": "semantically_similar_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.9,
-      "source_file": "Assets/_Project/Scripts/UI/HUDManager.cs",
-      "source_location": null,
-      "weight": 0.9
-    },
-    {
-      "source": "debugpanelhud_debugpanelhud",
-      "target": "debugpanel_debugpanel",
-      "relation": "semantically_similar_to",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "Assets/_Project/Scripts/UI/DebugPanelHUD.cs",
-      "source_location": null,
-      "weight": 0.8
-    },
-    {
       "source": "rigidbodywatcher_rigidbodywatcher",
       "target": "animatordebugger_animatordebugger",
       "relation": "semantically_similar_to",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
+      "confidence_score": 0.8,
       "source_file": "Assets/_Project/Scripts/Player/RigidbodyWatcher.cs",
       "source_location": null,
-      "weight": 0.85
-    },
-    {
-      "source": "playerinteraction_playerinteraction",
-      "target": "playerinteraction_oninteractionprompt",
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/Player/PlayerInteraction.cs",
-      "source_location": null,
-      "weight": 1.0
-    },
-    {
-      "source": "roleabilitycontroller_roleabilitycontroller",
-      "target": "playerstate_playerstate",
-      "relation": "shares_data_with",
-      "confidence": "INFERRED",
-      "confidence_score": 0.8,
-      "source_file": "Assets/_Project/Scripts/Player/RoleAbilityController.cs",
-      "source_location": null,
       "weight": 0.8
-    },
-    {
-      "source": "hud_hud",
-      "target": "playerinteraction_playerinteraction",
-      "relation": "shares_data_with",
-      "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "Assets/_Project/Scripts/UI/HUD.cs",
-      "source_location": null,
-      "weight": 0.85
-    },
-    {
-      "source": "playerstate_playerstate",
-      "target": "roledata_roledata",
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs",
-      "source_location": null,
-      "weight": 1.0
     },
     {
       "source": "debugpanel_debugpanel",
-      "target": "roledata_roledata",
-      "relation": "references",
+      "target": "debugpanelhud_debugpanelhud",
+      "relation": "semantically_similar_to",
       "confidence": "INFERRED",
-      "confidence_score": 0.8,
+      "confidence_score": 0.75,
       "source_file": "Assets/_Project/Scripts/UI/DebugPanel.cs",
       "source_location": null,
-      "weight": 0.8
+      "weight": 0.75
+    },
+    {
+      "source": "playerinteraction_playerinteraction",
+      "target": "playerstate_playerstate",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.7,
+      "source_file": "Assets/_Project/Scripts/Player/PlayerInteraction.cs",
+      "source_location": null,
+      "weight": 0.7
     }
   ],
   "hyperedges": [
     {
       "id": "hyperedge_role_system",
-      "label": "Role System: RoleManager broadcasts RoleData changes to RoleAbilityController, HUD, and RoleSelectionUI",
+      "label": "Role system: RoleManager broadcasts RoleData changes to UI and player ability components",
       "nodes": [
         "rolemanager_rolemanager",
-        "roleabilitycontroller_roleabilitycontroller",
-        "hud_hud",
+        "roledata_roledata",
         "roleselectionui_roleselectionui",
-        "roledata_roledata"
+        "hud_hud",
+        "roleabilitycontroller_roleabilitycontroller"
       ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
@@ -569,31 +539,29 @@
       "source_file": "Assets/_Project/Scripts/Roles/RoleManager.cs"
     },
     {
-      "id": "hyperedge_player_health_pipeline",
-      "label": "Player Health Pipeline: PlayerState fires OnHealthChanged consumed by HUD and EffectSystem revival",
+      "id": "hyperedge_player_hud_feedback",
+      "label": "Player HUD feedback loop: PlayerState and PlayerInteraction drive HUD display via events",
       "nodes": [
         "playerstate_playerstate",
-        "playerstate_onhealthchanged",
+        "playerinteraction_playerinteraction",
         "hud_hud"
       ],
       "relation": "participate_in",
       "confidence": "EXTRACTED",
       "confidence_score": 0.9,
-      "source_file": "Assets/_Project/Scripts/Player/PlayerState.cs"
+      "source_file": "Assets/_Project/Scripts/UI/HUD.cs"
     },
     {
-      "id": "hyperedge_debug_tools",
-      "label": "Debug Toolset: RigidbodyWatcher, AnimatorDebugger, DebugPanel, and DebugPanelHUD form a suite of runtime diagnostics",
+      "id": "hyperedge_network_session",
+      "label": "Network session flow: LobbyManager manages connection lifecycle, PlayerSpawner instantiates players on join",
       "nodes": [
-        "rigidbodywatcher_rigidbodywatcher",
-        "animatordebugger_animatordebugger",
-        "debugpanel_debugpanel",
-        "debugpanelhud_debugpanelhud"
+        "lobbymanager_lobbymanager",
+        "playerspawner_playerspawner"
       ],
-      "relation": "form",
+      "relation": "participate_in",
       "confidence": "INFERRED",
-      "confidence_score": 0.85,
-      "source_file": "Assets/_Project/Scripts/Player/RigidbodyWatcher.cs"
+      "confidence_score": 0.75,
+      "source_file": "Assets/_Project/Scripts/Network/LobbyManager.cs"
     }
   ],
   "input_tokens": 0,
